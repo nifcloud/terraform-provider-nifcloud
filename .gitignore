@@ -1,0 +1,15 @@
+*.out
+*.log
+*.bak
+*~
+.*.swp
+.idea
+*.test
+*.iml
+.vscode
+*.tfplan
+*.tfstate
+*.tfstate.backup
+.terraform
+bin/
+.env

@@ -1,0 +1,15 @@
+terraform-provider-nifcloud
+Copyright 2020 FUJITSU CLOUD TECHNOLOGIES LIMITED. All Rights Reserved.
+
+This product includes software developed at FUJITSU CLOUD TECHNOLOGIES LIMITED and
+third-party software developed by the licenses listed below.
+
+=========================================================================
+
+github.com/nifcloud/nifcloud-sdk-go          Apache-2.0
+github.com/aws/aws-sdk-go-v2                 Apache-2.0
+github.com/hashicorp/terraform-plugin-sdk    MPL-2.0
+github.com/hashicorp/go-cty                  MIT
+github.com/stretchr/testify                  MIT
+
+=========================================================================
