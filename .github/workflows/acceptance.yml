@@ -34,5 +34,5 @@ jobs:
       id: testacc
       env:
         NIFCLOUD_ACCESS_KEY_ID: ${{ secrets.NIFCLOUD_ACCESS_KEY_ID }}
-        NIFCLOUD_NIFCLOUD_SECRET_ACCESS_KEY: ${{ secrets.NIFCLOUD_SECRET_ACCESS_KEY }}
+        NIFCLOUD_SECRET_ACCESS_KEY: ${{ secrets.NIFCLOUD_SECRET_ACCESS_KEY }}
         NIFCLOUD_DEFAULT_REGION: jp-east-2
