@@ -9,10 +9,9 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/validator"
 )
 
-//const description = "Upload and register the specified SSH public key."
-const description = "Upload and register the specified SSH public key."
+const description = "Provides a private lan resource."
 
-// New returns the nifcloud_key_pair resource schema.
+// New returns the nifcloud_private_lan resource schema.
 func New() *schema.Resource {
 	return &schema.Resource{
 		Description: description,
