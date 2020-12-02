@@ -67,6 +67,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			for _, input := range authorizeInputList {
 				input := input
 				eg.Go(func() error {
+					mutexKV.Lock(nifcloud.StringValue(input.GroupName))
+					defer mutexKV.Unlock(nifcloud.StringValue(input.GroupName))
+
 					err := checkSecurityGroupExist(describeSecurityGroupsOutput.SecurityGroupInfo, nifcloud.StringValue(input.GroupName))
 					if err != nil {
 						return err
@@ -114,6 +117,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			for _, input := range revokeInputList {
 				input := input
 				eg.Go(func() error {
+					mutexKV.Lock(nifcloud.StringValue(input.GroupName))
+					defer mutexKV.Unlock(nifcloud.StringValue(input.GroupName))
 
 					err = checkSecurityGroupExist(describeSecurityGroupsOutput.SecurityGroupInfo, nifcloud.StringValue(input.GroupName))
 					if err != nil {

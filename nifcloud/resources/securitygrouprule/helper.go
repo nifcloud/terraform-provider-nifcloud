@@ -11,7 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
+
+var mutexKV = mutexkv.NewMutexKV()
 
 type securityGroupNotFound struct {
 	name           string
