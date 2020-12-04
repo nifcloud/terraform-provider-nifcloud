@@ -7,6 +7,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/privatelan"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/routetable"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/securitygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/securitygrouprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/sslcertificate"
@@ -47,6 +48,7 @@ func Provider() *schema.Provider {
 			"nifcloud_instance":            instance.New(),
 			"nifcloud_key_pair":            keypair.New(),
 			"nifcloud_private_lan":         privatelan.New(),
+			"nifcloud_route_table":         routetable.New(),
 			"nifcloud_security_group":      securitygroup.New(),
 			"nifcloud_security_group_rule": securitygrouprule.New(),
 			"nifcloud_ssl_certificate":     sslcertificate.New(),
