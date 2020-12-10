@@ -11,6 +11,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elblistener"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/loadbalancer"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nattable"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/privatelan"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/router"
@@ -61,6 +62,7 @@ func Provider() *schema.Provider {
 			"nifcloud_instance":            instance.New(),
 			"nifcloud_key_pair":            keypair.New(),
 			"nifcloud_nat_table":           nattable.New(),
+			"nifcloud_load_balancer":       loadbalancer.New(),
 			"nifcloud_private_lan":         privatelan.New(),
 			"nifcloud_router":              router.New(),
 			"nifcloud_route_table":         routetable.New(),
