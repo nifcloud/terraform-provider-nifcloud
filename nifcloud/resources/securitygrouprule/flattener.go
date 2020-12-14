@@ -23,6 +23,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsRespon
 	r := expandAuthorizeSecurityGroupIngressInputList(d)[0].IpPermissions[0]
 	for i := range res.SecurityGroupInfo[0].IpPermissions {
 		p := &res.SecurityGroupInfo[0].IpPermissions[i]
+
 		if p.ToPort != nil && r.ToPort != nil && nifcloud.Int64Value(p.ToPort) != nifcloud.Int64Value(r.ToPort) {
 			continue
 		}
@@ -35,21 +36,37 @@ func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsRespon
 			continue
 		}
 
-		if len(p.IpRanges) > 0 &&
-			len(r.ListOfRequestIpRanges) > 0 &&
-			p.IpRanges[0].CidrIp != nil &&
-			r.ListOfRequestIpRanges[0].CidrIp != nil &&
-			nifcloud.StringValue(p.IpRanges[0].CidrIp) != nifcloud.StringValue(r.ListOfRequestIpRanges[0].CidrIp) {
+		if nifcloud.StringValue(p.InOut) != string(r.InOut) {
 			continue
 		}
-		if len(p.Groups) > 0 &&
-			len(r.ListOfRequestGroups) > 0 &&
-			p.Groups[0].GroupName != nil &&
-			r.ListOfRequestGroups[0].GroupName != nil &&
-			nifcloud.StringValue(p.Groups[0].GroupName) != nifcloud.StringValue(r.ListOfRequestGroups[0].GroupName) {
-			continue
+
+		findCidrIP := false
+		if len(r.ListOfRequestIpRanges) > 0 {
+			for _, ip := range p.IpRanges {
+				if nifcloud.StringValue(ip.CidrIp) == nifcloud.StringValue(r.ListOfRequestIpRanges[0].CidrIp) {
+					findCidrIP = true
+					break
+				}
+			}
 		}
-		rule = p
+		if findCidrIP {
+			rule = p
+			break
+		}
+
+		findGroup := false
+		if len(r.ListOfRequestGroups) > 0 {
+			for _, gn := range p.Groups {
+				if nifcloud.StringValue(gn.GroupName) == nifcloud.StringValue(r.ListOfRequestGroups[0].GroupName) {
+					findGroup = true
+					break
+				}
+			}
+		}
+		if findGroup {
+			rule = p
+			break
+		}
 	}
 
 	if rule == nil {
