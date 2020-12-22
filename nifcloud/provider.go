@@ -3,6 +3,7 @@ package nifcloud
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/datasources/image"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpoption"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elasticip"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
@@ -45,6 +46,7 @@ func Provider() *schema.Provider {
 			"nifcloud_image": image.New(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
+			"nifcloud_dhcp_option":         dhcpoption.New(),
 			"nifcloud_elastic_ip":          elasticip.New(),
 			"nifcloud_instance":            instance.New(),
 			"nifcloud_key_pair":            keypair.New(),
