@@ -20,7 +20,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	res, err := req.Send(ctx)
 	if err != nil {
 		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DhcpOptions" {
+		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DhcpOptionsId" {
 			d.SetId("")
 			return nil
 		}
