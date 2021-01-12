@@ -41,9 +41,9 @@ The following arguments are supported:
 
 * `default_router` - (Optional) The IP address of default gateway.
 * `domain_name` - (Optional) The domain name used by the client in host name resolution.
-* `domain_name_servers` - (Optional) The IP address of the DNS server.
-* `ntp_servers` - (Optional) The IP address of the NTP server.
-* `netbios_name_servers` - (Optional) The IP address of the NetBIOS server.
+* `domain_name_servers` - (Optional) The IP address list of the DNS server.
+* `ntp_servers` - (Optional) The IP address list of the NTP server.
+* `netbios_name_servers` - (Optional) The IP address list of the NetBIOS server.
 * `netbios_node_type` - (Optional) The NetBIOS node type. (1: Don't use WINS, 2: Don't use broadcast, 4: Priorirtize broadcasting, 8: Prioritize WINS)
 * `lease_time` - (Optional) The IP address lease time.　(Unit: second)
 
