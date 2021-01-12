@@ -7,6 +7,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elasticip"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nattable"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/privatelan"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/routetable"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/securitygroup"
@@ -49,6 +50,7 @@ func Provider() *schema.Provider {
 			"nifcloud_elastic_ip":          elasticip.New(),
 			"nifcloud_instance":            instance.New(),
 			"nifcloud_key_pair":            keypair.New(),
+			"nifcloud_nat_table":           nattable.New(),
 			"nifcloud_private_lan":         privatelan.New(),
 			"nifcloud_route_table":         routetable.New(),
 			"nifcloud_security_group":      securitygroup.New(),
