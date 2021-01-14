@@ -61,13 +61,12 @@ func flatten(d *schema.ResourceData, res *describeResponses) error {
 		return err
 	}
 
-	if res.downloadSSLCertificateResponseForCA == nil {
-		return fmt.Errorf("download certificate authority result is empty")
-	}
-	if err := d.Set(
-		"ca", nifcloud.StringValue(res.downloadSSLCertificateResponseForCA.FileData),
-	); err != nil {
-		return err
+	if res.downloadSSLCertificateResponseForCA != nil {
+		if err := d.Set(
+			"ca", nifcloud.StringValue(res.downloadSSLCertificateResponseForCA.FileData),
+		); err != nil {
+			return err
+		}
 	}
 
 	return nil
