@@ -5,7 +5,7 @@ description: |-
   Provides a SSL certificate resource.
 ---
 
-# nifcloud_security_group
+# nifcloud_ssl_certificate
 
 Provides a SSL certificate resource.
 
