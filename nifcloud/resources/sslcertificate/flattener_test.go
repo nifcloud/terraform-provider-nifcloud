@@ -20,6 +20,15 @@ func TestFlatten(t *testing.T) {
 	})
 	rd.SetId("test_fqdn_id")
 
+	rdWithoutCA := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"fqdn_id":     "test_fqdn_id",
+		"fqdn":        "test_fqdn",
+		"description": "test_description",
+		"certificate": "test_certificate",
+		"key":         "test_key",
+	})
+	rdWithoutCA.SetId("test_fqdn_id")
+
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
@@ -65,6 +74,36 @@ func TestFlatten(t *testing.T) {
 				},
 			},
 			want: rd,
+		},
+		{
+			name: "flattens the response without ca",
+			args: args{
+				d: rdWithoutCA,
+				res: &describeResponses{
+					describeSSLCertificatesResponse: &computing.DescribeSslCertificatesResponse{
+						DescribeSslCertificatesOutput: &computing.DescribeSslCertificatesOutput{
+							CertsSet: []computing.CertsSet{
+								{
+									FqdnId:      nifcloud.String("test_fqdn_id"),
+									Fqdn:        nifcloud.String("test_fqdn"),
+									Description: nifcloud.String("test_description"),
+								},
+							},
+						},
+					},
+					downloadSSLCertificateResponseForCert: &computing.DownloadSslCertificateResponse{
+						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
+							FileData: nifcloud.String("test_certificate"),
+						},
+					},
+					downloadSSLCertificateResponseForKey: &computing.DownloadSslCertificateResponse{
+						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
+							FileData: nifcloud.String("test_key"),
+						},
+					},
+				},
+			},
+			want: rdWithoutCA,
 		},
 		{
 			name: "flattens the response even when the resource has been removed externally",

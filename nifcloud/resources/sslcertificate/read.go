@@ -48,15 +48,17 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 		return nil
 	})
 
-	eg.Go(func() error {
-		var err error
-		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCA(d))
-		res.downloadSSLCertificateResponseForCA, err = req.Send(ctx)
-		if err != nil {
-			return checkNotFoundError(err)
-		}
-		return nil
-	})
+	if _, ok := d.GetOk("ca"); ok {
+		eg.Go(func() error {
+			var err error
+			req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCA(d))
+			res.downloadSSLCertificateResponseForCA, err = req.Send(ctx)
+			if err != nil {
+				return checkNotFoundError(err)
+			}
+			return nil
+		})
+	}
 
 	if err := eg.Wait(); err != nil {
 		return diag.FromErr(err)
