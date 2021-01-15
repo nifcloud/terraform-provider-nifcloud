@@ -20,6 +20,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_route_table", &resource.Sweeper{
 		Name: "nifcloud_route_table",
 		F:    testSweepRouteTable,
+		Dependencies: []string{
+			"nifcloud_elb",
+		},
 	})
 }
 
