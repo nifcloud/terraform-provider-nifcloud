@@ -58,11 +58,6 @@ func newSchema() map[string]*schema.Schema {
 			Optional:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(1, 500),
 		},
-		"state": {
-			Type:        schema.TypeString,
-			Description: "The state.",
-			Computed:    true,
-		},
 		"ip_address": {
 			Type:             schema.TypeString,
 			Description:      "The IP address.",
