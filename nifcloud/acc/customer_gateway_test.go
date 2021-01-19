@@ -178,10 +178,10 @@ func testSweepCustomerGateway(region string) error {
 
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, n := range sweepCustomerGateways {
-		customerGatewayId := n
+		customerGatewayID := n
 		eg.Go(func() error {
 			_, err := svc.DeleteCustomerGatewayRequest(&computing.DeleteCustomerGatewayInput{
-				CustomerGatewayId: nifcloud.String(customerGatewayId),
+				CustomerGatewayId: nifcloud.String(customerGatewayID),
 			}).Send(ctx)
 			return err
 		})
