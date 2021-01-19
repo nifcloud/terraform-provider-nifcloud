@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -26,6 +27,7 @@ func TestAcc_CustomerGateway(t *testing.T) {
 	var customerGateway computing.CustomerGatewaySet
 
 	resourceName := "nifcloud_customer_gateway.basic"
+	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -33,11 +35,11 @@ func TestAcc_CustomerGateway(t *testing.T) {
 		CheckDestroy:      testAccCustomerGatewayResourceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccCustomerGateway(t, "testdata/customer_gateway.tf"),
+				Config: testAccCustomerGateway(t, "testdata/customer_gateway.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCustomerGatewayExists(resourceName, &customerGateway),
-					testAccCheckCustomerGatewayValues(&customerGateway),
-					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_name", "cgw001"),
+					testAccCheckCustomerGatewayValues(&customerGateway, randName),
+					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_description", "memo"),
 					resource.TestCheckResourceAttr(resourceName, "ip_address", "192.168.0.1"),
 					resource.TestCheckResourceAttr(resourceName, "nifty_lan_side_ip_address", "192.168.0.1"),
@@ -46,11 +48,11 @@ func TestAcc_CustomerGateway(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccCustomerGateway(t, "testdata/customer_gateway_update.tf"),
+				Config: testAccCustomerGateway(t, "testdata/customer_gateway_update.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCustomerGatewayExists(resourceName, &customerGateway),
-					testAccCheckCustomerGatewayValuesUpdated(&customerGateway),
-					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_name", "cgw001updated"),
+					testAccCheckCustomerGatewayValuesUpdated(&customerGateway, randName),
+					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_name", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_description", "memoupdated"),
 					resource.TestCheckResourceAttr(resourceName, "ip_address", "192.168.0.1"),
 					resource.TestCheckResourceAttr(resourceName, "nifty_lan_side_ip_address", "192.168.0.1"),
@@ -67,12 +69,12 @@ func TestAcc_CustomerGateway(t *testing.T) {
 	})
 }
 
-func testAccCustomerGateway(t *testing.T, fileName string) string {
+func testAccCustomerGateway(t *testing.T, fileName string, rName string) string {
 	b, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return string(b)
+	return fmt.Sprintf(string(b), rName)
 }
 
 func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.CustomerGatewaySet) resource.TestCheckFunc {
@@ -110,10 +112,10 @@ func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.Cust
 	}
 }
 
-func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewaySet) resource.TestCheckFunc {
+func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewaySet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != "cgw001" {
-			return fmt.Errorf("bad nifty_customer_gateway_name state, expected \"cgw001\", got: %#v", customerGateway.NiftyCustomerGatewayName)
+		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != rName {
+			return fmt.Errorf("bad nifty_customer_gateway_name state, expected \"%s\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memo" {
@@ -123,10 +125,10 @@ func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewa
 	}
 }
 
-func testAccCheckCustomerGatewayValuesUpdated(customerGateway *computing.CustomerGatewaySet) resource.TestCheckFunc {
+func testAccCheckCustomerGatewayValuesUpdated(customerGateway *computing.CustomerGatewaySet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != "cgw001updated" {
-			return fmt.Errorf("bad nifty_customer_gateway_name state, expected \"cgw001updated\", got: %#v", customerGateway.NiftyCustomerGatewayName)
+		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != rName+"upd" {
+			return fmt.Errorf("bad nifty_customer_gateway_name state, expected \"%supd\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memoupdated" {
