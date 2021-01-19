@@ -28,10 +28,6 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 		return err
 	}
 
-	if err := d.Set("state", customerGateway.State); err != nil {
-		return err
-	}
-
 	if err := d.Set("ip_address", customerGateway.IpAddress); err != nil {
 		return err
 	}
