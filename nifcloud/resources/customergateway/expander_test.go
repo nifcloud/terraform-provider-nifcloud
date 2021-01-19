@@ -89,7 +89,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayNa
 			args: rd,
 			want: &computing.NiftyModifyCustomerGatewayAttributeInput{
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
-				Attribute:         "niftyCustomerGatewayName",
+				Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
 				Value:             nifcloud.String("test_nifty_customer_gateway_name"),
 			},
 		},
@@ -119,7 +119,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDe
 			args: rd,
 			want: &computing.NiftyModifyCustomerGatewayAttributeInput{
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
-				Attribute:         "niftyCustomerGatewayDescription",
+				Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
 				Value:             nifcloud.String("test_nifty_customer_gateway_description"),
 			},
 		},
