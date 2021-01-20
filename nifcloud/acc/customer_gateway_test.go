@@ -121,6 +121,18 @@ func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewa
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memo" {
 			return fmt.Errorf("bad nifty_customer_gateway_description state, expected \"memo\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
 		}
+
+		if nifcloud.StringValue(customerGateway.IpAddress) != "192.168.0.1" {
+			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.IpAddress)
+		}
+
+		if nifcloud.StringValue(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
+			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
+		}
+
+		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
+			return fmt.Errorf("bad ip_address state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
+		}
 		return nil
 	}
 }
@@ -133,6 +145,18 @@ func testAccCheckCustomerGatewayValuesUpdated(customerGateway *computing.Custome
 
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memoupdated" {
 			return fmt.Errorf("bad nifty_customer_gateway_description state, expected \"memoupdated\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
+		}
+
+		if nifcloud.StringValue(customerGateway.IpAddress) != "192.168.0.1" {
+			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.IpAddress)
+		}
+
+		if nifcloud.StringValue(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
+			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
+		}
+
+		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
+			return fmt.Errorf("bad ip_address state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
 		}
 		return nil
 	}
