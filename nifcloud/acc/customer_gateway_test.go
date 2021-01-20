@@ -197,7 +197,7 @@ func testSweepCustomerGateway(region string) error {
 
 	var sweepCustomerGateways []string
 	for _, k := range res.CustomerGatewaySet {
-		if strings.HasPrefix(nifcloud.StringValue(k.CustomerGatewayId), prefix) {
+		if strings.HasPrefix(nifcloud.StringValue(k.NiftyCustomerGatewayName), prefix) {
 			sweepCustomerGateways = append(sweepCustomerGateways, nifcloud.StringValue(k.CustomerGatewayId))
 		}
 	}
