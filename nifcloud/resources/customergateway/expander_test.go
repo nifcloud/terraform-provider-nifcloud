@@ -16,7 +16,6 @@ func TestExpandCreateCustomerGatwayInput(t *testing.T) {
 		"nifty_lan_side_ip_address":          "test_nifty_lan_side_ip_address",
 		"nifty_lan_side_cidr_block":          "test_nifty_lan_side_cidr_block",
 		"nifty_customer_gateway_description": "test_nifty_customer_gateway_description",
-		"bgp_asn":                            36000,
 	})
 	rd.SetId("test_customer_gateway_id")
 
@@ -34,7 +33,6 @@ func TestExpandCreateCustomerGatwayInput(t *testing.T) {
 				NiftyLanSideIpAddress:           nifcloud.String("test_nifty_lan_side_ip_address"),
 				NiftyLanSideCidrBlock:           nifcloud.String("test_nifty_lan_side_cidr_block"),
 				NiftyCustomerGatewayDescription: nifcloud.String("test_nifty_customer_gateway_description"),
-				BgpAsn:                          nifcloud.Int64(int64(36000)),
 			},
 		},
 	}
