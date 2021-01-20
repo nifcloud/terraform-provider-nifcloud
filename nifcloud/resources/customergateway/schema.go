@@ -33,11 +33,6 @@ func New() *schema.Resource {
 
 func newSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
-		"bgp_asn": {
-			Type:        schema.TypeInt,
-			Description: "The BGP ASN.",
-			Optional:    true,
-		},
 		"customer_gateway_id": {
 			Type:        schema.TypeString,
 			Description: "The customer gateway id.",

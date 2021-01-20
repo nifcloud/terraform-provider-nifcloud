@@ -30,7 +30,6 @@ var (
 
 func expandCreateCustomerGatewayInput(d *schema.ResourceData) *computing.CreateCustomerGatewayInput {
 	return &computing.CreateCustomerGatewayInput{
-		BgpAsn:                          nifcloud.Int64(int64(d.Get("bgp_asn").(int))),
 		IpAddress:                       nifcloud.String(d.Get("ip_address").(string)),
 		NiftyCustomerGatewayDescription: nifcloud.String(d.Get("nifty_customer_gateway_description").(string)),
 		NiftyCustomerGatewayName:        nifcloud.String(d.Get("nifty_customer_gateway_name").(string)),
