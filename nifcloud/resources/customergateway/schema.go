@@ -57,24 +57,28 @@ func newSchema() map[string]*schema.Schema {
 			Type:             schema.TypeString,
 			Description:      "The IP address.",
 			Required:         true,
+			ForceNew:         true,
 			ValidateDiagFunc: validator.IPAddress,
 		},
 		"nifty_lan_side_ip_address": {
 			Type:             schema.TypeString,
 			Description:      "The nifty lan side IP address.",
 			Optional:         true,
+			ForceNew:         true,
 			ValidateDiagFunc: validator.IPAddress,
 		},
 		"nifty_lan_side_cidr_block": {
 			Type:             schema.TypeString,
 			Description:      "The nifty lan side CIDR block.",
 			Optional:         true,
+			ForceNew:         true,
 			ValidateDiagFunc: validator.CIDRNetworkAddress,
 		},
 		"type": {
 			Type:         schema.TypeString,
 			Description:  "The type.",
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.StringInSlice([]string{"IPsec", "IPsec VTI", "L2TPv3 / IPsec"}, false),
 		},
 	}
