@@ -27,7 +27,6 @@ provider "nifcloud" {
 resource "nifcloud_customer_gateway" "example" {
   type                               = "IPsec"
   ip_address                         = "192.168.0.1"
-  bgp_asn                            = 65000
   nifty_customer_gateway_name        = "cgw002"
   nifty_lan_side_ip_address          = "192.168.0.1"
   nifty_lan_side_cidr_block          = "192.168.0.0/28"
@@ -42,7 +41,6 @@ The following arguments are supported:
 
 * `type` - (Optional) The type.
 * `ip_address` - (Required) The IP address.
-* `bgp_asn` - (Optional) The BGP ASN.
 * `nifty_customer_gateway_name` - (Optional) The nifty customer gateway name.
 * `nifty_lan_side_ip_address` - (Optional) The nifty LAN side IP address.
 * `nifty_lan_side_cidr_block` - (Optional) The nifty LAN side CIDR block.
