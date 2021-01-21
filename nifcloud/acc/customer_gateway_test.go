@@ -127,11 +127,11 @@ func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewa
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
-			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
+			return fmt.Errorf("bad lan_side_ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
-			return fmt.Errorf("bad ip_address state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
+			return fmt.Errorf("bad lan_side_cidr_block state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
 		}
 		return nil
 	}
@@ -152,11 +152,11 @@ func testAccCheckCustomerGatewayValuesUpdated(customerGateway *computing.Custome
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
-			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
+			return fmt.Errorf("bad lan_side_ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
-			return fmt.Errorf("bad ip_address state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
+			return fmt.Errorf("bad lan_side_cidr_block state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
 		}
 		return nil
 	}
