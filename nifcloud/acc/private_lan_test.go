@@ -20,10 +20,12 @@ func init() {
 	resource.AddTestSweepers("nifcloud_private_lans", &resource.Sweeper{
 		Name: "nifcloud_private_lans",
 		F:    testSweepPrivateLan,
+		Dependencies: []string{
+			"nifcloud_router",
+		},
 	})
 }
 
-//
 func TestAcc_PrivateLan(t *testing.T) {
 	var privateLan computing.PrivateLanSet
 
