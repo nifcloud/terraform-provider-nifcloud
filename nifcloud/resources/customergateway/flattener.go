@@ -24,7 +24,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 		return err
 	}
 
-	if err := d.Set("nifty_customer_gateway_name", customerGateway.NiftyCustomerGatewayName); err != nil {
+	if err := d.Set("customer_gateway_name", customerGateway.NiftyCustomerGatewayName); err != nil {
 		return err
 	}
 
@@ -32,15 +32,15 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 		return err
 	}
 
-	if err := d.Set("nifty_lan_side_ip_address", customerGateway.NiftyLanSideIpAddress); err != nil {
+	if err := d.Set("lan_side_ip_address", customerGateway.NiftyLanSideIpAddress); err != nil {
 		return err
 	}
 
-	if err := d.Set("nifty_lan_side_cidr_block", customerGateway.NiftyLanSideCidrBlock); err != nil {
+	if err := d.Set("lan_side_cidr_block", customerGateway.NiftyLanSideCidrBlock); err != nil {
 		return err
 	}
 
-	if err := d.Set("nifty_customer_gateway_description", customerGateway.NiftyCustomerGatewayDescription); err != nil {
+	if err := d.Set("customer_gateway_description", customerGateway.NiftyCustomerGatewayDescription); err != nil {
 		return err
 	}
 	return nil

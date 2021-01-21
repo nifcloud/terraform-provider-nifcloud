@@ -25,12 +25,12 @@ provider "nifcloud" {
 }
 
 resource "nifcloud_customer_gateway" "example" {
-  type                               = "IPsec"
-  ip_address                         = "192.168.0.1"
-  nifty_customer_gateway_name        = "cgw002"
-  nifty_lan_side_ip_address          = "192.168.0.1"
-  nifty_lan_side_cidr_block          = "192.168.0.0/28"
-  nifty_customer_gateway_description = "memo"
+  type                         = "IPsec"
+  ip_address                   = "192.168.0.1"
+  customer_gateway_name        = "cgw002"
+  lan_side_ip_address          = "192.168.0.1"
+  lan_side_cidr_block          = "192.168.0.0/28"
+  customer_gateway_description = "memo"
 }
 ```
 
@@ -41,10 +41,10 @@ The following arguments are supported:
 
 * `type` - (Optional) The type.
 * `ip_address` - (Required) The IP address.
-* `nifty_customer_gateway_name` - (Optional) The nifty customer gateway name.
-* `nifty_lan_side_ip_address` - (Optional) The nifty LAN side IP address.
-* `nifty_lan_side_cidr_block` - (Optional) The nifty LAN side CIDR block.
-* `nifty_customer_gateway_description` - (Optional) The nifty customer gateway description.
+* `customer_gateway_name` - (Optional) The nifty customer gateway name.
+* `lan_side_ip_address` - (Optional) The nifty LAN side IP address.
+* `lan_side_cidr_block` - (Optional) The nifty LAN side CIDR block.
+* `customer_gateway_description` - (Optional) The nifty customer gateway description.
 
 ## Attributes Reference
 

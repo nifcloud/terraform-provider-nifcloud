@@ -31,10 +31,10 @@ var (
 func expandCreateCustomerGatewayInput(d *schema.ResourceData) *computing.CreateCustomerGatewayInput {
 	return &computing.CreateCustomerGatewayInput{
 		IpAddress:                       nifcloud.String(d.Get("ip_address").(string)),
-		NiftyCustomerGatewayDescription: nifcloud.String(d.Get("nifty_customer_gateway_description").(string)),
-		NiftyCustomerGatewayName:        nifcloud.String(d.Get("nifty_customer_gateway_name").(string)),
-		NiftyLanSideCidrBlock:           nifcloud.String(d.Get("nifty_lan_side_cidr_block").(string)),
-		NiftyLanSideIpAddress:           nifcloud.String(d.Get("nifty_lan_side_ip_address").(string)),
+		NiftyCustomerGatewayDescription: nifcloud.String(d.Get("customer_gateway_description").(string)),
+		NiftyCustomerGatewayName:        nifcloud.String(d.Get("customer_gateway_name").(string)),
+		NiftyLanSideCidrBlock:           nifcloud.String(d.Get("lan_side_cidr_block").(string)),
+		NiftyLanSideIpAddress:           nifcloud.String(d.Get("lan_side_ip_address").(string)),
 		Type:                            typeMapping[d.Get("type").(string)],
 	}
 }
@@ -49,7 +49,7 @@ func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(d
 	return &computing.NiftyModifyCustomerGatewayAttributeInput{
 		CustomerGatewayId: nifcloud.String(d.Id()),
 		Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
-		Value:             nifcloud.String(d.Get("nifty_customer_gateway_name").(string)),
+		Value:             nifcloud.String(d.Get("customer_gateway_name").(string)),
 	}
 }
 
@@ -57,7 +57,7 @@ func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDescri
 	return &computing.NiftyModifyCustomerGatewayAttributeInput{
 		CustomerGatewayId: nifcloud.String(d.Id()),
 		Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
-		Value:             nifcloud.String(d.Get("nifty_customer_gateway_description").(string)),
+		Value:             nifcloud.String(d.Get("customer_gateway_description").(string)),
 	}
 }
 

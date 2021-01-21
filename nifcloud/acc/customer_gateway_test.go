@@ -39,11 +39,11 @@ func TestAcc_CustomerGateway(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCustomerGatewayExists(resourceName, &customerGateway),
 					testAccCheckCustomerGatewayValues(&customerGateway, randName),
-					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_name", randName),
-					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_description", "memo"),
+					resource.TestCheckResourceAttr(resourceName, "customer_gateway_name", randName),
+					resource.TestCheckResourceAttr(resourceName, "customer_gateway_description", "memo"),
 					resource.TestCheckResourceAttr(resourceName, "ip_address", "192.168.0.1"),
-					resource.TestCheckResourceAttr(resourceName, "nifty_lan_side_ip_address", "192.168.0.1"),
-					resource.TestCheckResourceAttr(resourceName, "nifty_lan_side_cidr_block", "192.168.0.0/28"),
+					resource.TestCheckResourceAttr(resourceName, "lan_side_ip_address", "192.168.0.1"),
+					resource.TestCheckResourceAttr(resourceName, "lan_side_cidr_block", "192.168.0.0/28"),
 					resource.TestCheckResourceAttrSet(resourceName, "customer_gateway_id"),
 				),
 			},
@@ -52,11 +52,11 @@ func TestAcc_CustomerGateway(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckCustomerGatewayExists(resourceName, &customerGateway),
 					testAccCheckCustomerGatewayValuesUpdated(&customerGateway, randName),
-					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_name", randName+"upd"),
-					resource.TestCheckResourceAttr(resourceName, "nifty_customer_gateway_description", "memoupdated"),
+					resource.TestCheckResourceAttr(resourceName, "customer_gateway_name", randName+"upd"),
+					resource.TestCheckResourceAttr(resourceName, "customer_gateway_description", "memoupdated"),
 					resource.TestCheckResourceAttr(resourceName, "ip_address", "192.168.0.1"),
-					resource.TestCheckResourceAttr(resourceName, "nifty_lan_side_ip_address", "192.168.0.1"),
-					resource.TestCheckResourceAttr(resourceName, "nifty_lan_side_cidr_block", "192.168.0.0/28"),
+					resource.TestCheckResourceAttr(resourceName, "lan_side_ip_address", "192.168.0.1"),
+					resource.TestCheckResourceAttr(resourceName, "lan_side_cidr_block", "192.168.0.0/28"),
 					resource.TestCheckResourceAttrSet(resourceName, "customer_gateway_id"),
 				),
 			},
@@ -115,11 +115,11 @@ func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.Cust
 func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewaySet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != rName {
-			return fmt.Errorf("bad nifty_customer_gateway_name state, expected \"%s\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
+			return fmt.Errorf("bad customer_gateway_name state, expected \"%s\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memo" {
-			return fmt.Errorf("bad nifty_customer_gateway_description state, expected \"memo\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
+			return fmt.Errorf("bad customer_gateway_description state, expected \"memo\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
 		}
 
 		if nifcloud.StringValue(customerGateway.IpAddress) != "192.168.0.1" {
@@ -140,11 +140,11 @@ func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewa
 func testAccCheckCustomerGatewayValuesUpdated(customerGateway *computing.CustomerGatewaySet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != rName+"upd" {
-			return fmt.Errorf("bad nifty_customer_gateway_name state, expected \"%supd\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
+			return fmt.Errorf("bad customer_gateway_name state, expected \"%supd\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
 		}
 
 		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memoupdated" {
-			return fmt.Errorf("bad nifty_customer_gateway_description state, expected \"memoupdated\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
+			return fmt.Errorf("bad customer_gateway_description state, expected \"memoupdated\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
 		}
 
 		if nifcloud.StringValue(customerGateway.IpAddress) != "192.168.0.1" {
