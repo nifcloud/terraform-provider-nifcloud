@@ -4,8 +4,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/datasources/image"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/customergateway"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpconfig"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpoption"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elasticip"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elb"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nattable"
@@ -48,8 +50,10 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"nifcloud_customer_gateway":    customergateway.New(),
+			"nifcloud_dhcp_config":         dhcpconfig.New(),
 			"nifcloud_dhcp_option":         dhcpoption.New(),
 			"nifcloud_elastic_ip":          elasticip.New(),
+			"nifcloud_elb":                 elb.New(),
 			"nifcloud_instance":            instance.New(),
 			"nifcloud_key_pair":            keypair.New(),
 			"nifcloud_nat_table":           nattable.New(),
