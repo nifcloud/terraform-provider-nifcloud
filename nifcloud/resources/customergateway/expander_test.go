@@ -11,11 +11,11 @@ import (
 
 func TestExpandCreateCustomerGatwayInput(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"customer_gateway_name":        "test_customer_gateway_name",
-		"customer_gateway_description": "test_customer_gateway_description",
-		"ip_address":                   "test_ip_address",
-		"lan_side_ip_address":          "test_lan_side_ip_address",
-		"lan_side_cidr_block":          "test_lan_side_cidr_block",
+		"name":                "test_name",
+		"description":         "test_description",
+		"ip_address":          "test_ip_address",
+		"lan_side_ip_address": "test_lan_side_ip_address",
+		"lan_side_cidr_block": "test_lan_side_cidr_block",
 	})
 	rd.SetId("test_customer_gateway_id")
 
@@ -28,8 +28,8 @@ func TestExpandCreateCustomerGatwayInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.CreateCustomerGatewayInput{
-				NiftyCustomerGatewayName:        nifcloud.String("test_customer_gateway_name"),
-				NiftyCustomerGatewayDescription: nifcloud.String("test_customer_gateway_description"),
+				NiftyCustomerGatewayName:        nifcloud.String("test_name"),
+				NiftyCustomerGatewayDescription: nifcloud.String("test_description"),
 				IpAddress:                       nifcloud.String("test_ip_address"),
 				NiftyLanSideIpAddress:           nifcloud.String("test_lan_side_ip_address"),
 				NiftyLanSideCidrBlock:           nifcloud.String("test_lan_side_cidr_block"),
@@ -73,7 +73,7 @@ func TestExpandDescribeCustomerGatewaysInput(t *testing.T) {
 
 func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"customer_gateway_name": "test_customer_gateway_name",
+		"name": "test_name",
 	})
 	rd.SetId("test_customer_gateway_id")
 
@@ -88,7 +88,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayNa
 			want: &computing.NiftyModifyCustomerGatewayAttributeInput{
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
 				Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
-				Value:             nifcloud.String("test_customer_gateway_name"),
+				Value:             nifcloud.String("test_name"),
 			},
 		},
 	}
@@ -103,7 +103,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayNa
 
 func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDescription(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"customer_gateway_description": "test_customer_gateway_description",
+		"description": "test_description",
 	})
 	rd.SetId("test_customer_gateway_id")
 
@@ -118,7 +118,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDe
 			want: &computing.NiftyModifyCustomerGatewayAttributeInput{
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
 				Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
-				Value:             nifcloud.String("test_customer_gateway_description"),
+				Value:             nifcloud.String("test_description"),
 			},
 		},
 	}

@@ -24,11 +24,11 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 		return err
 	}
 
-	if err := d.Set("customer_gateway_name", customerGateway.NiftyCustomerGatewayName); err != nil {
+	if err := d.Set("name", customerGateway.NiftyCustomerGatewayName); err != nil {
 		return err
 	}
 
-	if err := d.Set("customer_gateway_description", customerGateway.NiftyCustomerGatewayDescription); err != nil {
+	if err := d.Set("description", customerGateway.NiftyCustomerGatewayDescription); err != nil {
 		return err
 	}
 

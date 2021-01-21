@@ -12,25 +12,25 @@ import (
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
 
-	if d.HasChange("customer_gateway_name") {
+	if d.HasChange("name") {
 		input := expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(d)
 
 		req := svc.NiftyModifyCustomerGatewayAttributeRequest(input)
 
 		_, err := req.Send(ctx)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed updating customer gateway customer_gateway_name: %s", err))
+			return diag.FromErr(fmt.Errorf("failed updating name: %s", err))
 		}
 	}
 
-	if d.HasChange("customer_gateway_description") {
+	if d.HasChange("description") {
 		input := expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDescription(d)
 
 		req := svc.NiftyModifyCustomerGatewayAttributeRequest(input)
 
 		_, err := req.Send(ctx)
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed updating customer gateway customer_gateway_description: %s", err))
+			return diag.FromErr(fmt.Errorf("failed updating description: %s", err))
 		}
 	}
 
