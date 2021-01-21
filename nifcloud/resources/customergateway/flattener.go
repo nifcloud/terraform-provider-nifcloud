@@ -28,6 +28,10 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 		return err
 	}
 
+	if err := d.Set("customer_gateway_description", customerGateway.NiftyCustomerGatewayDescription); err != nil {
+		return err
+	}
+
 	if err := d.Set("ip_address", customerGateway.IpAddress); err != nil {
 		return err
 	}
@@ -37,10 +41,6 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 	}
 
 	if err := d.Set("lan_side_cidr_block", customerGateway.NiftyLanSideCidrBlock); err != nil {
-		return err
-	}
-
-	if err := d.Set("customer_gateway_description", customerGateway.NiftyCustomerGatewayDescription); err != nil {
 		return err
 	}
 	return nil

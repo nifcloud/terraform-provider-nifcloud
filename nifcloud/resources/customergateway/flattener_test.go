@@ -13,10 +13,10 @@ func TestFlatten(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"customer_gateway_id":          "test_customer_gateway_id",
 		"customer_gateway_name":        "test_customer_gateway_name",
+		"customer_gateway_description": "test_customer_gateway_description",
 		"ip_address":                   "test_ip_address",
 		"lan_side_ip_address":          "test_lan_side_ip_address",
 		"lan_side_cidr_block":          "test_lan_side_cidr_block",
-		"customer_gateway_description": "test_customer_gateway_description",
 	})
 	rd.SetId("test_customer_gateway_id")
 
@@ -41,10 +41,10 @@ func TestFlatten(t *testing.T) {
 							{
 								CustomerGatewayId:               nifcloud.String("test_customer_gateway_id"),
 								NiftyCustomerGatewayName:        nifcloud.String("test_customer_gateway_name"),
+								NiftyCustomerGatewayDescription: nifcloud.String("test_customer_gateway_description"),
 								IpAddress:                       nifcloud.String("test_ip_address"),
 								NiftyLanSideIpAddress:           nifcloud.String("test_lan_side_ip_address"),
 								NiftyLanSideCidrBlock:           nifcloud.String("test_lan_side_cidr_block"),
-								NiftyCustomerGatewayDescription: nifcloud.String("test_customer_gateway_description"),
 							},
 						},
 					},

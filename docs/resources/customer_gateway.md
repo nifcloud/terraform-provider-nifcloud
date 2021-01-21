@@ -25,12 +25,12 @@ provider "nifcloud" {
 }
 
 resource "nifcloud_customer_gateway" "example" {
+  customer_gateway_name        = "cgw002"
+  customer_gateway_description = "memo"
   type                         = "IPsec"
   ip_address                   = "192.168.0.1"
-  customer_gateway_name        = "cgw002"
   lan_side_ip_address          = "192.168.0.1"
   lan_side_cidr_block          = "192.168.0.0/28"
-  customer_gateway_description = "memo"
 }
 ```
 
@@ -39,12 +39,12 @@ resource "nifcloud_customer_gateway" "example" {
 The following arguments are supported:
 
 
+* `customer_gateway_name` - (Optional) The customer gateway name.
+* `customer_gateway_description` - (Optional) The customer gateway description.
 * `type` - (Optional) The type.
 * `ip_address` - (Required) The IP address.
-* `customer_gateway_name` - (Optional) The customer gateway name.
 * `lan_side_ip_address` - (Optional) The LAN side IP address.
 * `lan_side_cidr_block` - (Optional) The LAN side CIDR block.
-* `customer_gateway_description` - (Optional) The customer gateway description.
 
 ## Attributes Reference
 
