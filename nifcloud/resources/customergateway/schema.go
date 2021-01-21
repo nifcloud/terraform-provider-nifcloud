@@ -38,18 +38,18 @@ func newSchema() map[string]*schema.Schema {
 			Description: "The customer gateway id.",
 			Computed:    true,
 		},
-		"customer_gateway_name": {
+		"name": {
 			Type:        schema.TypeString,
-			Description: "The customer gateway name.",
+			Description: "The name.",
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
 				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
 			),
 		},
-		"customer_gateway_description": {
+		"description": {
 			Type:             schema.TypeString,
-			Description:      "The customer gateway description.",
+			Description:      "The description.",
 			Optional:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(1, 500),
 		},

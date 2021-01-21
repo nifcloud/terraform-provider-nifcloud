@@ -30,8 +30,8 @@ var (
 
 func expandCreateCustomerGatewayInput(d *schema.ResourceData) *computing.CreateCustomerGatewayInput {
 	return &computing.CreateCustomerGatewayInput{
-		NiftyCustomerGatewayDescription: nifcloud.String(d.Get("customer_gateway_description").(string)),
-		NiftyCustomerGatewayName:        nifcloud.String(d.Get("customer_gateway_name").(string)),
+		NiftyCustomerGatewayDescription: nifcloud.String(d.Get("description").(string)),
+		NiftyCustomerGatewayName:        nifcloud.String(d.Get("name").(string)),
 		Type:                            typeMapping[d.Get("type").(string)],
 		IpAddress:                       nifcloud.String(d.Get("ip_address").(string)),
 		NiftyLanSideCidrBlock:           nifcloud.String(d.Get("lan_side_cidr_block").(string)),
@@ -49,7 +49,7 @@ func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(d
 	return &computing.NiftyModifyCustomerGatewayAttributeInput{
 		CustomerGatewayId: nifcloud.String(d.Id()),
 		Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
-		Value:             nifcloud.String(d.Get("customer_gateway_name").(string)),
+		Value:             nifcloud.String(d.Get("name").(string)),
 	}
 }
 
@@ -57,7 +57,7 @@ func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDescri
 	return &computing.NiftyModifyCustomerGatewayAttributeInput{
 		CustomerGatewayId: nifcloud.String(d.Id()),
 		Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
-		Value:             nifcloud.String(d.Get("customer_gateway_description").(string)),
+		Value:             nifcloud.String(d.Get("description").(string)),
 	}
 }
 
