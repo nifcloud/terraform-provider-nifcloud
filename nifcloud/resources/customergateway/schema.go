@@ -40,7 +40,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"customer_gateway_name": {
 			Type:        schema.TypeString,
-			Description: "The nifty customer gateway name.",
+			Description: "The customer gateway name.",
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
@@ -49,7 +49,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"customer_gateway_description": {
 			Type:             schema.TypeString,
-			Description:      "The nifty customer gateway description.",
+			Description:      "The customer gateway description.",
 			Optional:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(1, 500),
 		},
@@ -62,14 +62,14 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"lan_side_ip_address": {
 			Type:             schema.TypeString,
-			Description:      "The nifty lan side IP address.",
+			Description:      "The lan side IP address.",
 			Optional:         true,
 			ForceNew:         true,
 			ValidateDiagFunc: validator.IPAddress,
 		},
 		"lan_side_cidr_block": {
 			Type:             schema.TypeString,
-			Description:      "The nifty lan side CIDR block.",
+			Description:      "The lan side CIDR block.",
 			Optional:         true,
 			ForceNew:         true,
 			ValidateDiagFunc: validator.CIDRNetworkAddress,
