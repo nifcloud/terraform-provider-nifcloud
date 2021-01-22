@@ -69,7 +69,6 @@ func newSchema() map[string]*schema.Schema {
 		"nat_table_association_id": {
 			Type:        schema.TypeString,
 			Description: "The ID of the NAT table association.",
-			Optional:    true,
 			Computed:    true,
 		},
 		"nat_table_id": {
