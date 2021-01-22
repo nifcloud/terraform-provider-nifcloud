@@ -2,7 +2,6 @@ package router
 
 import (
 	"fmt"
-	"log"
 	"sort"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -127,8 +126,6 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersResponse
 				ni["dhcp_options_id"] = nifcloud.StringValue(n.DhcpOptionsId)
 				ni["dhcp_config_id"] = nifcloud.StringValue(n.DhcpConfigId)
 			}
-
-			log.Println("ni", ni)
 		}
 		networkInterfaces = append(networkInterfaces, ni)
 	}
