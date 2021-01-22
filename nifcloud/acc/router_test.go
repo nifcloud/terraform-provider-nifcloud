@@ -60,14 +60,14 @@ func TestAcc_Router(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRouterExists(resourceName, &router),
 					testAccCheckRouterValuesUpdated(&router, randName),
-					resource.TestCheckResourceAttr(resourceName, "accounting_type", "2"),
+					resource.TestCheckResourceAttr(resourceName, "accounting_type", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo-upd"),
 					resource.TestCheckResourceAttr(resourceName, "name", randName+"upd"),
 					resource.TestCheckResourceAttrSet(resourceName, "network_interface.0.network_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "network_interface.1.network_id"),
 					resource.TestCheckResourceAttr(resourceName, "security_group", randName),
-					resource.TestCheckResourceAttr(resourceName, "type", "small"),
+					resource.TestCheckResourceAttr(resourceName, "type", "medium"),
 					resource.TestCheckResourceAttrSet(resourceName, "router_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "nat_table_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "nat_table_association_id"),
@@ -134,7 +134,7 @@ func testAccCheckRouterExists(n string, router *computing.RouterSetOfNiftyDescri
 func testAccCheckRouterValues(router *computing.RouterSetOfNiftyDescribeRouters, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(router.AccountingType) != "2" {
-			return fmt.Errorf("bad accounting_type state,  expected \"2\", got: %#v", router.NextMonthAccountingType)
+			return fmt.Errorf("bad accounting_type state,  expected \"2\", got: %#v", router.AccountingType)
 		}
 
 		if nifcloud.StringValue(router.AvailabilityZone) != "east-21" {
@@ -208,7 +208,7 @@ func testAccCheckRouterValues(router *computing.RouterSetOfNiftyDescribeRouters,
 func testAccCheckRouterValuesUpdated(router *computing.RouterSetOfNiftyDescribeRouters, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(router.AccountingType) != "2" {
-			return fmt.Errorf("bad accounting_type state,  expected \"2\", got: %#v", router.NextMonthAccountingType)
+			return fmt.Errorf("bad accounting_type state,  expected \"2\", got: %#v", router.AccountingType)
 		}
 
 		if nifcloud.StringValue(router.AvailabilityZone) != "east-21" {
@@ -253,8 +253,8 @@ func testAccCheckRouterValuesUpdated(router *computing.RouterSetOfNiftyDescribeR
 			return fmt.Errorf("bad network_interface.1.network_name state,  expected %s, got: %#v", rName, router.NetworkInterfaceSet[1].NetworkName)
 		}
 
-		if nifcloud.StringValue(router.NetworkInterfaceSet[1].IpAddress) != "192.168.1.1" {
-			return fmt.Errorf("bad network_interface.1.ip_address state,  expected \"192.168.1.1\", got: %#v", router.NetworkInterfaceSet[1].IpAddress)
+		if nifcloud.StringValue(router.NetworkInterfaceSet[1].IpAddress) != "192.168.1.254" {
+			return fmt.Errorf("bad network_interface.1.ip_address state,  expected \"192.168.1.254\", got: %#v", router.NetworkInterfaceSet[1].IpAddress)
 		}
 
 		if !nifcloud.BoolValue(router.NetworkInterfaceSet[1].Dhcp) {
@@ -269,8 +269,8 @@ func testAccCheckRouterValuesUpdated(router *computing.RouterSetOfNiftyDescribeR
 			return fmt.Errorf("bad network_interface.1.dhcp_options_id state,  expected not empty string, got: empty string")
 		}
 
-		if nifcloud.StringValue(router.NextMonthAccountingType) != "2" {
-			return fmt.Errorf("bad next_month_accounting_type state,  expected \"2\", got: %#v", router.NextMonthAccountingType)
+		if nifcloud.StringValue(router.NextMonthAccountingType) != "1" {
+			return fmt.Errorf("bad next_month_accounting_type state,  expected \"1\", got: %#v", router.NextMonthAccountingType)
 		}
 
 		if nifcloud.StringValue(router.RouteTableAssociationId) == "" {
@@ -285,8 +285,8 @@ func testAccCheckRouterValuesUpdated(router *computing.RouterSetOfNiftyDescribeR
 			return fmt.Errorf("bad name,  expected \"%s\", got: %#v", rName+"upd", router.RouterName)
 		}
 
-		if nifcloud.StringValue(router.Type) != "small" {
-			return fmt.Errorf("bad type state,  expected \"small\", got: %#v", router.Type)
+		if nifcloud.StringValue(router.Type) != "medium" {
+			return fmt.Errorf("bad type state,  expected \"medium\", got: %#v", router.Type)
 		}
 
 		return nil

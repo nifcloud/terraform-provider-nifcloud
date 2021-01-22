@@ -6,8 +6,8 @@ resource "nifcloud_router" "basic" {
   name              = "%supd"
   description       = "memo-upd"
   availability_zone = "east-21"
-  accounting_type   = "2"
-  type              = "small"
+  accounting_type   = "1"
+  type              = "medium"
   security_group    = nifcloud_security_group.basic.group_name
   nat_table_id      = nifcloud_nat_table.basic.id
   route_table_id    = nifcloud_route_table.basic.id
@@ -18,7 +18,7 @@ resource "nifcloud_router" "basic" {
 
   network_interface {
     network_id      = nifcloud_private_lan.basic.id
-    ip_address      = "192.168.1.1"
+    ip_address      = "192.168.1.254"
     dhcp            = true
     dhcp_config_id  = nifcloud_dhcp_config.basic.id
     dhcp_options_id = nifcloud_dhcp_option.basic.id
