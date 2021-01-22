@@ -93,3 +93,8 @@ nifcloud_router can be imported using the `parameter corresponding to id`, e.g.
 ```
 $ terraform import nifcloud_router.example foo
 ```
+
+## Notice
+
+This provider does not support upgrading router.
+If you want to upgrade the router, please upgrade from control panel and also you must delete backup of router after upgrade.
