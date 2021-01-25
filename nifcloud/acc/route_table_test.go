@@ -22,6 +22,7 @@ func init() {
 		F:    testSweepRouteTable,
 		Dependencies: []string{
 			"nifcloud_elb",
+			"nifcloud_router",
 		},
 	})
 }

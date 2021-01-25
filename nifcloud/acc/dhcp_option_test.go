@@ -21,6 +21,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_dhcp_option", &resource.Sweeper{
 		Name: "nifcloud_dhcp_option",
 		F:    testSweepDhcpOption,
+		Dependencies: []string{
+			"nifcloud_router",
+		},
 	})
 }
 
