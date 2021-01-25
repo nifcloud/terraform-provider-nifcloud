@@ -18,6 +18,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/securitygrouprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/sslcertificate"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/volume"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/webproxy"
 )
 
 // Provider returns a schema.Provider.
@@ -65,6 +66,7 @@ func Provider() *schema.Provider {
 			"nifcloud_security_group_rule": securitygrouprule.New(),
 			"nifcloud_ssl_certificate":     sslcertificate.New(),
 			"nifcloud_volume":              volume.New(),
+			"nifcloud_web_proxy":           webproxy.New(),
 		},
 	}
 }

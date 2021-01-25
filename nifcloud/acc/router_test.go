@@ -22,6 +22,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_router", &resource.Sweeper{
 		Name: "nifcloud_router",
 		F:    testSweepRouter,
+		Dependencies: []string{
+			"nifcloud_web_proxy",
+		},
 	})
 }
 
