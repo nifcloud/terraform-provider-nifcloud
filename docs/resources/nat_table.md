@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_nat_table"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a nat table resource.
 ---

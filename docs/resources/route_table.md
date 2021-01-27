@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_route_table"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a route table resource.
 ---
