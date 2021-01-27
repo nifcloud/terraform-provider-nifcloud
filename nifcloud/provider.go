@@ -8,6 +8,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpoption"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elasticip"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elb"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/elblistener"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nattable"
@@ -55,6 +56,7 @@ func Provider() *schema.Provider {
 			"nifcloud_dhcp_option":         dhcpoption.New(),
 			"nifcloud_elastic_ip":          elasticip.New(),
 			"nifcloud_elb":                 elb.New(),
+			"nifcloud_elb_listener":        elblistener.New(),
 			"nifcloud_instance":            instance.New(),
 			"nifcloud_key_pair":            keypair.New(),
 			"nifcloud_nat_table":           nattable.New(),
