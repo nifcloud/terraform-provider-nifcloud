@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_customer_gateway"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a customer gateway resource.
 ---

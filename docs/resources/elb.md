@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_elb"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a multi load balancer resource.
 ---

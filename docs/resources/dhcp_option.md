@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_dhcp_option"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a dhcp option resource.
 ---

@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_private_lan"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a private LAN resource.
 ---

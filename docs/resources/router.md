@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_router"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a router resource.
 ---

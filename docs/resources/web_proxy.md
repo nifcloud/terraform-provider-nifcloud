@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_web_proxy"
-subcategory: "Computing"
+subcategory: "Network"
 description: |-
   Provides a web proxy resource.
 ---
