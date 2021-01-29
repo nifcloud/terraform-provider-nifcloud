@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_ssl_certificate"
-subcategory: "Computing"
+subcategory: "SSL Certificate"
 description: |-
   Provides a SSL certificate resource.
 ---
