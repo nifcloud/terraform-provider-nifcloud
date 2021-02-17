@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/datasources/image"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/customergateway"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dbinstance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dbparametergroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dbsecuritygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpconfig"
@@ -55,6 +56,8 @@ func Provider() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"nifcloud_customer_gateway":    customergateway.New(),
+			"nifcloud_db_instance":         dbinstance.New(),
+			"nifcloud_db_parameter_group":  dbparametergroup.New(),
 			"nifcloud_db_security_group":   dbsecuritygroup.New(),
 			"nifcloud_dhcp_config":         dhcpconfig.New(),
 			"nifcloud_dhcp_option":         dhcpoption.New(),
@@ -72,7 +75,6 @@ func Provider() *schema.Provider {
 			"nifcloud_ssl_certificate":     sslcertificate.New(),
 			"nifcloud_volume":              volume.New(),
 			"nifcloud_web_proxy":           webproxy.New(),
-			"nifcloud_db_parameter_group":  dbparametergroup.New(),
 		},
 	}
 }

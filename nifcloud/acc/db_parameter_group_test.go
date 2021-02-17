@@ -22,6 +22,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_db_parameter_group", &resource.Sweeper{
 		Name: "nifcloud_db_parameter_group",
 		F:    testSweepDBParameterGroup,
+		Dependencies: []string{
+			"nifcloud_db_instance",
+		},
 	})
 }
 
