@@ -25,6 +25,11 @@ func TestFlatten(t *testing.T) {
 				"value":        "test_value_02",
 				"apply_method": "test_apply_method_02",
 			},
+			map[string]interface{}{
+				"name":         "test_name_03",
+				"value":        "test_value_03",
+				"apply_method": "test_apply_method_03",
+			},
 		},
 	})
 	rd.SetId("test_name")
@@ -60,12 +65,23 @@ func TestFlatten(t *testing.T) {
 					{
 						ParameterName:  nifcloud.String("test_name_01"),
 						ParameterValue: nifcloud.String("test_value_01"),
-						ApplyMethod:    nifcloud.String("test_apply_method_01"),
 					},
 					{
 						ParameterName:  nifcloud.String("test_name_02"),
 						ParameterValue: nifcloud.String("test_value_02"),
-						ApplyMethod:    nifcloud.String("test_apply_method_02"),
+					},
+					{
+						ParameterName:  nifcloud.String("test_name_03"),
+						ParameterValue: nifcloud.String("test_value_03"),
+						ApplyMethod:    nifcloud.String("test_apply_method_03"),
+					},
+					{
+						ParameterName:  nifcloud.String("test_name_04"),
+						ParameterValue: nifcloud.String("test_value_04"),
+					},
+					{
+						ParameterName:  nil,
+						ParameterValue: nil,
 					},
 				},
 			},
