@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/datasources/image"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/customergateway"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dbparametergroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dbsecuritygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpconfig"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dhcpoption"
@@ -71,6 +72,7 @@ func Provider() *schema.Provider {
 			"nifcloud_ssl_certificate":     sslcertificate.New(),
 			"nifcloud_volume":              volume.New(),
 			"nifcloud_web_proxy":           webproxy.New(),
+			"nifcloud_db_parameter_group":  dbparametergroup.New(),
 		},
 	}
 }
