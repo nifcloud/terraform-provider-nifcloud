@@ -78,7 +78,7 @@ func flattenParameters(list []rdb.Parameter) []map[string]interface{} {
 				r["value"] = strings.ToLower(*i.ParameterValue)
 			}
 
-			if i.ApplyType != nil {
+			if i.ApplyMethod != nil {
 				r["apply_method"] = strings.ToLower(*i.ApplyMethod)
 			}
 
