@@ -155,12 +155,26 @@ func testAccCheckVpnGatewayValues(vpnGateway *computing.VpnGatewaySetOfDescribeV
 			return fmt.Errorf("bad next_month_accounting_type state,  expected \"2\", got: %#v", vpnGateway.NextMonthAccountingType)
 		}
 
-		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[0].NetworkName) != rName {
-			return fmt.Errorf("bad ip_address state,  expected \"%s\", got: %#v", rName, vpnGateway.NetworkInterfaceSet[0].IpAddress)
+		// swap network interfaces.
+		for i, ni := range vpnGateway.NetworkInterfaceSet {
+			if nifcloud.StringValue(ni.NetworkId) == "net-COMMON_GLOBAL" {
+				if i == 0 {
+					break
+				}
+				vpnGateway.NetworkInterfaceSet[0], vpnGateway.NetworkInterfaceSet[1] = vpnGateway.NetworkInterfaceSet[1], vpnGateway.NetworkInterfaceSet[0]
+			}
 		}
 
-		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[0].IpAddress) != "192.168.3.1" {
-			return fmt.Errorf("bad ip_address state,  expected \"%s\", got: %#v", "192.168.3.1", vpnGateway.NetworkInterfaceSet[0].IpAddress)
+		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[0].NetworkId) != "net-COMMON_GLOBAL" {
+			return fmt.Errorf("bad network_id state,  expected net-COMMON_GLOBAL, got: %#v", vpnGateway.NetworkInterfaceSet[0].NetworkId)
+		}
+
+		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[1].NetworkName) != rName {
+			return fmt.Errorf("bad network_name state,  expected \"%s\", got: %#v", rName, vpnGateway.NetworkInterfaceSet[1].NetworkName)
+		}
+
+		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[1].IpAddress) != "192.168.3.1" {
+			return fmt.Errorf("bad ip_address state,  expected \"%s\", got: %#v", "192.168.3.1", vpnGateway.NetworkInterfaceSet[1].IpAddress)
 		}
 
 		if nifcloud.StringValue(vpnGateway.GroupSet[0].GroupId) != rName {
@@ -205,12 +219,30 @@ func testAccCheckVpnGatewayValuesUpdated(vpnGateway *computing.VpnGatewaySetOfDe
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", vpnGateway.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[0].NetworkName) != rName {
-			return fmt.Errorf("bad ip_address state,  expected \"%s\", got: %#v", rName, vpnGateway.NetworkInterfaceSet[0].IpAddress)
+		if len(vpnGateway.NetworkInterfaceSet) != 2 {
+			return fmt.Errorf("bad network_interface length,  expected length 2, got %d", len(vpnGateway.NetworkInterfaceSet))
 		}
 
-		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[0].IpAddress) != "192.168.3.2" {
-			return fmt.Errorf("bad ip_address state,  expected \"%s\", got: %#v", "192.168.3.2", vpnGateway.NetworkInterfaceSet[0].IpAddress)
+		// swap network interfaces.
+		for i, ni := range vpnGateway.NetworkInterfaceSet {
+			if nifcloud.StringValue(ni.NetworkId) == "net-COMMON_GLOBAL" {
+				if i == 0 {
+					break
+				}
+				vpnGateway.NetworkInterfaceSet[0], vpnGateway.NetworkInterfaceSet[1] = vpnGateway.NetworkInterfaceSet[1], vpnGateway.NetworkInterfaceSet[0]
+			}
+		}
+
+		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[0].NetworkId) != "net-COMMON_GLOBAL" {
+			return fmt.Errorf("bad network_interface.0.network_id state,  expected net-COMMON_GLOBAL, got: %#v", vpnGateway.NetworkInterfaceSet[0].NetworkId)
+		}
+
+		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[1].NetworkName) != rName {
+			return fmt.Errorf("bad network_name state,  expected \"%s\", got: %#v", rName, vpnGateway.NetworkInterfaceSet[1].NetworkName)
+		}
+
+		if nifcloud.StringValue(vpnGateway.NetworkInterfaceSet[1].IpAddress) != "192.168.3.2" {
+			return fmt.Errorf("bad ip_address state,  expected \"%s\", got: %#v", "192.168.3.2", vpnGateway.NetworkInterfaceSet[1].IpAddress)
 		}
 
 		if nifcloud.StringValue(vpnGateway.GroupSet[0].GroupId) != rName {
