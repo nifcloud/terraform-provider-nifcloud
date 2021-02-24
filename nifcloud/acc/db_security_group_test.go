@@ -20,6 +20,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_db_security_group", &resource.Sweeper{
 		Name: "nifcloud_db_security_group",
 		F:    testSweepDbSecurityGroup,
+		Dependencies: []string{
+			"nifcloud_db_instance",
+		},
 	})
 }
 
