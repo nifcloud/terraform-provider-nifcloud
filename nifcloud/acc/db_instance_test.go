@@ -26,7 +26,7 @@ func init() {
 }
 
 func TestAcc_DBInstance(t *testing.T) {
-	var dbInstance rdb.DBInstance
+	var dbInstance, dbInstanceReplica, dbInstanceRestore rdb.DBInstance
 
 	resourceName := "nifcloud_db_instance.basic"
 	resourceNameReplica := "nifcloud_db_instance.replica"
@@ -43,8 +43,8 @@ func TestAcc_DBInstance(t *testing.T) {
 				Config: testAccDBInstance(t, "testdata/db_instance.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDBInstanceExists(resourceName, &dbInstance),
-					testAccCheckDBInstanceReplicaExists(resourceNameReplica),
-					testAccCheckDBInstanceRestoreExists(resourceNameRestore),
+					testAccCheckDBInstanceExists(resourceNameReplica, &dbInstanceReplica),
+					testAccCheckDBInstanceExists(resourceNameRestore, &dbInstanceRestore),
 					testAccCheckDBInstanceValues(&dbInstance, randName),
 					resource.TestCheckResourceAttr(resourceName, "identifier", randName),
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "1"),
@@ -89,8 +89,8 @@ func TestAcc_DBInstance(t *testing.T) {
 				Config: testAccDBInstance(t, "testdata/db_instance_update.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDBInstanceExists(resourceName, &dbInstance),
-					testAccCheckDBInstanceReplicaExists(resourceNameReplica),
-					testAccCheckDBInstanceRestoreExists(resourceNameRestore),
+					testAccCheckDBInstanceExists(resourceNameReplica, &dbInstanceReplica),
+					testAccCheckDBInstanceExists(resourceNameRestore, &dbInstanceRestore),
 					testAccCheckDBInstanceValuesUpdated(&dbInstance, randName),
 					resource.TestCheckResourceAttr(resourceName, "identifier", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "2"),
@@ -119,8 +119,8 @@ func TestAcc_DBInstance(t *testing.T) {
 				Config: testAccDBInstance(t, "testdata/db_instance_update_mha.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDBInstanceExists(resourceName, &dbInstance),
-					testAccCheckDBInstanceReplicaExists(resourceNameReplica),
-					testAccCheckDBInstanceRestoreExists(resourceNameRestore),
+					testAccCheckDBInstanceExists(resourceNameReplica, &dbInstanceReplica),
+					testAccCheckDBInstanceExists(resourceNameRestore, &dbInstanceRestore),
 					resource.TestCheckResourceAttr(resourceName, "multi_az", "true"),
 					resource.TestCheckResourceAttr(resourceName, "read_replica_identifier", randName+"-mhareplica"),
 				),
@@ -184,72 +184,6 @@ func testAccCheckDBInstanceExists(n string, dbInstance *rdb.DBInstance) resource
 		}
 
 		*dbInstance = foundDBInstance
-		return nil
-	}
-}
-
-func testAccCheckDBInstanceReplicaExists(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		saved, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("no db instance resource: %s", n)
-		}
-
-		if saved.Primary.ID == "" {
-			return fmt.Errorf("no db instance id is set")
-		}
-
-		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBInstancesRequest(&rdb.DescribeDBInstancesInput{
-			DBInstanceIdentifier: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
-
-		if err != nil {
-			return err
-		}
-
-		if res == nil || len(res.DBInstances) == 0 {
-			return fmt.Errorf("db instance does not found in cloud: %s", saved.Primary.ID)
-		}
-
-		foundDBInstance := res.DBInstances[0]
-
-		if nifcloud.StringValue(foundDBInstance.DBInstanceIdentifier) != saved.Primary.ID {
-			return fmt.Errorf("db instance does not found in cloud: %s", saved.Primary.ID)
-		}
-		return nil
-	}
-}
-
-func testAccCheckDBInstanceRestoreExists(n string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		saved, ok := s.RootModule().Resources[n]
-		if !ok {
-			return fmt.Errorf("no db instance resource: %s", n)
-		}
-
-		if saved.Primary.ID == "" {
-			return fmt.Errorf("no db instance id is set")
-		}
-
-		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBInstancesRequest(&rdb.DescribeDBInstancesInput{
-			DBInstanceIdentifier: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
-
-		if err != nil {
-			return err
-		}
-
-		if res == nil || len(res.DBInstances) == 0 {
-			return fmt.Errorf("db instance does not found in cloud: %s", saved.Primary.ID)
-		}
-
-		foundDBInstance := res.DBInstances[0]
-
-		if nifcloud.StringValue(foundDBInstance.DBInstanceIdentifier) != saved.Primary.ID {
-			return fmt.Errorf("db instance does not found in cloud: %s", saved.Primary.ID)
-		}
 		return nil
 	}
 }
