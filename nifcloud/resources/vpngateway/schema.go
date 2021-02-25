@@ -34,14 +34,18 @@ func New() *schema.Resource {
 	}
 }
 
-// TODO schemaの定義順をexpanderに合わせる
-
 func newSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"vpn_gateway_id": {
 			Type:        schema.TypeString,
 			Description: "The id for the vpn gateway.",
 			Computed:    true,
+		},
+		"nifty_vpn_gateway_description": {
+			Type:             schema.TypeString,
+			Description:      "The vpn gateway description.",
+			Optional:         true,
+			ValidateDiagFunc: validator.StringRuneCountBetween(0, 40),
 		},
 		"nifty_vpn_gateway_name": {
 			Type:        schema.TypeString,
@@ -70,12 +74,6 @@ func newSchema() map[string]*schema.Schema {
 			Optional:     true,
 			Default:      "2",
 			ValidateFunc: validation.StringInSlice([]string{"1", "2"}, false),
-		},
-		"nifty_vpn_gateway_description": {
-			Type:             schema.TypeString,
-			Description:      "The vpn gateway description.",
-			Optional:         true,
-			ValidateDiagFunc: validator.StringRuneCountBetween(0, 40),
 		},
 		"network_id": {
 			Type:        schema.TypeString,
@@ -122,3 +120,4 @@ func newSchema() map[string]*schema.Schema {
 		},
 	}
 }
+

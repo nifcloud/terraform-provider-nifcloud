@@ -40,15 +40,20 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 		return err
 	}
 
-	if len(vpnGateway.NetworkInterfaceSet) > 0 {
-		if err := d.Set("network_id", vpnGateway.NetworkInterfaceSet[0].NetworkId); err != nil {
-			return err
-		}
-		if err := d.Set("network_name", vpnGateway.NetworkInterfaceSet[0].NetworkName); err != nil {
-			return err
-		}
-		if err := d.Set("ip_address", vpnGateway.NetworkInterfaceSet[0].IpAddress); err != nil {
-			return err
+	for _, n := range vpnGateway.NetworkInterfaceSet {
+		switch nifcloud.StringValue(n.NetworkId) {
+		case "net-COMMON_GLOBAL", "net-COMMON_PRIVATE":
+			// Can not use "net-COMMON_GLOBAL", "net-COMMON_PRIVATE"
+		default:
+			if err := d.Set("network_id", n.NetworkId); err != nil {
+				return err
+			}
+			if err := d.Set("network_name", n.NetworkName); err != nil {
+				return err
+			}
+			if err := d.Set("ip_address", n.IpAddress); err != nil {
+				return err
+			}
 		}
 	}
 
