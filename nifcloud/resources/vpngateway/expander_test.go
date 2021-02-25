@@ -11,15 +11,15 @@ import (
 
 func TestExpandCreateVpnGatewayInput_netid_and_netname(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"nifty_vpn_gateway_name":        "test_nifty_vpn_gateway_name",
-		"nifty_vpn_gateway_type":        "test_nifty_vpn_gateway_type",
-		"availability_zone":             "test_availability_zone",
-		"accounting_type":               "test_accounting_type",
-		"nifty_vpn_gateway_description": "test_nifty_vpn_gateway_description",
-		"network_id":                    "test_network_id",
-		"network_name":                  "test_network_name",
-		"ip_address":                    "test_ip_address",
-		"security_group":                "test_security_group",
+		"name":              "test_name",
+		"type":              "test_type",
+		"availability_zone": "test_availability_zone",
+		"accounting_type":   "test_accounting_type",
+		"description":       "test_description",
+		"network_id":        "test_network_id",
+		"network_name":      "test_network_name",
+		"ip_address":        "test_ip_address",
+		"security_group":    "test_security_group",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -33,9 +33,9 @@ func TestExpandCreateVpnGatewayInput_netid_and_netname(t *testing.T) {
 			args: rd,
 			want: &computing.CreateVpnGatewayInput{
 				AccountingType:             computing.AccountingTypeOfCreateVpnGatewayRequest("test_accounting_type"),
-				NiftyVpnGatewayDescription: nifcloud.String("test_nifty_vpn_gateway_description"),
-				NiftyVpnGatewayName:        nifcloud.String("test_nifty_vpn_gateway_name"),
-				NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest("test_nifty_vpn_gateway_type"),
+				NiftyVpnGatewayDescription: nifcloud.String("test_description"),
+				NiftyVpnGatewayName:        nifcloud.String("test_name"),
+				NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest("test_type"),
 				Placement: &computing.RequestPlacementOfCreateVpnGateway{
 					AvailabilityZone: nifcloud.String("test_availability_zone"),
 				},
@@ -59,14 +59,14 @@ func TestExpandCreateVpnGatewayInput_netid_and_netname(t *testing.T) {
 
 func TestExpandCreateVpnGatewayInput_netid_only(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"nifty_vpn_gateway_name":        "test_nifty_vpn_gateway_name",
-		"nifty_vpn_gateway_type":        "test_nifty_vpn_gateway_type",
-		"availability_zone":             "test_availability_zone",
-		"accounting_type":               "test_accounting_type",
-		"nifty_vpn_gateway_description": "test_nifty_vpn_gateway_description",
-		"network_id":                    "test_network_id",
-		"ip_address":                    "test_ip_address",
-		"security_group":                "test_security_group",
+		"name":              "test_name",
+		"type":              "test_type",
+		"availability_zone": "test_availability_zone",
+		"accounting_type":   "test_accounting_type",
+		"description":       "test_description",
+		"network_id":        "test_network_id",
+		"ip_address":        "test_ip_address",
+		"security_group":    "test_security_group",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -80,9 +80,9 @@ func TestExpandCreateVpnGatewayInput_netid_only(t *testing.T) {
 			args: rd,
 			want: &computing.CreateVpnGatewayInput{
 				AccountingType:             computing.AccountingTypeOfCreateVpnGatewayRequest("test_accounting_type"),
-				NiftyVpnGatewayDescription: nifcloud.String("test_nifty_vpn_gateway_description"),
-				NiftyVpnGatewayName:        nifcloud.String("test_nifty_vpn_gateway_name"),
-				NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest("test_nifty_vpn_gateway_type"),
+				NiftyVpnGatewayDescription: nifcloud.String("test_description"),
+				NiftyVpnGatewayName:        nifcloud.String("test_name"),
+				NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest("test_type"),
 				Placement: &computing.RequestPlacementOfCreateVpnGateway{
 					AvailabilityZone: nifcloud.String("test_availability_zone"),
 				},
@@ -106,14 +106,14 @@ func TestExpandCreateVpnGatewayInput_netid_only(t *testing.T) {
 
 func TestExpandCreateVpnGatewayInput_netname_only(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"nifty_vpn_gateway_name":        "test_nifty_vpn_gateway_name",
-		"nifty_vpn_gateway_type":        "test_nifty_vpn_gateway_type",
-		"availability_zone":             "test_availability_zone",
-		"accounting_type":               "test_accounting_type",
-		"nifty_vpn_gateway_description": "test_nifty_vpn_gateway_description",
-		"network_name":                  "test_network_name",
-		"ip_address":                    "test_ip_address",
-		"security_group":                "test_security_group",
+		"name":              "test_name",
+		"type":              "test_type",
+		"availability_zone": "test_availability_zone",
+		"accounting_type":   "test_accounting_type",
+		"description":       "test_description",
+		"network_name":      "test_network_name",
+		"ip_address":        "test_ip_address",
+		"security_group":    "test_security_group",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -127,9 +127,9 @@ func TestExpandCreateVpnGatewayInput_netname_only(t *testing.T) {
 			args: rd,
 			want: &computing.CreateVpnGatewayInput{
 				AccountingType:             computing.AccountingTypeOfCreateVpnGatewayRequest("test_accounting_type"),
-				NiftyVpnGatewayDescription: nifcloud.String("test_nifty_vpn_gateway_description"),
-				NiftyVpnGatewayName:        nifcloud.String("test_nifty_vpn_gateway_name"),
-				NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest("test_nifty_vpn_gateway_type"),
+				NiftyVpnGatewayDescription: nifcloud.String("test_description"),
+				NiftyVpnGatewayName:        nifcloud.String("test_name"),
+				NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest("test_type"),
 				Placement: &computing.RequestPlacementOfCreateVpnGateway{
 					AvailabilityZone: nifcloud.String("test_availability_zone"),
 				},
@@ -196,7 +196,7 @@ func TestExpandDeleteVpnGatewaysInput(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := expandDeleteVpnGatewaysInput(tt.args)
+			got := expandDeleteVpnGatewayInput(tt.args)
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -234,7 +234,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForAccountingType(t *testing.T
 
 func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"nifty_vpn_gateway_description": "test_nifty_vpn_gateway_description",
+		"description": "test_description",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -249,7 +249,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(t *te
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayDescription,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_nifty_vpn_gateway_description"),
+				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_description"),
 			},
 		},
 	}
@@ -264,7 +264,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(t *te
 
 func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"nifty_vpn_gateway_name": "test_nifty_vpn_gateway_name",
+		"name": "test_name",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -279,7 +279,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(t *testing.T
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayName,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_nifty_vpn_gateway_name"),
+				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_name"),
 			},
 		},
 	}
@@ -294,7 +294,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(t *testing.T
 
 func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"nifty_vpn_gateway_type": "test_nifty_vpn_gateway_type",
+		"type": "test_type",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -309,7 +309,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(t *testing.T
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayType,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_nifty_vpn_gateway_type"),
+				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_type"),
 			},
 		},
 	}

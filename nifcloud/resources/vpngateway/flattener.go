@@ -28,15 +28,15 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 		return err
 	}
 
-	if err := d.Set("nifty_vpn_gateway_description", vpnGateway.NiftyVpnGatewayDescription); err != nil {
+	if err := d.Set("description", vpnGateway.NiftyVpnGatewayDescription); err != nil {
 		return err
 	}
 
-	if err := d.Set("nifty_vpn_gateway_name", vpnGateway.NiftyVpnGatewayName); err != nil {
+	if err := d.Set("name", vpnGateway.NiftyVpnGatewayName); err != nil {
 		return err
 	}
 
-	if err := d.Set("nifty_vpn_gateway_type", vpnGateway.NiftyVpnGatewayType); err != nil {
+	if err := d.Set("type", vpnGateway.NiftyVpnGatewayType); err != nil {
 		return err
 	}
 
@@ -46,16 +46,16 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 
 	for _, n := range vpnGateway.NetworkInterfaceSet {
 		switch nifcloud.StringValue(n.NetworkId) {
-		case "net-COMMON_GLOBAL", "net-COMMON_PRIVATE":
-			// Can not use "net-COMMON_GLOBAL", "net-COMMON_PRIVATE"
+		case "net-COMMON_GLOBAL":
+			// Can not use "net-COMMON_GLOBAL"
 		default:
-			if row, ok := d.GetOk("network_id"); ok {
-				if err := d.Set("network_id", row); err != nil {
+			if _, ok := d.GetOk("network_id"); ok {
+				if err := d.Set("network_id", n.NetworkId); err != nil {
 					return err
 				}
 			}
-			if row, ok := d.GetOk("network_name"); ok {
-				if err := d.Set("network_name", row); err != nil {
+			if _, ok := d.GetOk("network_name"); ok {
+				if err := d.Set("network_name", n.NetworkName); err != nil {
 					return err
 				}
 			}

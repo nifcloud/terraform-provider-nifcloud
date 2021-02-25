@@ -3,9 +3,9 @@ provider "nifcloud" {
 }
 
 resource "nifcloud_vpn_gateway" "basic" {
-  nifty_vpn_gateway_description       = "memo"
-  nifty_vpn_gateway_name              = "%s"
-  nifty_vpn_gateway_type      = "small"
+  description       = "memo"
+  name              = "%s"
+  type      = "small"
   availability_zone = "east-21"
   accounting_type   = "2"
   network_name = nifcloud_private_lan.basic.private_lan_name

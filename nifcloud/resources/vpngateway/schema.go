@@ -41,13 +41,13 @@ func newSchema() map[string]*schema.Schema {
 			Description: "The id for the vpn gateway.",
 			Computed:    true,
 		},
-		"nifty_vpn_gateway_description": {
+		"description": {
 			Type:             schema.TypeString,
 			Description:      "The vpn gateway description.",
 			Optional:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(0, 40),
 		},
-		"nifty_vpn_gateway_name": {
+		"name": {
 			Type:        schema.TypeString,
 			Description: "The name for the vpn gateway.",
 			Optional:    true,
@@ -56,7 +56,7 @@ func newSchema() map[string]*schema.Schema {
 				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
 			),
 		},
-		"nifty_vpn_gateway_type": {
+		"type": {
 			Type:         schema.TypeString,
 			Description:  "The type of vpn gateway.",
 			Optional:     true,
@@ -67,6 +67,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Description: "The availability zone.",
 			Optional:    true,
+			ForceNew:    true,
 		},
 		"accounting_type": {
 			Type:         schema.TypeString,
@@ -79,6 +80,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Description: "The id for the network.",
 			Optional:    true,
+			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
 				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
@@ -88,6 +90,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Description: "The name for the network.",
 			Optional:    true,
+			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
 				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),

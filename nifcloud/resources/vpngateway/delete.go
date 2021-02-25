@@ -24,7 +24,7 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed reading vpngateways: %s", err))
 	}
 
-	deleteVpnGatewayInput := expandDeleteVpnGatewaysInput(d)
+	deleteVpnGatewayInput := expandDeleteVpnGatewayInput(d)
 	if _, err := svc.DeleteVpnGatewayRequest(deleteVpnGatewayInput).Send(ctx); err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting vpngateway: %s", err))
 	}

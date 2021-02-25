@@ -1,5 +1,5 @@
 ---
-page_title: "NIFCLOUD: nifcloud_router"
+page_title: "NIFCLOUD: nifcloud_vpn_gateway"
 subcategory: "Network"
 description: |-
   Provides a vpn gateway resource.
@@ -26,8 +26,8 @@ provider "nifcloud" {
 
 resource "nifcloud_vpn_gateway" "vpngw" {
   accounting_type             = "1"
-  nifty_vpn_gateway_name      = "vpngw001"
-  nifty_vpn_gateway_type      = "small"
+  name      = "vpngw001"
+  type      = "small"
   availability_zone = "east-11"
   network_name = nifcloud_private_lan.basic.private_lan_name
   ip_address = "192.168.1.1"
@@ -63,11 +63,11 @@ resource "nifcloud_route_table" "rt" {
 
 The following arguments are supported:
 
-* `nifty_vpn_gateway_name` - (Optional) The name for the vpn gateway.
-* `nifty_vpn_gateway_type` - (Optional) The type of vpn gateway.
+* `name` - (Optional) The name for the vpn gateway.
+* `type` - (Optional) The type of vpn gateway.
 * `availability_zone` - (Optional) The availability zone.
 * `accounting_type` - (Optional) The accounting type.
-* `nifty_vpn_gateway_description` - (Optional) The vpn gateway description.
+* `description` - (Optional) The vpn gateway description.
 * `network_id` - (Optional) The id for the network.
 * `network_name` - (Optional) The name for the network.
 * `ip_address` - (Optional) The private ip address.

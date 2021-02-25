@@ -29,7 +29,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
-	if d.HasChange("nifty_vpn_gateway_description") {
+	if d.HasChange("description") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(d)
 
 		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
@@ -42,7 +42,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
-	if d.HasChange("nifty_vpn_gateway_name") {
+	if d.HasChange("name") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(d)
 
 		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
@@ -56,7 +56,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
-	if d.HasChange("nifty_vpn_gateway_type") {
+	if d.HasChange("type") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(d)
 
 		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)

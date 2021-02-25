@@ -12,9 +12,9 @@ provider "nifcloud" {
 
 resource "nifcloud_vpn_gateway" "vpngw" {
   accounting_type             = "1"
-  nifty_vpn_gateway_description = "vpn gateway by terraform"
-  nifty_vpn_gateway_name      = "vpngw001"
-  nifty_vpn_gateway_type      = "small"
+  description = "vpn gateway by terraform"
+  name      = "vpngw001"
+  type      = "small"
   availability_zone = "east-11"
   network_name = nifcloud_private_lan.basic.private_lan_name
   ip_address = "192.168.1.1"

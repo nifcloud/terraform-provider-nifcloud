@@ -12,18 +12,18 @@ import (
 
 func TestFlatten(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"vpn_gateway_id":                "test_vpn_gateway_id",
-		"nifty_vpn_gateway_name":        "test_nifty_vpn_gateway_name",
-		"nifty_vpn_gateway_type":        "test_nifty_vpn_gateway_type",
-		"availability_zone":             "test_availability_zone",
-		"accounting_type":               "test_accounting_type",
-		"nifty_vpn_gateway_description": "test_nifty_vpn_gateway_description",
-		"network_id":                    "test_network_id",
-		"network_name":                  "test_network_name",
-		"ip_address":                    "test_ip_address",
-		"security_group":                "test_security_group",
-		"route_table_id":                "test_route_table_id",
-		"route_table_association_id":    "test_route_table_association_id",
+		"vpn_gateway_id":             "test_vpn_gateway_id",
+		"name":                       "test_name",
+		"type":                       "test_type",
+		"availability_zone":          "test_availability_zone",
+		"accounting_type":            "test_accounting_type",
+		"description":                "test_description",
+		"network_id":                 "test_network_id",
+		"network_name":               "test_network_name",
+		"ip_address":                 "test_ip_address",
+		"security_group":             "test_security_group",
+		"route_table_id":             "test_route_table_id",
+		"route_table_association_id": "test_route_table_association_id",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -47,11 +47,11 @@ func TestFlatten(t *testing.T) {
 						VpnGatewaySet: []computing.VpnGatewaySetOfDescribeVpnGateways{
 							{
 								VpnGatewayId:               nifcloud.String("test_vpngateway_id"),
-								NiftyVpnGatewayName:        nifcloud.String("test_nifty_vpn_gateway_name"),
-								NiftyVpnGatewayType:        nifcloud.String("test_nifty_vpn_gateway_type"),
+								NiftyVpnGatewayName:        nifcloud.String("test_name"),
+								NiftyVpnGatewayType:        nifcloud.String("test_type"),
 								AvailabilityZone:           nifcloud.String("test_availability_zone"),
 								NextMonthAccountingType:    nifcloud.String("test_accounting_type"),
-								NiftyVpnGatewayDescription: nifcloud.String("test_nifty_vpn_gateway_description"),
+								NiftyVpnGatewayDescription: nifcloud.String("test_description"),
 								NetworkInterfaceSet: []computing.NetworkInterfaceSetOfDescribeVpnGateways{
 									{
 										NetworkId:   nifcloud.String("test_network_id"),
