@@ -17,7 +17,7 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	describeVpnGatewaysInput := expandDescribeVpnGatewaysInput(d)
 	if _, err := svc.DescribeVpnGatewaysRequest(describeVpnGatewaysInput).Send(ctx); err != nil {
 		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.RouterId" {
+		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.VpnGatewayId" {
 			d.SetId("")
 			return nil
 		}

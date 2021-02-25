@@ -45,11 +45,15 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 		case "net-COMMON_GLOBAL", "net-COMMON_PRIVATE":
 			// Can not use "net-COMMON_GLOBAL", "net-COMMON_PRIVATE"
 		default:
-			if err := d.Set("network_id", n.NetworkId); err != nil {
-				return err
+			if row, ok := d.GetOk("network_id"); ok {
+				if err := d.Set("network_id", row); err != nil {
+					return err
+				}
 			}
-			if err := d.Set("network_name", n.NetworkName); err != nil {
-				return err
+			if row, ok := d.GetOk("network_name"); ok {
+				if err := d.Set("network_name", row); err != nil {
+					return err
+				}
 			}
 			if err := d.Set("ip_address", n.IpAddress); err != nil {
 				return err
