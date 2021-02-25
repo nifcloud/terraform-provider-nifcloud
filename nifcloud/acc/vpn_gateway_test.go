@@ -41,6 +41,7 @@ func TestAcc_VpnGateway(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVpnGatewayExists(resourceName, &vpnGateway),
 					testAccCheckVpnGatewayValues(&vpnGateway, randName),
+					resource.TestCheckResourceAttrSet(resourceName, "vpn_gateway_id"),
 					resource.TestCheckResourceAttr(resourceName, "nifty_vpn_gateway_description", "memo"),
 					resource.TestCheckResourceAttr(resourceName, "nifty_vpn_gateway_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "nifty_vpn_gateway_type", "small"),
@@ -66,7 +67,7 @@ func TestAcc_VpnGateway(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "ip_address", "192.168.3.2"),
-					resource.TestCheckResourceAttr(resourceName, "security_group", randName+"upd"),
+					resource.TestCheckResourceAttr(resourceName, "security_group", randName),
 				),
 			},
 			{
@@ -328,4 +329,3 @@ func testSweepVpnGateway(region string) error {
 
 	return nil
 }
-

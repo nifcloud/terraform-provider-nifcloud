@@ -12,6 +12,7 @@ import (
 
 func TestFlatten(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"vpn_gateway_id":                "test_vpn_gateway_id",
 		"nifty_vpn_gateway_name":        "test_nifty_vpn_gateway_name",
 		"nifty_vpn_gateway_type":        "test_nifty_vpn_gateway_type",
 		"availability_zone":             "test_availability_zone",

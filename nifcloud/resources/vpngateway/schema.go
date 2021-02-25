@@ -120,4 +120,3 @@ func newSchema() map[string]*schema.Schema {
 		},
 	}
 }
-

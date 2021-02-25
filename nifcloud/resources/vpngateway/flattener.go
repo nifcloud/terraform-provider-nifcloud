@@ -20,6 +20,10 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 		return fmt.Errorf("unable to find vpngateway within: %#v", res.VpnGatewaySet)
 	}
 
+	if err := d.Set("vpn_gateway_id", vpnGateway.VpnGatewayId); err != nil {
+		return err
+	}
+
 	if err := d.Set("accounting_type", vpnGateway.NextMonthAccountingType); err != nil {
 		return err
 	}
