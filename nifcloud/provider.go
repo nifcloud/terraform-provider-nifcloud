@@ -15,6 +15,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/keypair"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/loadbalancer"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/loadbalancerlistener"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nattable"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/privatelan"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/router"
@@ -57,28 +58,29 @@ func Provider() *schema.Provider {
 			"nifcloud_image": image.New(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"nifcloud_customer_gateway":    customergateway.New(),
-			"nifcloud_db_instance":         dbinstance.New(),
-			"nifcloud_db_parameter_group":  dbparametergroup.New(),
-			"nifcloud_db_security_group":   dbsecuritygroup.New(),
-			"nifcloud_dhcp_config":         dhcpconfig.New(),
-			"nifcloud_dhcp_option":         dhcpoption.New(),
-			"nifcloud_elastic_ip":          elasticip.New(),
-			"nifcloud_elb":                 elb.New(),
-			"nifcloud_elb_listener":        elblistener.New(),
-			"nifcloud_instance":            instance.New(),
-			"nifcloud_key_pair":            keypair.New(),
-			"nifcloud_nat_table":           nattable.New(),
-			"nifcloud_load_balancer":       loadbalancer.New(),
-			"nifcloud_private_lan":         privatelan.New(),
-			"nifcloud_router":              router.New(),
-			"nifcloud_route_table":         routetable.New(),
-			"nifcloud_security_group":      securitygroup.New(),
-			"nifcloud_security_group_rule": securitygrouprule.New(),
-			"nifcloud_ssl_certificate":     sslcertificate.New(),
-			"nifcloud_volume":              volume.New(),
-			"nifcloud_vpn_gateway":         vpngateway.New(),
-			"nifcloud_web_proxy":           webproxy.New(),
+			"nifcloud_customer_gateway":       customergateway.New(),
+			"nifcloud_db_instance":            dbinstance.New(),
+			"nifcloud_db_parameter_group":     dbparametergroup.New(),
+			"nifcloud_db_security_group":      dbsecuritygroup.New(),
+			"nifcloud_dhcp_config":            dhcpconfig.New(),
+			"nifcloud_dhcp_option":            dhcpoption.New(),
+			"nifcloud_elastic_ip":             elasticip.New(),
+			"nifcloud_elb":                    elb.New(),
+			"nifcloud_elb_listener":           elblistener.New(),
+			"nifcloud_instance":               instance.New(),
+			"nifcloud_key_pair":               keypair.New(),
+			"nifcloud_nat_table":              nattable.New(),
+			"nifcloud_load_balancer":          loadbalancer.New(),
+			"nifcloud_load_balancer_listener": loadbalancerlistener.New(),
+			"nifcloud_private_lan":            privatelan.New(),
+			"nifcloud_router":                 router.New(),
+			"nifcloud_route_table":            routetable.New(),
+			"nifcloud_security_group":         securitygroup.New(),
+			"nifcloud_security_group_rule":    securitygrouprule.New(),
+			"nifcloud_ssl_certificate":        sslcertificate.New(),
+			"nifcloud_volume":                 volume.New(),
+			"nifcloud_vpn_gateway":            vpngateway.New(),
+			"nifcloud_web_proxy":              webproxy.New(),
 		},
 	}
 }

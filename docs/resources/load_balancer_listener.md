@@ -1,13 +1,13 @@
 ---
-page_title: "NIFCLOUD: nifcloud_load_balancer"
+page_title: "NIFCLOUD: nifcloud_load_balancer_listener"
 subcategory: "Computing"
 description: |-
-  Provides a load balancer resource.
+  Provides a load balancer listener resource.
 ---
 
-## nifcloud_load_balancer
+## nifcloud_load_balancer_listener
 
-Provides a load balancer resource.
+Provides a load balancer listener resource.
 
 ## Example Usage
 
@@ -19,16 +19,19 @@ terraform {
     }
   }
 }
-
 provider "nifcloud" {
   region = "jp-east-1"
 }
-
-resource "nifcloud_load_balancer" "l4lb" {
-  accounting_type = "1"
-  load_balancer_name = "nl4lb"
-  load_balancer_port = 80
+resource "nifcloud_load_balancer" "basic" {
+  load_balancer_name = "l4lb"
   instance_port = 80
+  load_balancer_port = 80
+  accounting_type = "1"
+}
+resource "nifcloud_load_balancer_listener" "ssh" {
+  load_balancer_name = nifcloud_load_balancer.basic.load_balancer_name
+  instance_port = 22
+  load_balancer_port = 22
 }
 ```
 
@@ -36,7 +39,6 @@ resource "nifcloud_load_balancer" "l4lb" {
 
 The following arguments are supported:
 
-* `accounting_type` - (Optional) Accounting type. (1: monthly, 2: pay per use).
 * `balancing_type` - (Optional) Balancing type. (1: Round-Robin, 2: Least-Connection).
 * `filter` - (Optional) A list of IP address filter for load balancer.
 * `filter_type` - (Optional) The filter_type of filter (1: Allow, 2: Deny).
@@ -47,7 +49,6 @@ The following arguments are supported:
 * `instance_port` - (Required) The port on the instance to route to.
 * `ip_version` - (Optional) The IP version. (v4 or v6).
 * `load_balancer_name` - (Required) The load balancer name.
-* `network_volume` - (Optional) The network volume.
 * `session_stickiness_policy_enable` - (Optional) The flag of session stickiness policy.
 * `session_stickiness_policy_expiration_period` - (Optional) The session stickiness policy expiration period.
 * `sorry_page_enable` - (Optional) The flag of sorry page.
@@ -60,7 +61,7 @@ The following arguments are supported:
 
 ## Import
 
-nifcloud_load_balancer can be imported using the `parameter corresponding to id`, e.g.
+nifcloud_load_balancer_listener can be imported using the `parameter corresponding to id`, e.g.
 
 ```
 $ terraform import nifcloud_load_balancer.example foo

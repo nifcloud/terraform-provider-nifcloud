@@ -44,7 +44,7 @@ install: build
 ###########
 .PHONY: test
 test:
-	@ go test ./$(PROVIDER)/... -timeout 30s -p 4 -race -cover -coverprofile=coverage.out
+	@ go test ./$(PROVIDER)/... -timeout 120s -p 4 -race -cover -coverprofile=coverage.out
 .PHONY: testacc
 testacc:
 	@ TF_ACC=1 go test ./$(PROVIDER)/acc/... -v -count 1 -parallel 7 -timeout 360m -run Test -coverprofile=coverage.out -coverpkg=./...
