@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.0.0
 	github.com/katbyte/terrafmt v0.2.0
-	github.com/nifcloud/nifcloud-sdk-go v1.1.0
+	github.com/nifcloud/nifcloud-sdk-go v1.2.0
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 )
