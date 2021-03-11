@@ -83,6 +83,7 @@ The following arguments are supported:
 * `ip_address` - (Optional) The IP address to select from `static` or `elastic IP address` or `static IP address`; Default(null) is DHCP.
 * `network_id` - (Optional) The ID of the network to attach; `net-COMMON_GLOBAL` or `net-COMMON_PRIVATE` or `private lan network id` .
 * `network_name` - (Optional) The private lan name of the network to attach.
+* `network_interface_id` - (Optional) The ID of the additional NIC, which can be managed using the `nifcloud_network_interface` resource. Modifying this field instance will force reboot.
 
 ## Attributes Reference
 
@@ -93,7 +94,6 @@ In addition to the arguments listed above, the following computed attributes are
 * `private_ip` - The private ip address of instance.
 * `public_ip` - The public ip address of instance.
 * `unique_id` - The unique ID of instance.
-
 
 ## Import
 

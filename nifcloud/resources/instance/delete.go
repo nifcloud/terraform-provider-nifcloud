@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -38,6 +39,20 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		err = svc.WaitUntilInstanceStopped(ctx, describeInstancesInput)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed deleting for wait until stopped instances error: %s", err))
+		}
+	}
+
+	routers, err := getRouterList(ctx, d, svc)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed updating instance network for get router set: %s", err))
+	}
+
+	for _, r := range routers {
+		mutexKV.Lock(r)
+		defer mutexKV.Unlock(r)
+
+		if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}); err != nil {
+			return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 		}
 	}
 

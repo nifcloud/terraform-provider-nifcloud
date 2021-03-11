@@ -23,9 +23,11 @@ func TestFlatten(t *testing.T) {
 		"license_name":            "test_license_name",
 		"license_num":             200,
 		"network_interface": []interface{}{map[string]interface{}{
-			"network_id":   "test_network_id",
-			"network_name": "test_network_name",
-			"ip_address":   "test_ip_address",
+			"network_id":                      "test_network_id",
+			"network_name":                    "test_network_name",
+			"ip_address":                      "test_ip_address",
+			"network_interface_id":            "test_network_interface_id",
+			"network_interface_attachment_id": "test_network_interface_attachment_id",
 		}},
 		"password":       "test_password",
 		"security_group": "test_security_group",
@@ -75,9 +77,13 @@ func TestFlatten(t *testing.T) {
 										InstanceUniqueId: nifcloud.String("test_unique_id"),
 										NetworkInterfaceSet: []computing.NetworkInterfaceSetOfDescribeInstances{
 											{
-												NiftyNetworkId:   nifcloud.String("test_network_id"),
-												NiftyNetworkName: nifcloud.String("test_network_name"),
-												PrivateIpAddress: nifcloud.String("test_ip_address"),
+												NiftyNetworkId:     nifcloud.String("test_network_id"),
+												NiftyNetworkName:   nifcloud.String("test_network_name"),
+												PrivateIpAddress:   nifcloud.String("test_ip_address"),
+												NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
+												Attachment: &computing.AttachmentOfDescribeInstances{
+													AttachmentId: nifcloud.String("test_network_interface_attachment_id"),
+												},
 											},
 										},
 									},

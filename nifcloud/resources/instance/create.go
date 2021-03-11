@@ -28,5 +28,5 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	instance := res.InstancesSet[0]
 	d.SetId(nifcloud.StringValue(instance.InstanceId))
 
-	return read(ctx, d, meta)
+	return update(ctx, d, meta)
 }
