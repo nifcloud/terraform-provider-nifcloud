@@ -114,10 +114,6 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnConnectionsRespon
 		return err
 	}
 
-	if err := d.Set("ipsec_config_hash_algorithm", vpnConnection.NiftyIpsecConfiguration.HashingAlgorithm); err != nil {
-		return err
-	}
-
 	if err := d.Set("ipsec_config_pre_shared_key", vpnConnection.NiftyIpsecConfiguration.PreSharedKey); err != nil {
 		return err
 	}
