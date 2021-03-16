@@ -16,7 +16,6 @@ func TestExpandCreateNetworkInterfaceInput(t *testing.T) {
 		"description":       "test_description",
 		"availability_zone": "test_availability_zone",
 	})
-	rd.SetId("test_network_interface_id")
 
 	tests := []struct {
 		name string

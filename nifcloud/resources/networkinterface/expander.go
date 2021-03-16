@@ -7,7 +7,7 @@ import (
 )
 
 func expandCreateNetworkInterfaceInput(d *schema.ResourceData) *computing.CreateNetworkInterfaceInput {
-	input := &computing.CreateNetworkInterfaceInput{
+	return &computing.CreateNetworkInterfaceInput{
 		NiftyNetworkId: nifcloud.String(d.Get("network_id").(string)),
 		IpAddress:      nifcloud.String(d.Get("ip_address").(string)),
 		Description:    nifcloud.String(d.Get("description").(string)),
@@ -15,14 +15,12 @@ func expandCreateNetworkInterfaceInput(d *schema.ResourceData) *computing.Create
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
 	}
-	return input
 }
 
 func expandDescribeNetworkInterfacesInput(d *schema.ResourceData) *computing.DescribeNetworkInterfacesInput {
-	input := &computing.DescribeNetworkInterfacesInput{
+	return &computing.DescribeNetworkInterfacesInput{
 		NetworkInterfaceId: []string{d.Id()},
 	}
-	return input
 }
 
 func expandModifyNetworkInterfaceAttributeInputForDescription(d *schema.ResourceData) *computing.ModifyNetworkInterfaceAttributeInput {
@@ -40,10 +38,9 @@ func expandModifyNetworkInterfaceAttributeInputForIPAddress(d *schema.ResourceDa
 }
 
 func expandDeleteNetworkInterfaceInput(d *schema.ResourceData) *computing.DeleteNetworkInterfaceInput {
-	input := &computing.DeleteNetworkInterfaceInput{
+	return &computing.DeleteNetworkInterfaceInput{
 		NetworkInterfaceId: nifcloud.String(d.Id()),
 	}
-	return input
 }
 
 func expandNiftyDescribePrivateLansInput(d *schema.ResourceData) *computing.NiftyDescribePrivateLansInput {
