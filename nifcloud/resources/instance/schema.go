@@ -27,9 +27,9 @@ func New() *schema.Resource {
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Default: schema.DefaultTimeout(5 * time.Minute),
-			Create:  schema.DefaultTimeout(30 * time.Minute),
-			Update:  schema.DefaultTimeout(20 * time.Minute),
-			Delete:  schema.DefaultTimeout(10 * time.Minute),
+			Create:  schema.DefaultTimeout(60 * time.Minute),
+			Update:  schema.DefaultTimeout(60 * time.Minute),
+			Delete:  schema.DefaultTimeout(20 * time.Minute),
 		},
 	}
 }
@@ -138,6 +138,17 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Description: "The IP address to select from `static` or `elastic IP address` or `static IP address`; Default(null) is DHCP.",
 						Optional:    true,
+					},
+					"network_interface_id": {
+						Type: schema.TypeString,
+						Description: `The ID of the additional NIC, which can be managed using the nifcloud_network_interface resource. 
+						Modifying this field instance will force reboot.`,
+						Optional: true,
+					},
+					"network_interface_attachment_id": {
+						Type:        schema.TypeString,
+						Description: "The attachment ID of the additional NIC",
+						Computed:    true,
 					},
 				},
 			},

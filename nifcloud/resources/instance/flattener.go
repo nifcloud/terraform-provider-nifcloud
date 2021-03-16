@@ -51,7 +51,11 @@ func flatten(d *schema.ResourceData, res *computing.DescribeInstancesResponse) e
 
 	var networkInterfaces []map[string]interface{}
 	for _, n := range instance.NetworkInterfaceSet {
-		ni := make(map[string]interface{})
+		ni := map[string]interface{}{
+			"network_interface_id":            n.NetworkInterfaceId,
+			"network_interface_attachment_id": n.Attachment.AttachmentId,
+		}
+
 		switch nifcloud.StringValue(n.NiftyNetworkId) {
 		case "net-COMMON_GLOBAL":
 			if nifcloud.StringValue(instance.IpType) == "elastic" {
@@ -80,12 +84,17 @@ func flatten(d *schema.ResourceData, res *computing.DescribeInstancesResponse) e
 					findElm = elm
 					break
 				}
+
+				if elm["network_interface_id"] == nifcloud.StringValue(n.NetworkInterfaceId) {
+					findElm = elm
+					break
+				}
 			}
 
 			if findElm != nil {
 				if findElm["ip_address"] == "static" {
 					ni["ip_address"] = "static"
-				} else {
+				} else if findElm["ip_address"] != nil && findElm["ip_address"] != "" {
 					ni["ip_address"] = nifcloud.StringValue(n.PrivateIpAddress)
 				}
 
@@ -102,6 +111,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeInstancesResponse) e
 				ni["ip_address"] = nifcloud.StringValue(n.PrivateIpAddress)
 			}
 		}
+
 		networkInterfaces = append(networkInterfaces, ni)
 	}
 
