@@ -22,4 +22,5 @@ resource "nifcloud_security_group_rule" "example" {
   to_port              = 65535
   protocol             = "TCP"
   cidr_ip              = "0.0.0.0/0"
+  description          = "メモです"
 }
