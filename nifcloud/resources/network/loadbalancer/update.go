@@ -19,7 +19,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		"instance_port",
 		"load_balancer_port",
 		"load_balancer_name",
-	) {
+	) && !d.IsNewResource() {
 		input := expandUpdateLoadBalancer(d)
 		req := svc.UpdateLoadBalancerRequest(input)
 		_, err := req.Send(ctx)
