@@ -20,6 +20,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_customer_gateway", &resource.Sweeper{
 		Name: "nifcloud_customer_gateway",
 		F:    testSweepCustomerGateway,
+		Dependencies: []string{
+			"nifcloud_vpn_connection",
+		},
 	})
 }
 

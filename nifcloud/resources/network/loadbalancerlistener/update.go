@@ -1,4 +1,4 @@
-package loadbalancer
+package loadbalancerlistener
 
 import (
 	"context"
@@ -6,27 +6,22 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
 	if d.HasChanges(
-		"accounting_type",
-		"network_volume",
 		"balancing_type",
 		"instance_port",
 		"load_balancer_port",
-		"load_balancer_name",
-	) {
+	) && !d.IsNewResource() {
 		input := expandUpdateLoadBalancer(d)
 		req := svc.UpdateLoadBalancerRequest(input)
 		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer %s", err))
 		}
-		d.SetId(d.Get("load_balancer_name").(string))
 	}
 	if d.HasChanges(
 		"session_stickiness_policy_enable",
@@ -93,7 +88,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 	if d.HasChange("filter") {
 		input := expandUnSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses) > 0 && nifcloud.StringValue(input.IPAddresses[0].IPAddress) != "*.*.*.*" {
+		if len(input.IPAddresses) > 0 && *input.IPAddresses[0].IPAddress != "*.*.*.*" {
 			req := svc.SetFilterForLoadBalancerRequest(input)
 			_, err := req.Send(ctx)
 			if err != nil {
@@ -102,7 +97,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 
 		input = expandSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses) > 0 && nifcloud.StringValue(input.IPAddresses[0].IPAddress) != "*.*.*.*" {
+		if len(input.IPAddresses) > 0 && *input.IPAddresses[0].IPAddress != "*.*.*.*" {
 			req := svc.SetFilterForLoadBalancerRequest(input)
 			_, err := req.Send(ctx)
 			if err != nil {

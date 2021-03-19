@@ -157,6 +157,7 @@ func TestExpandStopInstancesInput(t *testing.T) {
 			args: rd,
 			want: &computing.StopInstancesInput{
 				InstanceId: []string{"test_instance_id"},
+				Force:      nifcloud.Bool(true),
 			},
 		},
 	}
@@ -417,6 +418,63 @@ func TestExpandNiftyUpdateInstanceNetworkInterfacesInput(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := expandNiftyUpdateInstanceNetworkInterfacesInput(tt.args)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandAttachNetworkInterfaceInput(t *testing.T) {
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"instance_id": "test_instance_id",
+	})
+	rd.SetId("test_instance_id")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.AttachNetworkInterfaceInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.AttachNetworkInterfaceInput{
+				InstanceId:         nifcloud.String("test_instance_id"),
+				NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
+				NiftyReboot:        computing.NiftyRebootOfAttachNetworkInterfaceRequestForce,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandAttachNetworkInterfaceInput(tt.args, "test_network_interface_id")
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandDetachNetworkInterfaceInput(t *testing.T) {
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
+	rd.SetId("test_instance_id")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.DetachNetworkInterfaceInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.DetachNetworkInterfaceInput{
+				AttachmentId: nifcloud.String("test_network_interface_attachment_id"),
+				NiftyReboot:  computing.NiftyRebootOfDetachNetworkInterfaceRequestForce,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandDetachNetworkInterfaceInput(tt.args, "test_network_interface_attachment_id")
 			assert.Equal(t, tt.want, got)
 		})
 	}

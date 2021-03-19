@@ -23,7 +23,9 @@ func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInpu
 			if row, ok := v["ip_address"]; ok {
 				n.IpAddress = nifcloud.String(row.(string))
 			}
-			networkInterface = append(networkInterface, n)
+			if nifcloud.StringValue(n.NetworkId) != "" || nifcloud.StringValue(n.NetworkName) != "" {
+				networkInterface = append(networkInterface, n)
+			}
 		}
 	}
 
@@ -81,6 +83,7 @@ func expandDescribeInstanceAttributeInputWithDisableAPITermination(d *schema.Res
 func expandStopInstancesInput(d *schema.ResourceData) *computing.StopInstancesInput {
 	return &computing.StopInstancesInput{
 		InstanceId: []string{d.Id()},
+		Force:      nifcloud.Bool(true),
 	}
 }
 
@@ -153,12 +156,30 @@ func expandNiftyUpdateInstanceNetworkInterfacesInput(d *schema.ResourceData) *co
 			if row, ok := v["ip_address"]; ok {
 				n.IpAddress = nifcloud.String(row.(string))
 			}
-			networkInterface = append(networkInterface, n)
+
+			if nifcloud.StringValue(n.NetworkId) != "" || nifcloud.StringValue(n.NetworkName) != "" {
+				networkInterface = append(networkInterface, n)
+			}
 		}
 	}
 
 	return &computing.NiftyUpdateInstanceNetworkInterfacesInput{
 		InstanceId:       nifcloud.String(d.Id()),
 		NetworkInterface: networkInterface,
+	}
+}
+
+func expandAttachNetworkInterfaceInput(d *schema.ResourceData, networkInterfaceID string) *computing.AttachNetworkInterfaceInput {
+	return &computing.AttachNetworkInterfaceInput{
+		InstanceId:         nifcloud.String(d.Id()),
+		NetworkInterfaceId: nifcloud.String(networkInterfaceID),
+		NiftyReboot:        computing.NiftyRebootOfAttachNetworkInterfaceRequestForce,
+	}
+}
+
+func expandDetachNetworkInterfaceInput(d *schema.ResourceData, attachmentID string) *computing.DetachNetworkInterfaceInput {
+	return &computing.DetachNetworkInterfaceInput{
+		AttachmentId: nifcloud.String(attachmentID),
+		NiftyReboot:  computing.NiftyRebootOfDetachNetworkInterfaceRequestForce,
 	}
 }

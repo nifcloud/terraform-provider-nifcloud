@@ -17,13 +17,6 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	svc := meta.(*client.Client).Computing
 
-	if d.IsNewResource() {
-		err := svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed waiting for instance to become ready: %s", err))
-		}
-	}
-
 	describeInstancesReq := svc.DescribeInstancesRequest(describeInstancesInput)
 	describeInstanceAttribeteReq := svc.DescribeInstanceAttributeRequest(describeInstanceAttributeInput)
 

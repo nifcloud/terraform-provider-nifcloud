@@ -22,6 +22,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_vpn_gateway", &resource.Sweeper{
 		Name: "nifcloud_vpn_gateway",
 		F:    testSweepVpnGateway,
+		Dependencies: []string{
+			"nifcloud_vpn_connection",
+		},
 	})
 }
 

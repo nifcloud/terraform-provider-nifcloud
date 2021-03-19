@@ -65,7 +65,7 @@ func newSchema() map[string]*schema.Schema {
 		"revoke_rules_on_delete": {
 			Type:        schema.TypeBool,
 			Description: "Instruct Terraform to revoke all of the Security Groups attached In and Out rules before deleting the rule itself. ",
-			Default:     false,
+			Default:     true,
 			Optional:    true,
 		},
 	}
