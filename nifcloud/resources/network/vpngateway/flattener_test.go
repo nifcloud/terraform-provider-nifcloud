@@ -21,6 +21,7 @@ func TestFlatten(t *testing.T) {
 		"network_id":                 "test_network_id",
 		"network_name":               "test_network_name",
 		"ip_address":                 "test_ip_address",
+		"public_ip_address":          "test_public_ip_address",
 		"security_group":             "test_security_group",
 		"route_table_id":             "test_route_table_id",
 		"route_table_association_id": "test_route_table_association_id",
@@ -57,6 +58,10 @@ func TestFlatten(t *testing.T) {
 										NetworkId:   nifcloud.String("test_network_id"),
 										NetworkName: nifcloud.String("test_network_name"),
 										IpAddress:   nifcloud.String("test_ip_address"),
+									},
+									{
+										NetworkId: nifcloud.String("net-COMMON_GLOBAL"),
+										IpAddress: nifcloud.String("test_public_ip_address"),
 									},
 								},
 								GroupSet: []computing.GroupSetOfDescribeVpnGateways{

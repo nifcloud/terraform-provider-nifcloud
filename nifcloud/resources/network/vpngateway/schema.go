@@ -102,6 +102,11 @@ func newSchema() map[string]*schema.Schema {
 			Optional:         true,
 			ValidateDiagFunc: validator.IPAddress,
 		},
+		"public_ip_address": {
+			Type:        schema.TypeString,
+			Description: "The public ip address.",
+			Computed:    true,
+		},
 		"security_group": {
 			Type:        schema.TypeString,
 			Description: "The name of firewall group.",

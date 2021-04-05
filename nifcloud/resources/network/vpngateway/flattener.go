@@ -47,7 +47,9 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 	for _, n := range vpnGateway.NetworkInterfaceSet {
 		switch nifcloud.StringValue(n.NetworkId) {
 		case "net-COMMON_GLOBAL":
-			// Can not use "net-COMMON_GLOBAL"
+			if err := d.Set("public_ip_address", n.IpAddress); err != nil {
+				return err
+			}
 		default:
 			if _, ok := d.GetOk("network_id"); ok {
 				if err := d.Set("network_id", n.NetworkId); err != nil {
