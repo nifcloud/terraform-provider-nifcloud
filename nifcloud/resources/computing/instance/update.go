@@ -196,7 +196,14 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 		req := svc.ModifyInstanceAttributeRequest(input)
 
-		_, err := req.Send(ctx)
+		mutexKV.Lock(string(input.Value))
+		defer mutexKV.Unlock(string(input.Value))
+
+		err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{string(input.Value)}})
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
+		}
+		_, err = req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance security_group: %s", err))
 		}
