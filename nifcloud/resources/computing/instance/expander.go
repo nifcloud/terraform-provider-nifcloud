@@ -183,3 +183,12 @@ func expandDetachNetworkInterfaceInput(d *schema.ResourceData, attachmentID stri
 		NiftyReboot:  computing.NiftyRebootOfDetachNetworkInterfaceRequestForce,
 	}
 }
+
+func expandDeregisterInstancesFromSecurityGroupInput(d *schema.ResourceData) *computing.DeregisterInstancesFromSecurityGroupInput {
+	groupName, _ := d.GetChange("security_group")
+
+	return &computing.DeregisterInstancesFromSecurityGroupInput{
+		InstanceId: []string{d.Id()},
+		GroupName:  nifcloud.String(groupName.(string)),
+	}
+}

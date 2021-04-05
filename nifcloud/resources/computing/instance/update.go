@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
@@ -192,23 +193,41 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	if d.HasChange("security_group") {
-		input := expandModifyInstanceAttributeInputForSecurityGroup(d)
+		if d.Get("security_group").(string) == "" {
+			input := expandDeregisterInstancesFromSecurityGroupInput(d)
 
-		req := svc.ModifyInstanceAttributeRequest(input)
+			req := svc.DeregisterInstancesFromSecurityGroupRequest(input)
 
-		mutexKV.Lock(string(input.Value))
-		defer mutexKV.Unlock(string(input.Value))
+			mutexKV.Lock(nifcloud.StringValue(input.GroupName))
+			defer mutexKV.Unlock(nifcloud.StringValue(input.GroupName))
 
-		err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{string(input.Value)}})
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
+			err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.StringValue(input.GroupName)}})
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
+			}
+			_, err = req.Send(ctx)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed updating instance security_group: %s", err))
+			}
+		} else {
+			input := expandModifyInstanceAttributeInputForSecurityGroup(d)
+
+			req := svc.ModifyInstanceAttributeRequest(input)
+
+			mutexKV.Lock(string(input.Value))
+			defer mutexKV.Unlock(string(input.Value))
+
+			err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{string(input.Value)}})
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
+			}
+			_, err = req.Send(ctx)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed updating instance security_group: %s", err))
+			}
 		}
-		_, err = req.Send(ctx)
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed updating instance security_group: %s", err))
-		}
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err := svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}

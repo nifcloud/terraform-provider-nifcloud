@@ -479,3 +479,36 @@ func TestExpandDetachNetworkInterfaceInput(t *testing.T) {
 		})
 	}
 }
+
+func TestExpandDeregisterInstancesFromSecurityGroupInput(t *testing.T) {
+	r := New()
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"instance_id":    "test_instance_id",
+		"security_group": "test_security_group",
+	})
+	rd.SetId("test_instance_id")
+
+	dn := r.Data(rd.State())
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.DeregisterInstancesFromSecurityGroupInput
+	}{
+		{
+			name: "expands the resource data",
+			args: dn,
+			want: &computing.DeregisterInstancesFromSecurityGroupInput{
+				InstanceId: []string{"test_instance_id"},
+				GroupName:  nifcloud.String("test_security_group"),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandDeregisterInstancesFromSecurityGroupInput(tt.args)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
