@@ -2,6 +2,7 @@ package loadbalancer
 
 import (
 	"fmt"
+	"net"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -64,6 +65,18 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 
 	if err := d.Set("dns_name", loadBalancer.DNSName); err != nil {
 		return err
+	}
+
+	if ip := net.ParseIP(nifcloud.StringValue(loadBalancer.DNSName)); ip != nil {
+		if ip.To4() != nil {
+			if err := d.Set("ip_version", "v4"); err != nil {
+				return err
+			}
+		} else {
+			if err := d.Set("ip_version", "v6"); err != nil {
+				return err
+			}
+		}
 	}
 
 	listener := loadBalancer.ListenerDescriptions[0]

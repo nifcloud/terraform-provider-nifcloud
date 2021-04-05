@@ -52,7 +52,6 @@ The following arguments are supported:
 * `healthy_threshold` - (Optional) The number of checks before the instance is declared healthy.
 * `instance_port` - (Required) The port on the instance to route to.
 * `instances` - (Optional) A list of instance names to place in the load balancer pool.
-* `ip_version` - (Optional) The load balancer ip version(v4 or v6).
 * `load_balancer_name` - (Required) The name for the load_balancer.
 * `load_balancer_port` - (Required) The port to listen on for the load balancer.
 * `policy_type` - (Optional) policy type (standard or ats).
@@ -69,7 +68,7 @@ The following arguments are supported:
 
 In addition to the arguments listed above, the following computed attributes are exported:
 
-
+* `ip_version` - The load balancer ip version(v4 or v6).
 
 ## Import
 

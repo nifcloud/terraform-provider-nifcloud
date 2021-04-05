@@ -161,12 +161,9 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"ip_version": {
-			Type:         schema.TypeString,
-			Description:  "The load balancer ip version(v4 or v6).",
-			Optional:     true,
-			Default:      "v4",
-			ForceNew:     true,
-			ValidateFunc: validation.StringInSlice([]string{"v4", "v6"}, false),
+			Type:        schema.TypeString,
+			Description: "The load balancer ip version(v4 or v6).",
+			Computed:    true,
 		},
 		"policy_type": {
 			Type:         schema.TypeString,
