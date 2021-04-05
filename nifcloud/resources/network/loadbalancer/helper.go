@@ -9,10 +9,10 @@ import (
 )
 
 func validateLBImportString(importStr string) ([]string, error) {
-	// example: example_TCP_8000_8000
+	// example: example_8000_8000
 
 	importParts := strings.Split(importStr, "_")
-	errStr := "unexpected format of import string (%q), expected ELBID_PROTOCOL_LBPORT_INSTANCEPORT: %s"
+	errStr := "unexpected format of import string (%q), expected LBNAME_LBPORT_INSTANCEPORT: %s"
 	if len(importParts) != 3 {
 		return nil, fmt.Errorf(errStr, importStr, "invalid parts")
 	}
