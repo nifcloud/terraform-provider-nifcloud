@@ -55,6 +55,7 @@ func TestAcc_VpnGateway(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_group", randName),
 					resource.TestCheckResourceAttrSet(resourceName, "route_table_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "route_table_association_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
 				),
 			},
 			{
@@ -71,6 +72,7 @@ func TestAcc_VpnGateway(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "ip_address", "192.168.3.2"),
 					resource.TestCheckResourceAttr(resourceName, "security_group", randName),
+					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
 				),
 			},
 			{

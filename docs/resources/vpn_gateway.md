@@ -80,6 +80,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `vpn_gateway_id` - The id for the vpn gateway.
 * `route_table_association_id` - The ID of the route table association.
+* `public_ip_address` - (Optional) The public ip address.
 
 ## Import
 
