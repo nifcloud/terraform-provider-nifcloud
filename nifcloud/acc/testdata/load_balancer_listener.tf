@@ -4,31 +4,30 @@ provider "nifcloud" {
 
 resource "nifcloud_load_balancer" "basic" {
   load_balancer_name = "%s"
-  instance_port = 8080
+  instance_port      = 8080
   load_balancer_port = 8080
 }
 
 resource "nifcloud_load_balancer_listener" "basic" {
-  load_balancer_name = nifcloud_load_balancer.basic.load_balancer_name
-  instance_port = 8081
-  load_balancer_port = 80
-  balancing_type = "1"
-  ip_version = "v4"
-  instances = [nifcloud_instance.basic.instance_id]
-  policy_type = "standard"
-  ssl_certificate_id  = nifcloud_ssl_certificate.basic.id
-  ssl_policy_id = 1
-  filter_type = 1
-  filter = ["192.168.1.1"]
-  session_stickiness_policy_enable = true
+  load_balancer_name                          = nifcloud_load_balancer.basic.load_balancer_name
+  instance_port                               = 8081
+  load_balancer_port                          = 80
+  balancing_type                              = "1"
+  instances                                   = [nifcloud_instance.basic.instance_id]
+  policy_type                                 = "standard"
+  ssl_certificate_id                          = nifcloud_ssl_certificate.basic.id
+  ssl_policy_id                               = 1
+  filter_type                                 = 1
+  filter                                      = ["192.168.1.1"]
+  session_stickiness_policy_enable            = true
   session_stickiness_policy_expiration_period = 5
-  sorry_page_enable = true
-  sorry_page_status_code = 503
-  health_check_interval = 10
-  health_check_target = "TCP:80"
-  healthy_threshold = 1
-  unhealthy_threshold = 2
-  depends_on = [nifcloud_instance.basic, nifcloud_ssl_certificate.basic]
+  sorry_page_enable                           = true
+  sorry_page_status_code                      = 503
+  health_check_interval                       = 10
+  health_check_target                         = "TCP:80"
+  healthy_threshold                           = 1
+  unhealthy_threshold                         = 2
+  depends_on                                  = [nifcloud_instance.basic, nifcloud_ssl_certificate.basic]
 }
 
 resource "nifcloud_instance" "basic" {
@@ -36,7 +35,7 @@ resource "nifcloud_instance" "basic" {
   availability_zone = "east-21"
   image_id          = "221"
   key_name          = nifcloud_key_pair.basic.key_name
-  depends_on = [nifcloud_key_pair.basic]
+  depends_on        = [nifcloud_key_pair.basic]
 
   network_interface {
     network_id = "net-COMMON_GLOBAL"
