@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
@@ -14,6 +15,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
+	"golang.org/x/sync/errgroup"
 )
 
 func init() {
@@ -255,16 +257,25 @@ func testSweepDbSecurityGroup(region string) error {
 		return err
 	}
 
-	for _, dbSecurityGroup := range res.DBSecurityGroups {
-
-		input := &rdb.DeleteDBSecurityGroupInput{
-			DBSecurityGroupName: dbSecurityGroup.DBSecurityGroupName,
+	var sweepDbSecurityGroups []string
+	for _, k := range res.DBSecurityGroups {
+		if strings.HasPrefix(nifcloud.StringValue(k.DBSecurityGroupName), prefix) {
+			sweepDbSecurityGroups = append(sweepDbSecurityGroups, nifcloud.StringValue(k.DBSecurityGroupName))
 		}
+	}
 
-		_, err := svc.DeleteDBSecurityGroupRequest(input).Send(ctx)
-		if err != nil {
+	eg, ctx := errgroup.WithContext(ctx)
+	for _, n := range sweepDbSecurityGroups {
+		groupName := n
+		eg.Go(func() error {
+			_, err := svc.DeleteDBSecurityGroupRequest(&rdb.DeleteDBSecurityGroupInput{
+				DBSecurityGroupName: nifcloud.String(groupName),
+			}).Send(ctx)
 			return err
-		}
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return err
 	}
 	return nil
 }
