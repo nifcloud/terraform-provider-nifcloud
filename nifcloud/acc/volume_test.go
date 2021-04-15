@@ -44,7 +44,7 @@ func TestAcc_Volume(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "size", "100"),
 					resource.TestCheckResourceAttr(resourceName, "volume_id", randName),
 					resource.TestCheckResourceAttr(resourceName, "disk_type", "High-Speed Storage A"),
-					resource.TestCheckResourceAttrSet(resourceName, "instance_id"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id", randName),
 					resource.TestCheckResourceAttr(resourceName, "reboot", "true"),
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "1"),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
@@ -58,7 +58,7 @@ func TestAcc_Volume(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "size", "300"),
 					resource.TestCheckResourceAttr(resourceName, "volume_id", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "disk_type", "High-Speed Storage A"),
-					resource.TestCheckResourceAttrSet(resourceName, "instance_id"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "reboot", "true"),
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "2"),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo"+"-upd"),
@@ -168,8 +168,8 @@ func testAccCheckVolumeValues(volume *computing.VolumeSet, rName string) resourc
 			return fmt.Errorf("bad disk_type state,  expected \"High-Speed Storage A\", got: %#v", volume.DiskType)
 		}
 
-		if nifcloud.StringValue(volume.AttachmentSet[0].InstanceId) == "" {
-			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
+		if nifcloud.StringValue(volume.AttachmentSet[0].InstanceId) != rName {
+			return fmt.Errorf("bad instance_id state, expected \"%s\", got: %#v", rName, volume.AttachmentSet[0].InstanceId)
 		}
 
 		if nifcloud.StringValue(volume.NextMonthAccountingType) != "1" {
@@ -226,8 +226,8 @@ func testAccCheckVolumeValuesUpdated(volume *computing.VolumeSet, rName string) 
 			return fmt.Errorf("bad disk_type state,  expected \"High-Speed Storage A\", got: %#v", volume.DiskType)
 		}
 
-		if nifcloud.StringValue(volume.AttachmentSet[0].InstanceId) == "" {
-			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
+		if nifcloud.StringValue(volume.AttachmentSet[0].InstanceId) != rName {
+			return fmt.Errorf("bad instance_id state, expected \"%s\", got: %#v", rName, volume.AttachmentSet[0].InstanceId)
 		}
 
 		if nifcloud.StringValue(volume.NextMonthAccountingType) != "2" {

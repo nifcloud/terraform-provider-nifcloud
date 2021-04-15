@@ -235,6 +235,36 @@ func TestExpandDescribeVolumesInput(t *testing.T) {
 	}
 }
 
+func TestExpandAttachVolumeInput(t *testing.T) {
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"volume_id":   "test_volume_id",
+		"instance_id": "test_instance_id",
+	})
+	rd.SetId("test_volume_id")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.AttachVolumeInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.AttachVolumeInput{
+				VolumeId:   nifcloud.String("test_volume_id"),
+				InstanceId: nifcloud.String("test_instance_id"),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandAttachVolumeInput(tt.args)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestExpandDetachVolumeInput(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"volume_id":   "test_volume_id",

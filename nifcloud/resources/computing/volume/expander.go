@@ -101,6 +101,13 @@ func expandDescribeVolumesInput(d *schema.ResourceData) *computing.DescribeVolum
 	}
 }
 
+func expandAttachVolumeInput(d *schema.ResourceData) *computing.AttachVolumeInput {
+	return &computing.AttachVolumeInput{
+		VolumeId:   nifcloud.String(d.Id()),
+		InstanceId: nifcloud.String(d.Get("instance_id").(string)),
+	}
+}
+
 func expandDetachVolumeInput(d *schema.ResourceData) *computing.DetachVolumeInput {
 	return &computing.DetachVolumeInput{
 		VolumeId:   nifcloud.String(d.Id()),

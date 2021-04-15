@@ -2,12 +2,15 @@ package volume
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 
+	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -89,6 +92,59 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			if extendSize == afterSize.(int) {
 				break
 			}
+		}
+	}
+
+	if d.HasChange("instance_id") {
+		beforeID, afterID := d.GetChange("instance_id")
+
+		// Check if the instance has changed
+		res, err := svc.DescribeInstancesRequest(
+			&computing.DescribeInstancesInput{
+				InstanceId: []string{afterID.(string)},
+			},
+		).Send(ctx)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("failed reading instance: %s", err))
+		}
+
+		afterUniqueID := res.DescribeInstancesOutput.ReservationSet[0].InstancesSet[0].InstanceUniqueId
+		if *afterUniqueID == d.Get("instance_unique_id").(string) {
+			return read(ctx, d, meta)
+		}
+
+		detachVolumeInput := expandDetachVolumeInput(d)
+		detachVolumeInput.InstanceId = nifcloud.String(beforeID.(string))
+		_, err = svc.DetachVolumeRequest(detachVolumeInput).Send(ctx)
+		if err != nil {
+			var awsErr awserr.Error
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Volume" {
+				d.SetId("")
+				return nil
+			}
+			return diag.FromErr(fmt.Errorf("failed detaching volume: %s", err))
+		}
+
+		describeVolumeInput := expandDescribeVolumesInput(d)
+		err = svc.WaitUntilVolumeAvailable(ctx, describeVolumeInput)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("failed waiting for volume detached: %s", err))
+		}
+
+		attachVolumeInput := expandAttachVolumeInput(d)
+		_, err = svc.AttachVolumeRequest(attachVolumeInput).Send(ctx)
+		if err != nil {
+			var awsErr awserr.Error
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Volume" {
+				d.SetId("")
+				return nil
+			}
+			return diag.FromErr(fmt.Errorf("failed attaching volume: %s", err))
+		}
+
+		err = svc.WaitUntilVolumeInUse(ctx, describeVolumeInput)
+		if err != nil {
+			return diag.FromErr(fmt.Errorf("failed waiting for volume attached: %s", err))
 		}
 	}
 
