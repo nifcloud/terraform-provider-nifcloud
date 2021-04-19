@@ -71,7 +71,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 			describeVolumeInput := expandDescribeVolumesInput(d)
 
-			err = waitUntilVolumeExtended(ctx, svc, describeVolumeInput)
+			err = svc.WaitUntilVolumeAttached(ctx, describeVolumeInput)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed extending volume size: %s", err))
 			}
