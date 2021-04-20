@@ -79,7 +79,7 @@ The following arguments are supported:
 * `reboot` - (Optional) The reboot type. See [reboot](#reboot).
 * `accounting_type` - (Optional) Accounting type. (1: monthly, 2: pay per use).
 * `description` - (Optional) The volume description.
-* `instance_id` - (Optional) The instance name. Cannot be specified with `instance_unique_id`. If　you want to change the attached volume, please use this argument.
+* `instance_id` - (Optional) The instance name. Cannot be specified with `instance_unique_id`. If you want to change the attached volume, please use this argument.
 * `instance_unique_id` - (Optional) The unique ID of instance. Cannot be specified with `instance_id`. This argument is deprecated.
 
 ## disk_type
