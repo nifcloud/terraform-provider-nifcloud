@@ -10,13 +10,12 @@ import (
 )
 
 func flatten(d *schema.ResourceData, res *computing.DescribeVolumesResponse) error {
-	if res == nil || len(res.VolumeSet) == 0 || len(res.VolumeSet[0].AttachmentSet) == 0 {
+	if res == nil || len(res.VolumeSet) == 0 {
 		d.SetId("")
 		return nil
 	}
 
 	volume := res.VolumeSet[0]
-	instance := res.VolumeSet[0].AttachmentSet[0]
 
 	if nifcloud.StringValue(volume.VolumeId) != d.Id() {
 		return fmt.Errorf("unable to find volume within: %#v", res.VolumeSet)
@@ -37,20 +36,28 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVolumesResponse) err
 		return err
 	}
 
-	if err := d.Set("instance_id", instance.InstanceId); err != nil {
-		return err
-	}
-
-	if err := d.Set("instance_unique_id", instance.InstanceUniqueId); err != nil {
-		return err
-	}
-
 	if err := d.Set("accounting_type", volume.NextMonthAccountingType); err != nil {
 		return err
 	}
 
 	if err := d.Set("description", volume.Description); err != nil {
 		return err
+	}
+
+	if len(res.VolumeSet[0].AttachmentSet) != 0 {
+		instance := res.VolumeSet[0].AttachmentSet[0]
+
+		if _, ok := d.GetOk("instance_id"); ok {
+			if err := d.Set("instance_id", instance.InstanceId); err != nil {
+				return err
+			}
+		}
+
+		if _, ok := d.GetOk("instance_unique_id"); ok {
+			if err := d.Set("instance_unique_id", instance.InstanceUniqueId); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

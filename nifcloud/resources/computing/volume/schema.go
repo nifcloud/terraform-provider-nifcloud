@@ -69,7 +69,6 @@ func newSchema() map[string]*schema.Schema {
 			Type:        schema.TypeString,
 			Description: "The instance name.",
 			Optional:    true,
-			Computed:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
 				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
@@ -80,7 +79,6 @@ func newSchema() map[string]*schema.Schema {
 			Type:          schema.TypeString,
 			Description:   "The unique ID of instance.",
 			Optional:      true,
-			Computed:      true,
 			ForceNew:      true,
 			ConflictsWith: []string{"instance_id"},
 		},

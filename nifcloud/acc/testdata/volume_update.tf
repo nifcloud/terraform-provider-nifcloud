@@ -13,7 +13,7 @@ resource "nifcloud_volume" "basic" {
 }
 
 resource "nifcloud_instance" "basic" {
-  instance_id             = "%supd"
+  instance_id             = "%s"
   description             = "memo"
   availability_zone       = "east-21"
   accounting_type         = "2"
