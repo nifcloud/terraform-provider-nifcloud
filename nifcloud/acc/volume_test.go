@@ -54,11 +54,11 @@ func TestAcc_Volume(t *testing.T) {
 				Config: testAccVolume(t, "testdata/volume_update.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVolumeExists(resourceName, &volume),
-					testAccCheckVolumeValuesUpdated(&volume, randName+"upd"),
+					testAccCheckVolumeValuesUpdated(&volume, randName),
 					resource.TestCheckResourceAttr(resourceName, "size", "300"),
 					resource.TestCheckResourceAttr(resourceName, "volume_id", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "disk_type", "High-Speed Storage A"),
-					resource.TestCheckResourceAttr(resourceName, "instance_id", randName+"upd"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id", randName),
 					resource.TestCheckResourceAttr(resourceName, "reboot", "true"),
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "2"),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo"+"-upd"),
@@ -214,8 +214,8 @@ func testAccCheckVolumeUniqueIDValues(volume *computing.VolumeSet, rName string)
 
 func testAccCheckVolumeValuesUpdated(volume *computing.VolumeSet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(volume.VolumeId) != rName {
-			return fmt.Errorf("bad volume_id state, expected \"%s\", got: %#v", rName, volume.VolumeId)
+		if nifcloud.StringValue(volume.VolumeId) != rName+"upd" {
+			return fmt.Errorf("bad volume_id state, expected \"%s\", got: %#v", rName+"upd", volume.VolumeId)
 		}
 
 		if nifcloud.StringValue(volume.Size) != "300" {

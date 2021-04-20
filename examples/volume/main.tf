@@ -18,7 +18,6 @@ resource "nifcloud_volume" "web" {
   reboot          = "true"
   accounting_type = "2"
   description     = "memo"
-  # instance_unique_id = nifcloud_instance.web.unique_id
 }
 
 resource "nifcloud_instance" "web" {
