@@ -219,7 +219,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForAccountingType(t *testing.T
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayAccountingType,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_accounting_type"),
+				Value:        nifcloud.String("test_accounting_type"),
 			},
 		},
 	}
@@ -249,7 +249,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(t *te
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayDescription,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_description"),
+				Value:        nifcloud.String("test_description"),
 			},
 		},
 	}
@@ -279,7 +279,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(t *testing.T
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayName,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_name"),
+				Value:        nifcloud.String("test_name"),
 			},
 		},
 	}
@@ -309,7 +309,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(t *testing.T
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayType,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_type"),
+				Value:        nifcloud.String("test_type"),
 			},
 		},
 	}
@@ -370,7 +370,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForSecurityGroup(t *testing.T)
 			want: &computing.NiftyModifyVpnGatewayAttributeInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
 				Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestGroupId,
-				Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest("test_security_group"),
+				Value:        nifcloud.String("test_security_group"),
 			},
 		},
 	}

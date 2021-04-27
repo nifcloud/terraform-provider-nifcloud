@@ -215,8 +215,8 @@ func TestExpandModifyInstanceAttributeInputForAccountingType(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  "accountingType",
-				Value:      "test_accounting_type",
+				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestAccountingType,
+				Value:      nifcloud.String("test_accounting_type"),
 			},
 		},
 	}
@@ -246,8 +246,8 @@ func TestExpandModifyInstanceAttributeInputForDescription(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  "description",
-				Value:      "test_description",
+				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDescription,
+				Value:      nifcloud.String("test_description"),
 			},
 		},
 	}
@@ -277,8 +277,8 @@ func TestExpandModifyInstanceAttributeInputForDisableAPITermination(t *testing.T
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  "disableApiTermination",
-				Value:      computing.ValueOfModifyInstanceAttributeRequest("false"),
+				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDisableApiTermination,
+				Value:      nifcloud.String("false"),
 			},
 		},
 	}
@@ -309,8 +309,8 @@ func TestExpandModifyInstanceAttributeInputForInstanceID(t *testing.T) {
 			args: dn,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  "instanceName",
-				Value:      computing.ValueOfModifyInstanceAttributeRequest("test_instance_id"),
+				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceName,
+				Value:      nifcloud.String("test_instance_id"),
 			},
 		},
 	}
@@ -340,8 +340,8 @@ func TestExpandModifyInstanceAttributeInputForInstanceType(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  "instanceType",
-				Value:      computing.ValueOfModifyInstanceAttributeRequest("test_instance_type"),
+				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceType,
+				Value:      nifcloud.String("test_instance_type"),
 			},
 		},
 	}
@@ -371,8 +371,8 @@ func TestExpandModifyInstanceAttributeInputForSecurityGroup(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  "groupId",
-				Value:      computing.ValueOfModifyInstanceAttributeRequest("test_security_group"),
+				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestGroupId,
+				Value:      nifcloud.String("test_security_group"),
 			},
 		},
 	}

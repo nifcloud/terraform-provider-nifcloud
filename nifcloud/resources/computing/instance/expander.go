@@ -96,24 +96,24 @@ func expandTerminateInstancesInput(d *schema.ResourceData) *computing.TerminateI
 func expandModifyInstanceAttributeInputForAccountingType(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  "accountingType",
-		Value:      computing.ValueOfModifyInstanceAttributeRequest(d.Get("accounting_type").(string)),
+		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestAccountingType,
+		Value:      nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
 
 func expandModifyInstanceAttributeInputForDescription(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  "description",
-		Value:      computing.ValueOfModifyInstanceAttributeRequest(d.Get("description").(string)),
+		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDescription,
+		Value:      nifcloud.String(d.Get("description").(string)),
 	}
 }
 
 func expandModifyInstanceAttributeInputForDisableAPITermination(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  "disableApiTermination",
-		Value:      computing.ValueOfModifyInstanceAttributeRequest(strconv.FormatBool(d.Get("disable_api_termination").(bool))),
+		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDisableApiTermination,
+		Value:      nifcloud.String(strconv.FormatBool(d.Get("disable_api_termination").(bool))),
 	}
 }
 
@@ -122,23 +122,23 @@ func expandModifyInstanceAttributeInputForInstanceID(d *schema.ResourceData) *co
 
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(before.(string)),
-		Attribute:  "instanceName",
-		Value:      computing.ValueOfModifyInstanceAttributeRequest(after.(string)),
+		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceName,
+		Value:      nifcloud.String(after.(string)),
 	}
 }
 func expandModifyInstanceAttributeInputForInstanceType(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  "instanceType",
-		Value:      computing.ValueOfModifyInstanceAttributeRequest(d.Get("instance_type").(string)),
+		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceType,
+		Value:      nifcloud.String(d.Get("instance_type").(string)),
 	}
 }
 
 func expandModifyInstanceAttributeInputForSecurityGroup(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  "groupId",
-		Value:      computing.ValueOfModifyInstanceAttributeRequest(d.Get("security_group").(string)),
+		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestGroupId,
+		Value:      nifcloud.String(d.Get("security_group").(string)),
 	}
 }
 

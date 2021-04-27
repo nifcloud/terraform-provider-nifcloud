@@ -59,7 +59,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForAccountingType(d *schema.Resour
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
 		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayAccountingType,
-		Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest(d.Get("accounting_type").(string)),
+		Value:        nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
 
@@ -67,7 +67,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(d *schema
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
 		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayDescription,
-		Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest(d.Get("description").(string)),
+		Value:        nifcloud.String(d.Get("description").(string)),
 	}
 }
 
@@ -75,7 +75,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(d *schema.Resour
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
 		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayName,
-		Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest(d.Get("name").(string)),
+		Value:        nifcloud.String(d.Get("name").(string)),
 	}
 }
 
@@ -83,7 +83,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(d *schema.Resour
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
 		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayType,
-		Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest(d.Get("type").(string)),
+		Value:        nifcloud.String(d.Get("type").(string)),
 	}
 }
 
@@ -100,7 +100,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForSecurityGroup(d *schema.Resourc
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
 		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestGroupId,
-		Value:        computing.ValueOfNiftyModifyVpnGatewayAttributeRequest(d.Get("security_group").(string)),
+		Value:        nifcloud.String(d.Get("security_group").(string)),
 	}
 }
 
