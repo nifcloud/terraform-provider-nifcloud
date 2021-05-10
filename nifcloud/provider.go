@@ -10,6 +10,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygrouprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/volume"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nassecuritygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/network/customergateway"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/network/dhcpconfig"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/network/dhcpoption"
@@ -71,6 +72,7 @@ func Provider() *schema.Provider {
 			"nifcloud_elb_listener":           elblistener.New(),
 			"nifcloud_instance":               instance.New(),
 			"nifcloud_key_pair":               keypair.New(),
+			"nifcloud_nas_security_group":     nassecuritygroup.New(),
 			"nifcloud_nat_table":              nattable.New(),
 			"nifcloud_network_interface":      networkinterface.New(),
 			"nifcloud_load_balancer":          loadbalancer.New(),
