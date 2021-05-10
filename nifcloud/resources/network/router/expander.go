@@ -75,7 +75,7 @@ func expandNiftyModifyRouterAttributeInputForRouterName(d *schema.ResourceData) 
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
 		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestRouterName,
-		Value:     computing.ValueOfNiftyModifyRouterAttributeRequest(d.Get("name").(string)),
+		Value:     nifcloud.String(d.Get("name").(string)),
 	}
 }
 
@@ -83,7 +83,7 @@ func expandNiftyModifyRouterAttributeInputForAccountingType(d *schema.ResourceDa
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
 		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestAccountingType,
-		Value:     computing.ValueOfNiftyModifyRouterAttributeRequest(d.Get("accounting_type").(string)),
+		Value:     nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
 
@@ -91,7 +91,7 @@ func expandNiftyModifyRouterAttributeInputForDescription(d *schema.ResourceData)
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
 		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestDescription,
-		Value:     computing.ValueOfNiftyModifyRouterAttributeRequest(d.Get("description").(string)),
+		Value:     nifcloud.String(d.Get("description").(string)),
 	}
 }
 
@@ -99,7 +99,7 @@ func expandNiftyModifyRouterAttributeInputForType(d *schema.ResourceData) *compu
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
 		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestType,
-		Value:     computing.ValueOfNiftyModifyRouterAttributeRequest(d.Get("type").(string)),
+		Value:     nifcloud.String(d.Get("type").(string)),
 	}
 }
 
@@ -107,7 +107,7 @@ func expandNiftyModifyRouterAttributeInputForSecurityGroup(d *schema.ResourceDat
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
 		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestGroupId,
-		Value:     computing.ValueOfNiftyModifyRouterAttributeRequest(d.Get("security_group").(string)),
+		Value:     nifcloud.String(d.Get("security_group").(string)),
 	}
 }
 

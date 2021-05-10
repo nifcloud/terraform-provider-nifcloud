@@ -214,10 +214,10 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 			req := svc.ModifyInstanceAttributeRequest(input)
 
-			mutexKV.Lock(string(input.Value))
-			defer mutexKV.Unlock(string(input.Value))
+			mutexKV.Lock(nifcloud.StringValue(input.Value))
+			defer mutexKV.Unlock(nifcloud.StringValue(input.Value))
 
-			err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{string(input.Value)}})
+			err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.StringValue(input.Value)}})
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 			}

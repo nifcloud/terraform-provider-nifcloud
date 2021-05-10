@@ -169,7 +169,7 @@ func TestExpandNiftyModifyRouterAttributeInputForRouterName(t *testing.T) {
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
 				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestRouterName,
-				Value:     computing.ValueOfNiftyModifyRouterAttributeRequest("test_router_name"),
+				Value:     nifcloud.String("test_router_name"),
 			},
 		},
 	}
@@ -199,7 +199,7 @@ func TestExpandNiftyModifyRouterAttributeInputForAccountingType(t *testing.T) {
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
 				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestAccountingType,
-				Value:     computing.ValueOfNiftyModifyRouterAttributeRequest("test_accounting_type"),
+				Value:     nifcloud.String("test_accounting_type"),
 			},
 		},
 	}
@@ -229,7 +229,7 @@ func TestExpandNiftyModifyRouterAttributeInputForDescription(t *testing.T) {
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
 				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestDescription,
-				Value:     computing.ValueOfNiftyModifyRouterAttributeRequest("test_description"),
+				Value:     nifcloud.String("test_description"),
 			},
 		},
 	}
@@ -259,7 +259,7 @@ func TestExpandNiftyModifyRouterAttributeInputForType(t *testing.T) {
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
 				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestType,
-				Value:     computing.ValueOfNiftyModifyRouterAttributeRequest("test_type"),
+				Value:     nifcloud.String("test_type"),
 			},
 		},
 	}
@@ -289,7 +289,7 @@ func TestExpandNiftyModifyRouterAttributeInputForSecurityGroup(t *testing.T) {
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
 				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestGroupId,
-				Value:     computing.ValueOfNiftyModifyRouterAttributeRequest("test_security_group"),
+				Value:     nifcloud.String("test_security_group"),
 			},
 		},
 	}
