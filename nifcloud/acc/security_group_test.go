@@ -24,6 +24,7 @@ func init() {
 		F:    testSweepSecurityGroup,
 		Dependencies: []string{
 			"nifcloud_instance",
+			"nifcloud_nas_security_group",
 		},
 	})
 }
