@@ -75,17 +75,17 @@ func flatten(d *schema.ResourceData, res *computing.DescribeInstancesResponse) e
 			for _, dn := range d.Get("network_interface").(*schema.Set).List() {
 				elm := dn.(map[string]interface{})
 
-				if elm["network_id"] == nifcloud.StringValue(n.NiftyNetworkId) {
+				if elm["network_id"] != nil && n.NiftyNetworkId != nil && elm["network_id"] == nifcloud.StringValue(n.NiftyNetworkId) {
 					findElm = elm
 					break
 				}
 
-				if elm["network_name"] == nifcloud.StringValue(n.NiftyNetworkName) {
+				if elm["network_name"] != nil && n.NiftyNetworkName != nil && elm["network_name"] == nifcloud.StringValue(n.NiftyNetworkName) {
 					findElm = elm
 					break
 				}
 
-				if elm["network_interface_id"] == nifcloud.StringValue(n.NetworkInterfaceId) {
+				if elm["network_interface_id"] != nil && n.NetworkInterfaceId != nil && elm["network_interface_id"] == nifcloud.StringValue(n.NetworkInterfaceId) {
 					findElm = elm
 					break
 				}
