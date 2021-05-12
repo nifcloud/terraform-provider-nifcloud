@@ -9,7 +9,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/validator"
 )
 
-const description = "Provides a NAS instance resource."
+const description = "Provides a NAS security group resource."
 
 // New returns the nifcloud_nas_security_group resource schema.
 func New() *schema.Resource {
