@@ -1,0 +1,79 @@
+provider "nifcloud" {
+  region = "jp-east-2"
+}
+
+resource "nifcloud_nas_instance" "basic" {
+  identifier                               = "%supd"
+  allocated_storage                        = 200
+  availability_zone                        = "east-21"
+  description                              = "memo-upd"
+  protocol                                 = "cifs"
+  type                                     = 0
+  master_username                          = "tfaccupd"
+  master_user_password                     = "tfaccpassupd"
+  authentication_type                      = 1
+  directory_service_domain_name            = "tfacc.local"
+  directory_service_administrator_name     = "Administrator"
+  directory_service_administrator_password = "tfaccpass+555"
+  domain_controllers {
+    ip_address = "192.168.1.201"
+    hostname   = "ad01"
+  }
+  network_id                     = nifcloud_private_lan.basic.id
+  private_ip_address             = "192.168.1.101"
+  private_ip_address_subnet_mask = "/24"
+  nas_security_group_name        = nifcloud_nas_security_group.basic.group_name
+}
+
+resource "nifcloud_nas_security_group" "basic" {
+  group_name        = "%s"
+  availability_zone = "east-21"
+}
+
+resource "nifcloud_instance" "ad" {
+  instance_id       = "%s"
+  description       = "memo"
+  availability_zone = "east-21"
+  accounting_type   = "2"
+  image_id          = "221"
+  instance_type     = "small"
+  key_name          = nifcloud_key_pair.basic.key_name
+  security_group    = nifcloud_security_group.basic.group_name
+  user_data         = <<EOT
+%s
+EOT
+
+  depends_on = [nifcloud_private_lan.basic, nifcloud_key_pair.basic, nifcloud_security_group.basic]
+
+  network_interface {
+    network_id = nifcloud_private_lan.basic.id
+    ip_address = "static"
+  }
+
+  network_interface {
+    network_id = "net-COMMON_GLOBAL"
+  }
+}
+
+resource "nifcloud_private_lan" "basic" {
+  private_lan_name  = "%s"
+  availability_zone = "east-21"
+  cidr_block        = "192.168.1.0/24"
+}
+
+resource "nifcloud_security_group" "basic" {
+  group_name        = "%s"
+  availability_zone = "east-21"
+}
+
+resource "nifcloud_security_group_rule" "from_nas" {
+  security_group_names = [nifcloud_security_group.basic.group_name]
+  type                 = "IN"
+  protocol             = "ANY"
+  cidr_ip              = "192.168.1.101"
+}
+
+resource "nifcloud_key_pair" "basic" {
+  key_name   = "%s"
+  public_key = "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFEeFVVSmtIWFFvalVmeGphT3dQNVJmMjhOTVRFSjJFblBQdFk0b1NkZFBpRllnMWVDTGFNU08wV25nZVIrVk5sU215am1qU2xRWjBsc1BkcHZjWnY0KzZiMDlLUUZlT3NxakdjNE9Ga1o2MTZyTEI3UmdzblZnSXl3QmtIZ2lsMVQzbFRwRHVtYVk2TFFaRjRiaVpTNkNyaFdYeVhiSjFUVmYyZ0hIYXZPdi9WSS9ITjhIejlnSDg5Q0xWRVFOWFVQbXdjbC83ZE4yMXE4QnhNVkpGNW1sSW1RcGxwTjFKQVRwdnBXSXVXSzZZOFpYblEvYVowMDBMTFVBMVA4N1l3V2FRSWJRTGVPelNhc29GYm5pbkZ3R05FdVdCK0t5MWNMQkRZc1lmZExHQnVYTkRlVmtnUUE3ODJXWWxaNU1lN0RVMWt0Q0U3Qk5jOUlyUVA1YWZDU2g="
+}
