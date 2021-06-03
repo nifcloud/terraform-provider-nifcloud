@@ -12,9 +12,6 @@ resource "nifcloud_nas_instance" "basic" {
   master_username                = "tfacc"
   master_user_password           = "tfaccpass"
   authentication_type            = 0
-  network_id                     = nifcloud_private_lan.basic.id
-  private_ip_address             = "192.168.1.101"
-  private_ip_address_subnet_mask = "/24"
   nas_security_group_name        = nifcloud_nas_security_group.basic.group_name
 }
 
@@ -36,22 +33,13 @@ resource "nifcloud_instance" "ad" {
 %s
 EOT
 
-  depends_on = [nifcloud_private_lan.basic, nifcloud_key_pair.basic, nifcloud_security_group.basic]
-
   network_interface {
-    network_id = nifcloud_private_lan.basic.id
-    ip_address = "static"
+    network_id = "net-COMMON_PRIVATE"
   }
 
   network_interface {
     network_id = "net-COMMON_GLOBAL"
   }
-}
-
-resource "nifcloud_private_lan" "basic" {
-  private_lan_name  = "%s"
-  availability_zone = "east-21"
-  cidr_block        = "192.168.1.0/24"
 }
 
 resource "nifcloud_security_group" "basic" {
@@ -63,7 +51,7 @@ resource "nifcloud_security_group_rule" "from_nas" {
   security_group_names = [nifcloud_security_group.basic.group_name]
   type                 = "IN"
   protocol             = "ANY"
-  cidr_ip              = "192.168.1.101"
+  cidr_ip              = nifcloud_nas_instance.basic.private_ip_address
 }
 
 resource "nifcloud_key_pair" "basic" {

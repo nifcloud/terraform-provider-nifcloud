@@ -2,30 +2,18 @@
 
 set -euo pipefail
 
-function configure_ip_address () {
-  cat << EOF > /etc/netplan/99-netcfg.yaml
-network:
-  version: 2
-  renderer: networkd
-  ethernets:
-      ens224:
-          dhcp4: false
-          addresses: [192.168.1.201/24]
-          dhcp6: false
-EOF
-  netplan apply
-}
-
 function configure_ad_server () {
   HOST_NAME="AD01"
   DOMAIN="TFACC"
   REALM="TFACC.LOCAL"
+  HOST_IP="$(ip a show ens224 | grep -o 'inet [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+' | grep -o [0-9].*)" 
+  echo $${HOST_IP} > /var/log/ip
 
   apt-get update
   DEBIAN_FRONTEND=noninteractive apt-get -y install slapd ldap-utils libnss-ldap samba smbldap-tools smbclient krb5-user winbind
 
   rm /etc/samba/smb.conf
-  samba-tool domain provision --use-rfc2307 --realm=$${REALM} --server-role=dc --dns-backend=SAMBA_INTERNAL --domain=$${DOMAIN} --host-name=$${HOST_NAME} --host-ip=192.168.1.201 --adminpass=tfaccpass+555 --option="interfaces=lo ens224"
+  samba-tool domain provision --use-rfc2307 --realm=$${REALM} --server-role=dc --dns-backend=SAMBA_INTERNAL --domain=$${DOMAIN} --host-name=$${HOST_NAME} --host-ip=$${HOST_IP} --adminpass=tfaccpass+555 --option="interfaces=lo ens224"
 
   cp -p /var/lib/samba/private/krb5.conf /etc/krb5.conf
   cat << EOF >> /etc/krb5.conf
@@ -63,5 +51,4 @@ EOF
   systemctl restart samba-ad-dc.service
 }
 
-configure_ip_address
 configure_ad_server

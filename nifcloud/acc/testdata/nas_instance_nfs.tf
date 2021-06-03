@@ -17,9 +17,3 @@ resource "nifcloud_nas_security_group" "basic" {
   group_name        = "%s"
   availability_zone = "east-21"
 }
-
-resource "nifcloud_private_lan" "basic" {
-  private_lan_name  = "%s"
-  availability_zone = "east-21"
-  cidr_block        = "192.168.1.0/24"
-}

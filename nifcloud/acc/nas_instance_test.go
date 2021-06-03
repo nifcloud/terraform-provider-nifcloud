@@ -66,9 +66,7 @@ func TestAcc_NASInstance_NFS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "type", "0"),
 					resource.TestCheckResourceAttr(resourceName, "nas_security_group_name", randName),
 					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
-					resource.TestCheckResourceAttrSet(resourceName, "network_id"),
-					resource.TestCheckResourceAttr(resourceName, "private_ip_address", "192.168.1.101"),
-					resource.TestCheckResourceAttr(resourceName, "private_ip_address_subnet_mask", "/24"),
+					resource.TestCheckResourceAttrSet(resourceName, "private_ip_address"),
 				),
 			},
 			{
@@ -107,9 +105,7 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "master_user_password", "tfaccpass"),
 					resource.TestCheckResourceAttr(resourceName, "authentication_type", "0"),
 					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
-					resource.TestCheckResourceAttrSet(resourceName, "network_id"),
-					resource.TestCheckResourceAttr(resourceName, "private_ip_address", "192.168.1.101"),
-					resource.TestCheckResourceAttr(resourceName, "private_ip_address_subnet_mask", "/24"),
+					resource.TestCheckResourceAttrSet(resourceName, "private_ip_address"),
 				),
 			},
 			{
@@ -124,19 +120,16 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "protocol", "cifs"),
 					resource.TestCheckResourceAttr(resourceName, "type", "0"),
 					resource.TestCheckResourceAttr(resourceName, "nas_security_group_name", randName),
-					resource.TestCheckResourceAttr(resourceName, "master_username", "tfaccupd"),
-					resource.TestCheckResourceAttr(resourceName, "master_user_password", "tfaccpassupd"),
+					resource.TestCheckResourceAttr(resourceName, "master_username", "tfacc"),
+					resource.TestCheckResourceAttr(resourceName, "master_user_password", "tfaccpass"),
 					resource.TestCheckResourceAttr(resourceName, "authentication_type", "1"),
 					resource.TestCheckResourceAttr(resourceName, "directory_service_domain_name", "tfacc.local"),
 					resource.TestCheckResourceAttr(resourceName, "directory_service_administrator_name", "Administrator"),
 					resource.TestCheckResourceAttr(resourceName, "directory_service_administrator_password", "tfaccpass+555"),
 					resource.TestCheckResourceAttr(resourceName, "domain_controllers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "domain_controllers.0.ip_address", "192.168.1.201"),
 					resource.TestCheckResourceAttr(resourceName, "domain_controllers.0.hostname", "ad01"),
 					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
-					resource.TestCheckResourceAttrSet(resourceName, "network_id"),
-					resource.TestCheckResourceAttr(resourceName, "private_ip_address", "192.168.1.101"),
-					resource.TestCheckResourceAttr(resourceName, "private_ip_address_subnet_mask", "/24"),
+					resource.TestCheckResourceAttrSet(resourceName, "private_ip_address"),
 				),
 			},
 			{
@@ -154,7 +147,6 @@ func testAccNASInstanceForNFS(t *testing.T, fileName, rName string) string {
 		t.Fatal(err)
 	}
 	return fmt.Sprintf(string(b),
-		rName,
 		rName,
 		rName,
 	)
@@ -176,7 +168,6 @@ func testAccNASInstanceForCIFS(t *testing.T, fileName, rName string) string {
 		rName,
 		rName,
 		string(userData),
-		rName,
 		rName,
 		rName,
 	)
@@ -278,10 +269,6 @@ func testAccCheckNASInstanceValuesForNFS(nasInstance *nas.NASInstance, identifie
 			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress) != "192.168.1.101" {
-			return fmt.Errorf("bad private_ip_address state, expected \"192.168.1.101\", got: %#v", nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress))
-		}
-
 		if nifcloud.StringValue(nasInstance.NoRootSquash) != "false" {
 			return fmt.Errorf("bad no_root_squash state, expected \"false\", got: %#v", nifcloud.StringValue(nasInstance.NoRootSquash))
 		}
@@ -314,10 +301,6 @@ func testAccCheckNASInstanceValuesUpdatedForNFS(nasInstance *nas.NASInstance, id
 
 		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
 			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
-		}
-
-		if nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress) != "192.168.1.111" {
-			return fmt.Errorf("bad private_ip_address state, expected \"192.168.1.111\", got: %#v", nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress))
 		}
 
 		if nifcloud.StringValue(nasInstance.NoRootSquash) != "true" {
@@ -362,10 +345,6 @@ func testAccCheckNASInstanceValuesForCIFS(nasInstance *nas.NASInstance, identifi
 			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.Int64Value(nasInstance.AuthenticationType))
 		}
 
-		if nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress) != "192.168.1.101" {
-			return fmt.Errorf("bad private_ip_address state, expected \"192.168.1.101\", got: %#v", nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress))
-		}
-
 		return nil
 	}
 }
@@ -396,12 +375,12 @@ func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *nas.NASInstance, i
 			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.StringValue(nasInstance.MasterUsername) != "tfaccupd" {
+		if nifcloud.StringValue(nasInstance.MasterUsername) != "tfacc" {
 			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.StringValue(nasInstance.MasterUsername))
 		}
 
 		if nifcloud.Int64Value(nasInstance.AuthenticationType) != 1 {
-			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.Int64Value(nasInstance.AuthenticationType))
+			return fmt.Errorf("bad authentication_type state, expected 1, got: %#v", nifcloud.Int64Value(nasInstance.AuthenticationType))
 		}
 
 		if nifcloud.StringValue(nasInstance.DirectoryServiceDomainName) != "tfacc.local" {
@@ -414,14 +393,6 @@ func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *nas.NASInstance, i
 
 		if nifcloud.StringValue(nasInstance.DomainControllers[0].Hostname) != "ad01" {
 			return fmt.Errorf("bad domain_controllers.0.hostname state, expected \"ad01\" got: %#v", nifcloud.StringValue(nasInstance.DomainControllers[0].Hostname))
-		}
-
-		if nifcloud.StringValue(nasInstance.DomainControllers[0].IPAddress) != "192.168.1.201" {
-			return fmt.Errorf("bad domain_controllers.0.ip_address state, expected \"ad01\" got: %#v", nifcloud.StringValue(nasInstance.DomainControllers[0].IPAddress))
-		}
-
-		if nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress) != "192.168.1.101" {
-			return fmt.Errorf("bad private_ip_address state, expected \"192.168.1.101\", got: %#v", nifcloud.StringValue(nasInstance.Endpoint.PrivateAddress))
 		}
 
 		return nil
@@ -442,7 +413,7 @@ func testAccNASInstanceResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameter.NotFound.NASInstanceIdentifier" {
+			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameter.NotFound.NASInstanceIdentifier" {
 				return fmt.Errorf("failed DescribeNASInstancesRequest: %s", err)
 			}
 		}
