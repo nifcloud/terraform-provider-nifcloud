@@ -237,7 +237,7 @@ func testAccHatobaFirewallGroupResourceDestroy(s *terraform.State) error {
 	svc := testAccProvider.Meta().(*client.Client).Hatoba
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "nifcloud_hatoba_security_group" {
+		if rs.Type != "nifcloud_hatoba_firewall_group" {
 			continue
 		}
 
