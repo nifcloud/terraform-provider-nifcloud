@@ -43,7 +43,7 @@ func newSchema() map[string]*schema.Schema {
 						Optional:    true,
 						Description: "The protocol.",
 						ValidateFunc: validation.StringInSlice([]string{
-							"ANY", "TCP", "UDP", "ICMP", "GRE", "ESP", "AH", "VRRP", "ICMPv6-all",
+							"ANY", "TCP", "UDP", "ICMP", "SSH", "HTTP", "HTTPS", "RDP", "GRE", "ESP", "AH", "VRRP", "L2TP",
 						}, false),
 					},
 					"direction": {
