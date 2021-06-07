@@ -66,8 +66,8 @@ func newSchema() map[string]*schema.Schema {
 					},
 					"cidr_ip": {
 						Type:        schema.TypeString,
+						Required:    true,
 						Description: "The CIDR IP address that allow access.",
-						Optional:    true,
 						ValidateDiagFunc: validator.Any(
 							validator.CIDRNetworkAddress,
 							validator.IPAddress,

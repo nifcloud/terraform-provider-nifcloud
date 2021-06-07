@@ -57,7 +57,7 @@ The following arguments are supported:
 * `direction` - (Optional) The direction of rule being created. Valid options are IN (Incoming) or OUT (Outgoing).
 * `from_port` - (Optional) The start port.
 * `protocol` - (Optional) The protocol.
-* `to_port` - (Required if protocol is undefined) The end port.
+* `to_port` - (Optional) The end port.
 
 ## Attributes Reference
 
