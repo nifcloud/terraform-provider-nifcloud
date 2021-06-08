@@ -27,7 +27,7 @@ provider "nifcloud" {
 resource "nifcloud_router" "router" {
   name       = "router"
   availability_zone = "east-12"
-  security_group    = nifcloud_security_group.web.group_name
+  security_group    = nifcloud_security_group.router.group_name
   type              = "small"
   accounting_type   = "2"
 
