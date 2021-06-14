@@ -41,7 +41,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"description": {
 			Type:             schema.TypeString,
-			Description:      "The firewall group description.",
+			Description:      "The cluster description.",
 			Optional:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(0, 255),
 		},
