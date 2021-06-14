@@ -69,6 +69,6 @@ docscheck:
 validate-examples:
 	@ for example in $(shell find examples -maxdepth 1 -type d | grep "/"); do \
 		cd $(shell pwd)/$$example ; \
-		terraform init -get-plugins=false; \
+		terraform init ; \
 		terraform validate ; \
 	  done
