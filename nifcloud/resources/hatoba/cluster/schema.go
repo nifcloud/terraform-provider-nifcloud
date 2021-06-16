@@ -35,8 +35,9 @@ func New() *schema.Resource {
 func newSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
-			Type:     schema.TypeString,
-			Required: true,
+			Type:        schema.TypeString,
+			Description: "The name of the cluster.",
+			Required:    true,
 		},
 		"description": {
 			Type:             schema.TypeString,
@@ -45,12 +46,14 @@ func newSchema() map[string]*schema.Schema {
 			ValidateDiagFunc: validator.StringRuneCountBetween(0, 255),
 		},
 		"kubernetes_version": {
-			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Type:        schema.TypeString,
+			Description: "The version of Kubernetes.",
+			Optional:    true,
+			Computed:    true,
 		},
 		"locations": {
-			Type: schema.TypeList,
+			Type:        schema.TypeList,
+			Description: "The cluster location. availability zone can be specified.",
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 			},
@@ -59,22 +62,25 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew: true,
 		},
 		"addons_config": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Description: "The configs for Kubernetes addons.",
+			Optional:    true,
+			Computed:    true,
+			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"http_load_balancing": {
-						Type:     schema.TypeList,
-						Optional: true,
-						Computed: true,
-						MaxItems: 1,
+						Type:        schema.TypeList,
+						Description: "The configs for HTTP load balancer.",
+						Optional:    true,
+						Computed:    true,
+						MaxItems:    1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"disabled": {
-									Type:     schema.TypeBool,
-									Required: true,
+									Type:        schema.TypeBool,
+									Description: "Disable the HTTP load balancing addon.",
+									Required:    true,
 								},
 							},
 						},
@@ -83,42 +89,49 @@ func newSchema() map[string]*schema.Schema {
 			},
 		},
 		"network_config": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
-			MaxItems: 1,
+			Type:        schema.TypeList,
+			Description: "The configs for cluster network.",
+			Optional:    true,
+			Computed:    true,
+			MaxItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"network_id": {
-						Type:     schema.TypeString,
-						Required: true,
-						ForceNew: true,
+						Type:        schema.TypeString,
+						Description: "The ID of private LAN.",
+						Required:    true,
+						ForceNew:    true,
 					},
 				},
 			},
 		},
 		"firewall_group": {
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
+			Type:        schema.TypeString,
+			Description: "The firewall group name to associate with.",
+			Required:    true,
+			ForceNew:    true,
 		},
 		"node_pools": {
-			Type:     schema.TypeSet,
-			Required: true,
-			MinItems: 1,
+			Type:        schema.TypeSet,
+			Description: "The node pool config",
+			Required:    true,
+			MinItems:    1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"name": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Description: "The name of the node pool.",
+						Required:    true,
 					},
 					"instance_type": {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:        schema.TypeString,
+						Description: "The instance type for node pool.",
+						Required:    true,
 					},
 					"node_count": {
-						Type:     schema.TypeInt,
-						Required: true,
+						Type:        schema.TypeInt,
+						Description: "The desired node count in this node pool.",
+						Required:    true,
 					},
 					"nodes": {
 						Type:     schema.TypeSet,
@@ -126,20 +139,24 @@ func newSchema() map[string]*schema.Schema {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								"name": {
-									Type:     schema.TypeString,
-									Computed: true,
+									Type:        schema.TypeString,
+									Description: "The name of the node.",
+									Computed:    true,
 								},
 								"availability_zone": {
-									Type:     schema.TypeString,
-									Computed: true,
+									Type:        schema.TypeString,
+									Description: "The availability zone where the node located.",
+									Computed:    true,
 								},
 								"public_ip_address": {
-									Type:     schema.TypeString,
-									Computed: true,
+									Type:        schema.TypeString,
+									Description: "The public IP address of the node.",
+									Computed:    true,
 								},
 								"private_ip_address": {
-									Type:     schema.TypeString,
-									Computed: true,
+									Type:        schema.TypeString,
+									Description: "The private IP address of the node.",
+									Computed:    true,
 								},
 							},
 						},
