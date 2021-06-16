@@ -33,13 +33,23 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	if d.HasChange("node_pools") {
 		o, n := d.GetChange("node_pools")
-		toDelete := o.(*schema.Set).Difference(n.(*schema.Set))
-		toAdd := n.(*schema.Set).Difference(o.(*schema.Set))
-		toChangeSize := n.(*schema.Set).Intersection(o.(*schema.Set))
+		toDeleteCandidate := o.(*schema.Set).Difference(n.(*schema.Set))
+		toCreateCandidate := n.(*schema.Set).Difference(o.(*schema.Set))
 
-		for _, l := range toChangeSize.List() {
-			change := l.(map[string]interface{})
-			input := expandSetNodePoolSizeInput(d, change)
+		toCreate := []interface{}{}
+		toDelete := []interface{}{}
+		toChangeSize := []interface{}{}
+		if toDeleteCandidate.Len() != 0 && toCreateCandidate.Len() != 0 {
+			toChangeSize = detectNodeCountChangedNodePools(toDeleteCandidate, toCreateCandidate)
+			toCreate = excludeNodePools(toCreateCandidate, toChangeSize)
+			toDelete = excludeNodePools(toDeleteCandidate, toChangeSize)
+		} else {
+			toCreate = toCreateCandidate.List()
+			toDelete = toDeleteCandidate.List()
+		}
+
+		for _, elm := range toChangeSize {
+			input := expandSetNodePoolSizeInput(d, elm.(map[string]interface{}))
 			req := svc.SetNodePoolSizeRequest(input)
 			if _, err := req.Send(ctx); err != nil {
 				return diag.Errorf(err.Error())
@@ -50,12 +60,23 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			}
 		}
 
-		toDeleteNames := []string{}
-		for _, l := range toDelete.List() {
-			del := l.(map[string]interface{})
-			toDeleteNames = append(toDeleteNames, del["name"].(string))
+		for _, elm := range toCreate {
+			input := expandCreateNodePoolInput(d, elm.(map[string]interface{}))
+			req := svc.CreateNodePoolRequest(input)
+			if _, err := req.Send(ctx); err != nil {
+				return diag.FromErr(fmt.Errorf("failed creating Hatoba cluster node pool: %s", err))
+			}
+
+			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
+				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
+			}
 		}
 
+		toDeleteNames := []string{}
+		for _, elm := range toDelete {
+			target := elm.(map[string]interface{})
+			toDeleteNames = append(toDeleteNames, target["name"].(string))
+		}
 		if len(toDeleteNames) != 0 {
 			deleteNodePoolsInput := expandDeleteNodePoolsInput(d, toDeleteNames)
 			req := svc.DeleteNodePoolsRequest(deleteNodePoolsInput)
@@ -67,20 +88,47 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
 			}
 		}
+	}
 
-		for _, l := range toAdd.List() {
-			add := l.(map[string]interface{})
-			input := expandCreateNodePoolInput(d, add)
-			req := svc.CreateNodePoolRequest(input)
-			if _, err := req.Send(ctx); err != nil {
-				return diag.FromErr(fmt.Errorf("failed creating Hatoba cluster node pool: %s", err))
-			}
+	return read(ctx, d, meta)
+}
 
-			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
-				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
+func detectNodeCountChangedNodePools(deleteCandidate, createCandidate *schema.Set) []interface{} {
+	res := []interface{}{}
+	for _, d := range deleteCandidate.List() {
+		td := d.(map[string]interface{})
+		for _, a := range createCandidate.List() {
+			ta := a.(map[string]interface{})
+			if ta["name"] == td["name"] &&
+				ta["instance_type"] == td["instance_type"] &&
+				ta["node_count"] != td["node_count"] {
+				res = append(res, a)
+				break
 			}
 		}
 	}
 
-	return read(ctx, d, meta)
+	return res
+}
+
+func excludeNodePools(from *schema.Set, targets []interface{}) []interface{} {
+	res := []interface{}{}
+	for _, f := range from.List() {
+		fromElem := f.(map[string]interface{})
+		found := false
+		for _, t := range targets {
+			targetElem := t.(map[string]interface{})
+			if targetElem["name"] == fromElem["name"] &&
+				targetElem["instance_type"] == fromElem["instance_type"] {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			res = append(res, f)
+		}
+	}
+
+	return res
 }

@@ -1,7 +1,6 @@
 package cluster
 
 import (
-	"hash/crc32"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -107,10 +106,6 @@ func newSchema() map[string]*schema.Schema {
 			Type:     schema.TypeSet,
 			Required: true,
 			MinItems: 1,
-			Set: func(v interface{}) int {
-				name := v.(map[string]interface{})["name"].(string)
-				return int(crc32.ChecksumIEEE([]byte(name)))
-			},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					"name": {
