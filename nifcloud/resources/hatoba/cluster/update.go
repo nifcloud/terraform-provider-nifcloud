@@ -41,9 +41,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		toDeleteCandidate := o.(*schema.Set).Difference(n.(*schema.Set))
 		toCreateCandidate := n.(*schema.Set).Difference(o.(*schema.Set))
 
-		toCreate := []interface{}{}
-		toDelete := []interface{}{}
-		toChangeSize := []interface{}{}
+		var toCreate []interface{}
+		var toDelete []interface{}
+		var toChangeSize []interface{}
 		if toDeleteCandidate.Len() != 0 && toCreateCandidate.Len() != 0 {
 			toChangeSize = detectNodeCountChangedNodePools(toDeleteCandidate, toCreateCandidate)
 			toCreate = excludeNodePools(toCreateCandidate, toChangeSize)
