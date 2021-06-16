@@ -18,7 +18,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			return diag.FromErr(fmt.Errorf("failed waiting for Hatoba cluster to become ready: %s", err))
 		}
 
-		return nil
+		return read(ctx, d, meta)
 	}
 
 	if d.HasChanges("name", "description", "kubernetes_version", "addons_config") {
