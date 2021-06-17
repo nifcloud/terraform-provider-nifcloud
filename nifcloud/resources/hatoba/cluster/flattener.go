@@ -28,6 +28,10 @@ func flatten(d *schema.ResourceData, res *hatoba.GetClusterResponse) error {
 		return err
 	}
 
+	if err := d.Set("locations", cluster.Locations); err != nil {
+		return err
+	}
+
 	if err := d.Set("kubernetes_version", cluster.KubernetesVersion); err != nil {
 		return err
 	}
