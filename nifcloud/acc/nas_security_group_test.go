@@ -21,9 +21,11 @@ import (
 
 func init() {
 	resource.AddTestSweepers("nifcloud_nas_security_group", &resource.Sweeper{
-		Name:         "nifcloud_nas_security_group",
-		F:            testSweepNASSecurityGroup,
-		Dependencies: []string{},
+		Name: "nifcloud_nas_security_group",
+		F:    testSweepNASSecurityGroup,
+		Dependencies: []string{
+			"nifcloud_nas_instance",
+		},
 	})
 }
 
