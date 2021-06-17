@@ -122,11 +122,13 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Description: "The name of the node pool.",
 						Required:    true,
+						ForceNew:    true,
 					},
 					"instance_type": {
 						Type:        schema.TypeString,
 						Description: "The instance type for node pool.",
 						Required:    true,
+						ForceNew:    true,
 					},
 					"node_count": {
 						Type:        schema.TypeInt,
