@@ -144,6 +144,7 @@ func newSchema() map[string]*schema.Schema {
 			Description:  "The pre shared key for IPsec config.",
 			Optional:     true,
 			ForceNew:     true,
+			Computed:     true,
 			ValidateFunc: validation.StringLenBetween(1, 64),
 		},
 		"ipsec_config_internet_key_exchange": {
