@@ -136,6 +136,11 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"directory_service_administrator_name",
+					"directory_service_administrator_password",
+					"master_user_password",
+				},
 			},
 		},
 	})
@@ -413,9 +418,10 @@ func testAccNASInstanceResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameter.NotFound.NASInstanceIdentifier" {
-				return fmt.Errorf("failed DescribeNASInstancesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameter.NotFound.NASInstanceIdentifier" {
+				return nil
 			}
+			return fmt.Errorf("failed NiftyDescribeNatTablesRequest: %s", err)
 		}
 
 		if len(res.NASInstances) > 0 {

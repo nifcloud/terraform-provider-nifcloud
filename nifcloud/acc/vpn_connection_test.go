@@ -68,6 +68,11 @@ func TestAcc_VpnConnection(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"customer_gateway_name",
+					"vpn_gateway_name",
+					"tunnel",
+				},
 			},
 		},
 	})
@@ -106,6 +111,11 @@ func TestAcc_VpnConnection_Id_No_Tunnel(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"customer_gateway_id",
+					"vpn_gateway_id",
+					"mtu",
+				},
 			},
 		},
 	})
@@ -312,9 +322,10 @@ func testAccVpnConnectionResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.VpnConnectionId" {
-				return fmt.Errorf("failed DescribeVpnConnectionsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.VpnConnectionId" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeVpnConnectionsRequest: %s", err)
 		}
 
 		if len(res.VpnConnectionSet) > 0 {

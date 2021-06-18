@@ -335,9 +335,10 @@ func testAccLoadBalancerResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.LoadBalancerName" {
-				return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.LoadBalancer" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
 		}
 
 		if len(res.LoadBalancerDescriptions) > 0 {

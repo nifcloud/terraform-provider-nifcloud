@@ -60,6 +60,9 @@ func TestAcc_HatobaFirewallGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"rule.",
+				},
 			},
 		},
 	})
@@ -247,9 +250,10 @@ func testAccHatobaFirewallGroupResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.FirewallGroup" {
-				return fmt.Errorf("failed GetFirewallGroupRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.FirewallGroup" {
+				return nil
 			}
+			return fmt.Errorf("failed GetFirewallGroupRequest: %s", err)
 		}
 	}
 	return nil

@@ -60,6 +60,9 @@ func TestAcc_KeyPair(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"public_key",
+				},
 			},
 		},
 	})
@@ -158,9 +161,10 @@ func testAccKeyPairResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.KeyPair" {
-				return fmt.Errorf("failed DescribeKeyPairsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.KeyPair" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeKeyPairsRequest: %s", err)
 		}
 
 		if len(res.KeySet) > 0 {

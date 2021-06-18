@@ -67,6 +67,9 @@ func TestAcc_DbSecurityGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"rule.",
+				},
 			},
 		},
 	})
@@ -237,8 +240,9 @@ func testAccDbSecurityGroupResourceDestroy(s *terraform.State) error {
 		if err != nil {
 			var awsErr awserr.Error
 			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBSecurityGroup" {
-				return fmt.Errorf("failed DescribeDBSecurityGroupsRequest: %s", err)
+				return nil
 			}
+			return fmt.Errorf("failed DescribeDBSecurityGroupsRequest: %s", err)
 		}
 
 		if len(res.DBSecurityGroups) > 0 {

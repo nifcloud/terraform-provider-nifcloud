@@ -229,9 +229,10 @@ func testAccSecurityGroupRuleResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.SecurityGroup" {
-				return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
 		}
 
 		if len(res.SecurityGroupInfo) > 0 {

@@ -95,7 +95,6 @@ func TestAcc_LoadBalancerListener(t *testing.T) {
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateIdFunc: testAccLoadBalancerListenerImportStateIDFunc(resourceName),
 				ImportStateVerify: true,
 			},
 		},
@@ -317,9 +316,10 @@ func testAccLoadBalancerListenerResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.LoadBalancerName" {
-				return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.LoadBalancer" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
 		}
 
 		if len(res.LoadBalancerDescriptions) > 0 {
@@ -377,26 +377,4 @@ func testSweepLoadBalancerListener(region string) error {
 		return err
 	}
 	return nil
-}
-
-func testAccLoadBalancerListenerImportStateIDFunc(resourceName string) resource.ImportStateIdFunc {
-	return func(s *terraform.State) (string, error) {
-
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return "", fmt.Errorf("not found: %s", resourceName)
-		}
-
-		lbID := rs.Primary.Attributes["load_balancer_name"]
-		lbPort := rs.Primary.Attributes["load_balancer_port"]
-		instancePort := rs.Primary.Attributes["instance_port"]
-
-		var parts []string
-		parts = append(parts, lbID)
-		parts = append(parts, lbPort)
-		parts = append(parts, instancePort)
-
-		id := strings.Join(parts, "_")
-		return id, nil
-	}
 }

@@ -2,11 +2,13 @@ package acc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -67,6 +69,9 @@ func TestAcc_CustomerGateway(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"type",
+				},
 			},
 		},
 	})
@@ -179,6 +184,10 @@ func testAccCustomerGatewayResourceDestroy(s *terraform.State) error {
 		}).Send(context.Background())
 
 		if err != nil {
+			var awsErr awserr.Error
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.CustomerGatewayId" {
+				return nil
+			}
 			return fmt.Errorf("failed DescribeCustomerGatewaysRequest: %s", err)
 		}
 

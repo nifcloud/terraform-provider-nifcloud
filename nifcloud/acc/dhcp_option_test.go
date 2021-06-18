@@ -183,9 +183,10 @@ func testAccDhcpOptionResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.DhcpOptionsId" {
-				return fmt.Errorf("failed DescribeDhcpOptionsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DhcpOptionsId" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeDhcpOptionsRequest: %s", err)
 		}
 
 		if len(res.DhcpOptionsSet) > 0 {

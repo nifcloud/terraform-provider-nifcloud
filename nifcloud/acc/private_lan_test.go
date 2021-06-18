@@ -2,11 +2,13 @@ package acc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
 	"testing"
 
+	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -17,8 +19,8 @@ import (
 )
 
 func init() {
-	resource.AddTestSweepers("nifcloud_private_lans", &resource.Sweeper{
-		Name: "nifcloud_private_lans",
+	resource.AddTestSweepers("nifcloud_private_lan", &resource.Sweeper{
+		Name: "nifcloud_private_lan",
 		F:    testSweepPrivateLan,
 		Dependencies: []string{
 			"nifcloud_router",
@@ -93,6 +95,10 @@ func testAccPrivateLanResourceDestroy(s *terraform.State) error {
 		}).Send(context.Background())
 
 		if err != nil {
+			var awsErr awserr.Error
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NetworkId" {
+				return nil
+			}
 			return fmt.Errorf("failed NiftyDescribePrivateLansRequest: %s", err)
 		}
 

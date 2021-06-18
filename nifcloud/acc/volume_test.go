@@ -68,6 +68,10 @@ func TestAcc_Volume(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"instance_id",
+					"reboot",
+				},
 			},
 		},
 	})
@@ -102,6 +106,10 @@ func TestAcc_Volume_Unique_Id(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"instance_unique_id",
+					"reboot",
+				},
 			},
 		},
 	})
@@ -255,9 +263,10 @@ func testAccVolumeResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.Volume" {
-				return fmt.Errorf("failed DescribeVolumesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Volume" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeVolumesRequest: %s", err)
 		}
 
 		if len(res.VolumeSet) > 0 {

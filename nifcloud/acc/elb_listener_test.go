@@ -87,7 +87,6 @@ func TestAcc_ELBListener(t *testing.T) {
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateIdFunc: testAccELBImportStateIDFunc(resourceName),
 				ImportStateVerify: true,
 			},
 		},
@@ -316,9 +315,10 @@ func testAccELBListenerResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
-				return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
+				return nil
 			}
+			return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
 		}
 
 		if len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) > 0 {

@@ -66,6 +66,9 @@ func TestAcc_NASSecurityGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"rule.",
+				},
 			},
 		},
 	})
@@ -245,8 +248,9 @@ func testAccNASSecurityGroupResourceDestroy(s *terraform.State) error {
 		if err != nil {
 			var awsErr awserr.Error
 			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameter.NotFound.NASSecurityGroupName" {
-				return fmt.Errorf("failed DescribeNASSecurityGroupsRequest: %s", err)
+				return nil
 			}
+			return fmt.Errorf("failed DescribeNASSecurityGroupsRequest: %s", err)
 		}
 
 		if len(res.NASSecurityGroups) > 0 {

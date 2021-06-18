@@ -241,9 +241,10 @@ func testAccSSLCertificateResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.SslCertificate" {
-				return fmt.Errorf("failed DesribeSslCertificates: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SslCertificate" {
+				return nil
 			}
+			return fmt.Errorf("failed DesribeSslCertificates: %s", err)
 		}
 
 		if len(res.CertsSet) > 0 {

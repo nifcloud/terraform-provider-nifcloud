@@ -79,6 +79,10 @@ func TestAcc_VpnGateway(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"network_name",
+					"route_table_id",
+				},
 			},
 		},
 	})
@@ -277,9 +281,10 @@ func testAccVpnGatewayResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.VpnGatewayId" {
-				return fmt.Errorf("failed listing vpn gateways: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.VpnGatewayId" {
+				return nil
 			}
+			return fmt.Errorf("failed listing vpn gateways: %s", err)
 		}
 
 		if len(res.VpnGatewaySet) > 0 {
