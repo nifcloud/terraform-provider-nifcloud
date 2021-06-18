@@ -73,8 +73,10 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 		}
 	}
 
-	if err := d.Set("route_table_id", vpnGateway.RouteTableId); err != nil {
-		return err
+	if _, ok := d.GetOk("route_table_id"); ok {
+		if err := d.Set("route_table_id", vpnGateway.RouteTableId); err != nil {
+			return err
+		}
 	}
 
 	if err := d.Set("route_table_association_id", vpnGateway.RouteTableAssociationId); err != nil {
