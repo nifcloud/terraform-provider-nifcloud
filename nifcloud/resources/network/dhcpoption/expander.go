@@ -20,7 +20,7 @@ func expandCreateDhcpOptionsInput(d *schema.ResourceData) *computing.CreateDhcpO
 		dc.ListOfRequestValue = append(dc.ListOfRequestValue, v)
 		dhcpConfiguration = append(dhcpConfiguration, dc)
 	}
-	if vs := d.Get("domain_name_servers").([]interface{}); len(vs) != 0 {
+	if vs := d.Get("domain_name_servers").(*schema.Set).List(); len(vs) != 0 {
 		dc := computing.RequestDhcpConfiguration{}
 		dc.Key = computing.KeyOfDhcpConfigurationForCreateDhcpOptionsDomainNameServers
 		for _, v := range vs {
@@ -28,7 +28,7 @@ func expandCreateDhcpOptionsInput(d *schema.ResourceData) *computing.CreateDhcpO
 		}
 		dhcpConfiguration = append(dhcpConfiguration, dc)
 	}
-	if vs := d.Get("ntp_servers").([]interface{}); len(vs) != 0 {
+	if vs := d.Get("ntp_servers").(*schema.Set).List(); len(vs) != 0 {
 		dc := computing.RequestDhcpConfiguration{}
 		dc.Key = computing.KeyOfDhcpConfigurationForCreateDhcpOptionsNtpServers
 		for _, v := range vs {
@@ -36,7 +36,7 @@ func expandCreateDhcpOptionsInput(d *schema.ResourceData) *computing.CreateDhcpO
 		}
 		dhcpConfiguration = append(dhcpConfiguration, dc)
 	}
-	if vs := d.Get("netbios_name_servers").([]interface{}); len(vs) != 0 {
+	if vs := d.Get("netbios_name_servers").(*schema.Set).List(); len(vs) != 0 {
 		dc := computing.RequestDhcpConfiguration{}
 		dc.Key = computing.KeyOfDhcpConfigurationForCreateDhcpOptionsNetbiosNameServers
 		for _, v := range vs {

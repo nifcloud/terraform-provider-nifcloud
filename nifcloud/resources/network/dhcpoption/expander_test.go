@@ -50,7 +50,7 @@ func TestExpandCreateDhcpOptionsInput(t *testing.T) {
 					},
 					{
 						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("netbios-name-servers"),
-						ListOfRequestValue: []string{"test_netbios_name_servers1", "test_netbios_name_servers2"},
+						ListOfRequestValue: []string{"test_netbios_name_servers2", "test_netbios_name_servers1"},
 					},
 					{
 						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("netbios-node-type"),
