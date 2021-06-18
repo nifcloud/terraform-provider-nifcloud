@@ -81,16 +81,12 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 	}
 
 	if listener.Listener.SSLPolicy != nil {
-		if _, ok := d.GetOk("ssl_policy_id"); ok {
-			if err := d.Set("ssl_policy_id", listener.Listener.SSLPolicy.SSLPolicyId); err != nil {
-				return err
-			}
+		if err := d.Set("ssl_policy_id", listener.Listener.SSLPolicy.SSLPolicyId); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("ssl_policy_name"); ok {
-			if err := d.Set("ssl_policy_name", listener.Listener.SSLPolicy.SSLPolicyName); err != nil {
-				return err
-			}
+		if err := d.Set("ssl_policy_name", listener.Listener.SSLPolicy.SSLPolicyName); err != nil {
+			return err
 		}
 	}
 

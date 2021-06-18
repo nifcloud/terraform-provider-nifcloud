@@ -21,6 +21,7 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating load_balancer: %s", err))
 	}
+
 	lbID := strings.Join([]string{
 		d.Get("load_balancer_name").(string),
 		strconv.Itoa(d.Get("load_balancer_port").(int)),

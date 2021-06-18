@@ -61,8 +61,6 @@ func populateLBFromImport(d *schema.ResourceData, importParts []string) error {
 		return err
 	}
 
-	d.SetId(lbName)
-
 	return nil
 }
 

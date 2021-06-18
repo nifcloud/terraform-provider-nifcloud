@@ -3,6 +3,8 @@ package loadbalancerlistener
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -22,6 +24,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer %s", err))
 		}
+
+		lbID := strings.Join([]string{
+			d.Get("load_balancer_name").(string),
+			strconv.Itoa(d.Get("load_balancer_port").(int)),
+			strconv.Itoa(d.Get("instance_port").(int)),
+		}, "_")
+		d.SetId(lbID)
 	}
 	if d.HasChanges(
 		"session_stickiness_policy_enable",
