@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -17,11 +18,11 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	res := describeResponses{}
 
-	eg, ctx := errgroup.WithContext(ctx)
+	eg, errCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
 		var err error
 		req := svc.DescribeSslCertificatesRequest(expandDescribeSSLCertificatesInput(d))
-		res.describeSSLCertificatesResponse, err = req.Send(ctx)
+		res.describeSSLCertificatesResponse, err = req.Send(errCtx)
 		if err != nil {
 			return fmt.Errorf("failed reading SSLCertificate: %s", err.Error())
 		}
@@ -31,7 +32,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	eg.Go(func() error {
 		var err error
 		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCert(d))
-		res.downloadSSLCertificateResponseForCert, err = req.Send(ctx)
+		res.downloadSSLCertificateResponseForCert, err = req.Send(errCtx)
 		if err != nil {
 			return checkNotFoundError(err)
 		}
@@ -41,27 +42,26 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	eg.Go(func() error {
 		var err error
 		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForKey(d))
-		res.downloadSSLCertificateResponseForKey, err = req.Send(ctx)
+		res.downloadSSLCertificateResponseForKey, err = req.Send(errCtx)
 		if err != nil {
 			return checkNotFoundError(err)
 		}
 		return nil
 	})
 
-	if _, ok := d.GetOk("ca"); ok {
-		eg.Go(func() error {
-			var err error
-			req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCA(d))
-			res.downloadSSLCertificateResponseForCA, err = req.Send(ctx)
-			if err != nil {
-				return checkNotFoundError(err)
-			}
-			return nil
-		})
-	}
-
 	if err := eg.Wait(); err != nil {
 		return diag.FromErr(err)
+	}
+
+	if res.describeSSLCertificatesResponse != nil &&
+		len(res.describeSSLCertificatesResponse.CertsSet) == 1 &&
+		nifcloud.BoolValue(res.describeSSLCertificatesResponse.CertsSet[0].CaState) {
+		var err error
+		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCA(d))
+		res.downloadSSLCertificateResponseForCA, err = req.Send(ctx)
+		if err != nil {
+			return diag.FromErr(checkNotFoundError(err))
+		}
 	}
 
 	if err := flatten(d, &res); err != nil {
