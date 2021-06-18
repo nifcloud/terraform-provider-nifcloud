@@ -10,6 +10,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygrouprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/volume"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/cluster"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/firewallgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nasinstance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nassecuritygroup"
@@ -91,6 +92,7 @@ func Provider() *schema.Provider {
 			"nifcloud_vpn_gateway":            vpngateway.New(),
 			"nifcloud_web_proxy":              webproxy.New(),
 			"nifcloud_hatoba_firewall_group":  firewallgroup.New(),
+			"nifcloud_hatoba_cluster":         cluster.New(),
 		},
 	}
 }
