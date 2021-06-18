@@ -3,6 +3,8 @@ package elblistener
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -20,7 +22,6 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}
 	} else {
-
 		mutexKV.Lock(getELBID(d))
 		defer mutexKV.Unlock(getELBID(d))
 	}
@@ -51,6 +52,14 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}
+
+		elbID := strings.Join([]string{
+			d.Get("elb_id").(string),
+			d.Get("protocol").(string),
+			strconv.Itoa(d.Get("lb_port").(int)),
+			strconv.Itoa(d.Get("instance_port").(int)),
+		}, "_")
+		d.SetId(elbID)
 	}
 
 	if d.HasChanges(
