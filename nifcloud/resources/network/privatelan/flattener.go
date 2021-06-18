@@ -44,5 +44,9 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribePrivateLansResp
 		return err
 	}
 
+	if err := d.Set("cidr_block", privateLan.CidrBlock); err != nil {
+		return err
+	}
+
 	return nil
 }
