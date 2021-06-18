@@ -17,10 +17,16 @@ func flatten(d *schema.ResourceData, res *computing.DescribeAddressesResponse) e
 	elasticIP := res.AddressesSet[0]
 
 	if nifcloud.StringValue(elasticIP.PrivateIpAddress) == d.Id() {
+		if err := d.Set("ip_type", true); err != nil {
+			return err
+		}
 		if err := d.Set("private_ip", elasticIP.PrivateIpAddress); err != nil {
 			return err
 		}
 	} else if nifcloud.StringValue(elasticIP.PublicIp) == d.Id() {
+		if err := d.Set("ip_type", false); err != nil {
+			return err
+		}
 		if err := d.Set("public_ip", elasticIP.PublicIp); err != nil {
 			return err
 		}
