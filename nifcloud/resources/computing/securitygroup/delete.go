@@ -46,6 +46,11 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}
 
+	err = svc.WaitUntilSecurityGroupDeleted(ctx, expandDescribeSecurityGroupsInput(d))
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed deleting for wait until deleted security group error: %s", err))
+	}
+
 	d.SetId("")
 	return nil
 }
