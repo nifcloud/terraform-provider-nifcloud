@@ -50,7 +50,7 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(6, 20),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the admin within 6-20 characters [0-9a-zA-Z]."),
 			),
 		},
 		"availability_zone": {
@@ -85,7 +85,7 @@ func newSchema() map[string]*schema.Schema {
 			Computed:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the instance_id within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"instance_type": {
@@ -161,7 +161,7 @@ func newSchema() map[string]*schema.Schema {
 			Sensitive:   true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(6, 32),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the password within 6-32 characters [0-9a-zA-Z]."),
 			),
 		},
 		"security_group": {

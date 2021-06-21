@@ -51,7 +51,7 @@ func newSchema() map[string]*schema.Schema {
 			Computed:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the elb_name within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"availability_zone": {
@@ -136,7 +136,10 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(0, 255),
-				validation.StringMatch(regexp.MustCompile(`^[/][\w/:%&~='<>@\?\(\)\.\,\+\-\*\[\]\^\{\}\|]*$`), ""),
+				validation.StringMatch(
+					regexp.MustCompile(`^[/][\w/:%&~='<>@\?\(\)\.\,\+\-\*\[\]\^\{\}\|]*$`),
+					"Enter the health_check_path within 0-255 characters",
+				),
 			),
 		},
 		"health_check_expectation_http_code": {
@@ -215,7 +218,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Description:  "The sorry page redirect url.",
 			Optional:     true,
-			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^(https?):\/\/.+$`), ""),
+			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^(https?):\/\/.+$`), "Invalid format for a sorry_page_redirect_url"),
 		},
 		"route_table_id": {
 			Type:        schema.TypeString,

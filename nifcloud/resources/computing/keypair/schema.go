@@ -41,7 +41,7 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(6, 32),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the key_name within 6-32 characters [0-9a-zA-Z]."),
 			),
 		},
 		"description": {

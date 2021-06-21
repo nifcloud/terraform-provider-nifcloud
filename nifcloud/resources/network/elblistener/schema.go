@@ -112,7 +112,10 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(0, 255),
-				validation.StringMatch(regexp.MustCompile(`^[/][\w/:%&~='<>@\?\(\)\.\,\+\-\*\[\]\^\{\}\|]*$`), ""),
+				validation.StringMatch(
+					regexp.MustCompile(`^[/][\w/:%&~='<>@\?\(\)\.\,\+\-\*\[\]\^\{\}\|]*$`),
+					"Enter the health_check_path within 0-255 characters",
+				),
 			),
 		},
 		"health_check_expectation_http_code": {
@@ -160,7 +163,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Description:  "The sorry page redirect url.",
 			Optional:     true,
-			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^(https?):\/\/.+$`), ""),
+			ValidateFunc: validation.StringMatch(regexp.MustCompile(`^(https?):\/\/.+$`), "Invalid format for a sorry_page_redirect_url"),
 		},
 	}
 }
