@@ -19,6 +19,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
+	// lintignore:R019
 	if d.HasChanges(
 		"description",
 		"balancing_type",
@@ -63,6 +64,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
+	// lintignore:R019
 	if d.HasChanges(
 		"unhealthy_threshold",
 		"health_check_target",

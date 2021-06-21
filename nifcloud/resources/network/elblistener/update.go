@@ -26,6 +26,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		defer mutexKV.Unlock(getELBID(d))
 	}
 
+	// lintignore:R019
 	if d.HasChanges(
 		"description",
 		"balancing_type",
@@ -62,6 +63,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		d.SetId(elbID)
 	}
 
+	// lintignore:R019
 	if d.HasChanges(
 		"unhealthy_threshold",
 		"health_check_target",
