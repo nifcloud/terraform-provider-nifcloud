@@ -32,7 +32,7 @@ func TestAcc_PrivateLan(t *testing.T) {
 	var privateLan computing.PrivateLanSet
 
 	resourceName := "nifcloud_private_lan.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

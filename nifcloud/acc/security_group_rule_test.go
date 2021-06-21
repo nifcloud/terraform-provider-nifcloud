@@ -22,7 +22,7 @@ func TestAcc_SecurityGroupRule_Cidr(t *testing.T) {
 
 	resourceName := "nifcloud_security_group_rule.basic_cidr"
 
-	randName := prefix + acctest.RandStringFromCharSet(6, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(6)
 
 	fwName := randName + "1"
 	fwNameUpd := randName + "2"
@@ -69,7 +69,7 @@ func TestAcc_SecurityGroupRule_Source(t *testing.T) {
 
 	resourceName := "nifcloud_security_group_rule.basic_source"
 
-	randName := prefix + acctest.RandStringFromCharSet(6, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(6)
 
 	fwName := randName + "3"
 	fwNameUpd := randName + "4"

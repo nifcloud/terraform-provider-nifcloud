@@ -30,7 +30,7 @@ func TestAcc_SSLCertificate(t *testing.T) {
 	var sslCertificate computing.CertsSet
 
 	resourceName := "nifcloud_ssl_certificate.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(10)
 
 	caKey := helper.GeneratePrivateKey(t, 4096)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)

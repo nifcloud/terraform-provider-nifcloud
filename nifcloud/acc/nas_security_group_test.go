@@ -33,7 +33,7 @@ func TestAcc_NASSecurityGroup(t *testing.T) {
 	var nasSecurityGroup nas.NASSecurityGroup
 
 	resourceName := "nifcloud_nas_security_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

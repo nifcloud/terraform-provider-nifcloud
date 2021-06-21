@@ -32,7 +32,7 @@ func TestAcc_CustomerGateway(t *testing.T) {
 	var customerGateway computing.CustomerGatewaySet
 
 	resourceName := "nifcloud_customer_gateway.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

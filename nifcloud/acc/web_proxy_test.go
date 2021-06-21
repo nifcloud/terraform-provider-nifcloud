@@ -29,7 +29,7 @@ func TestAcc_WebProxy(t *testing.T) {
 	var webProxy computing.WebProxyOfNiftyDescribeWebProxies
 
 	resourceName := "nifcloud_web_proxy.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

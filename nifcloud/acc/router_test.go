@@ -32,7 +32,7 @@ func TestAcc_Router(t *testing.T) {
 	var router computing.RouterSetOfNiftyDescribeRouters
 
 	resourceName := "nifcloud_router.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

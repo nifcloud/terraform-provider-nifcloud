@@ -32,7 +32,7 @@ func TestAcc_DbSecurityGroup(t *testing.T) {
 	var dbSecurityGroup rdb.DBSecurityGroup
 
 	resourceName := "nifcloud_db_security_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

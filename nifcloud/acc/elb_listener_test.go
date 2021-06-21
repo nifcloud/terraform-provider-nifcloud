@@ -22,7 +22,7 @@ func TestAcc_ELBListener(t *testing.T) {
 	var listener computing.ListenerOfNiftyDescribeElasticLoadBalancers
 
 	resourceName := "nifcloud_elb_listener.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	caKey := helper.GeneratePrivateKey(t, 2048)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)

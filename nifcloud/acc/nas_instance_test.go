@@ -30,7 +30,7 @@ func TestAcc_NASInstance_NFS(t *testing.T) {
 	var nasInstance nas.NASInstance
 
 	resourceName := "nifcloud_nas_instance.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -82,7 +82,7 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 	var nasInstance nas.NASInstance
 
 	resourceName := "nifcloud_nas_instance.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

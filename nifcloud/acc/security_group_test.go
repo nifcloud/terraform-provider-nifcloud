@@ -33,7 +33,7 @@ func TestAcc_SecurityGroup(t *testing.T) {
 	var securityGroup computing.SecurityGroupInfo
 
 	resourceName := "nifcloud_security_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

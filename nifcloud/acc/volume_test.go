@@ -29,7 +29,7 @@ func TestAcc_Volume(t *testing.T) {
 	var volume computing.VolumeSet
 
 	resourceName := "nifcloud_volume.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -81,7 +81,7 @@ func TestAcc_Volume_Unique_Id(t *testing.T) {
 	var volume computing.VolumeSet
 
 	resourceName := "nifcloud_volume.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

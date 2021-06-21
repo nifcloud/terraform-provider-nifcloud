@@ -32,7 +32,7 @@ func TestAcc_NetworkInterface(t *testing.T) {
 	var networkInterface computing.NetworkInterfaceSetOfDescribeNetworkInterfaces
 
 	resourceName := "nifcloud_network_interface.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

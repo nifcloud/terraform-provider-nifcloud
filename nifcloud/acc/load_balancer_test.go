@@ -29,11 +29,11 @@ func init() {
 func TestAcc_LoadBalancer(t *testing.T) {
 	var loadBalancer computing.LoadBalancerDescriptions
 
-	instanceName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	instanceName := prefix + acctest.RandString(7)
 
 	resourceName := "nifcloud_load_balancer.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
-	sshKey := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
+	sshKey := prefix + acctest.RandString(7)
 
 	caKey := helper.GeneratePrivateKey(t, 2048)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)

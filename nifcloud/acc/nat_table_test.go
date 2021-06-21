@@ -30,7 +30,7 @@ func TestAcc_NatTable(t *testing.T) {
 	var natTable computing.NatTableSet
 
 	resourceName := "nifcloud_nat_table.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

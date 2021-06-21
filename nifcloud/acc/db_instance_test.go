@@ -32,7 +32,7 @@ func TestAcc_DBInstance(t *testing.T) {
 	resourceNameReplica := "nifcloud_db_instance.replica"
 	resourceNameRestore := "nifcloud_db_instance.restore"
 
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

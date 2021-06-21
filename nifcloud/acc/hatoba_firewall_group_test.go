@@ -29,7 +29,7 @@ func TestAcc_HatobaFirewallGroup(t *testing.T) {
 	var firewallGroup hatoba.FirewallGroupResponse
 
 	resourceName := "nifcloud_hatoba_firewall_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

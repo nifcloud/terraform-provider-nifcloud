@@ -32,7 +32,7 @@ func TestAcc_DBParameterGroup(t *testing.T) {
 	var group rdb.DBParameterGroup
 
 	resourceName := "nifcloud_db_parameter_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(10)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

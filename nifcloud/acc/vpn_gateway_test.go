@@ -32,7 +32,7 @@ func TestAcc_VpnGateway(t *testing.T) {
 	var vpnGateway computing.VpnGatewaySetOfDescribeVpnGateways
 
 	resourceName := "nifcloud_vpn_gateway.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

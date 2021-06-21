@@ -29,7 +29,7 @@ func TestAcc_KeyPair(t *testing.T) {
 	var keyPair computing.KeySet
 
 	resourceName := "nifcloud_key_pair.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(10)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

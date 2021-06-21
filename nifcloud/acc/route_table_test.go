@@ -31,7 +31,7 @@ func TestAcc_RouteTable(t *testing.T) {
 	var routeTable computing.RouteTableSet
 
 	resourceName := "nifcloud_route_table.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
