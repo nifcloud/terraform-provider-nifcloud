@@ -38,6 +38,7 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
+	// lintignore:R018
 	time.Sleep(waiterInitialDelayForCreate * time.Second)
 
 	// wait for AssociateId.
