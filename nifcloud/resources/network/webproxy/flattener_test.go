@@ -46,11 +46,11 @@ func TestFlatten(t *testing.T) {
 								RouterName:  nifcloud.String("test_router_name"),
 								Description: nifcloud.String("test_description"),
 								ListenPort:  nifcloud.String("test_listen_port"),
-								ListenInterface: &computing.ListenInterfaceOfNiftyDescribeWebProxies{
+								ListenInterface: &computing.ListenInterface{
 									NetworkName: nifcloud.String("test_listen_interface_network_name"),
 									NetworkId:   nifcloud.String("test_listen_interface_network_id"),
 								},
-								BypassInterface: &computing.BypassInterfaceOfNiftyDescribeWebProxies{
+								BypassInterface: &computing.BypassInterface{
 									NetworkName: nifcloud.String("test_bypass_interface_network_name"),
 									NetworkId:   nifcloud.String("test_bypass_interface_network_id"),
 								},

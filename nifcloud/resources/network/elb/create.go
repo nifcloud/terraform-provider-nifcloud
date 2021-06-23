@@ -26,7 +26,7 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed describe elb: %s", err))
 	}
 
-	elbID := res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0].ElasticLoadBalancerId
+	elbID := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0].ElasticLoadBalancerId
 	d.SetId(nifcloud.StringValue(elbID))
 
 	return update(ctx, d, meta)

@@ -49,7 +49,7 @@ func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInpu
 		Admin:                 nifcloud.String(d.Get("admin").(string)),
 		Password:              nifcloud.String(d.Get("password").(string)),
 		Agreement:             nifcloud.Bool(true),
-		UserData: &computing.RequestUserDataOfRunInstances{
+		UserData: &computing.RequestUserData{
 			Content:  nifcloud.String(base64.StdEncoding.EncodeToString([]byte(d.Get("user_data").(string)))),
 			Encoding: nifcloud.String("base64"),
 		},
@@ -143,10 +143,10 @@ func expandModifyInstanceAttributeInputForSecurityGroup(d *schema.ResourceData) 
 }
 
 func expandNiftyUpdateInstanceNetworkInterfacesInput(d *schema.ResourceData) *computing.NiftyUpdateInstanceNetworkInterfacesInput {
-	var networkInterface []computing.RequestNetworkInterfaceOfNiftyUpdateInstanceNetworkInterfaces
+	var networkInterface []computing.RequestNetworkInterface
 	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
 		if v, ok := ni.(map[string]interface{}); ok {
-			n := computing.RequestNetworkInterfaceOfNiftyUpdateInstanceNetworkInterfaces{}
+			n := computing.RequestNetworkInterface{}
 			if row, ok := v["network_id"]; ok {
 				n.NetworkId = nifcloud.String(row.(string))
 			}

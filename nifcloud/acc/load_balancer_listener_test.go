@@ -132,11 +132,11 @@ func testAccCheckLoadBalancerListenerExists(lbName string, lbPort, instancePort 
 		if err != nil {
 			return err
 		}
-		if res == nil || len(res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.DescribeLoadBalancersOutput.LoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", lbName)
 		}
 
-		foundLoadBalancer := res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions[0]
+		foundLoadBalancer := res.DescribeLoadBalancersOutput.LoadBalancerDescriptions[0]
 
 		if nifcloud.StringValue(foundLoadBalancer.LoadBalancerName) != lbName {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", lbName)
@@ -345,7 +345,7 @@ func testSweepLoadBalancerListener(region string) error {
 	}
 
 	var sweepLBs []lb
-	for _, b := range res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions {
+	for _, b := range res.DescribeLoadBalancersOutput.LoadBalancerDescriptions {
 		for _, l := range b.ListenerDescriptions {
 			if strings.HasPrefix(nifcloud.StringValue(b.LoadBalancerName), prefix) {
 				sweepLBs = append(sweepLBs, lb{

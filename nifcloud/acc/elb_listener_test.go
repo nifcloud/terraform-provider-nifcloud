@@ -135,11 +135,11 @@ func testAccCheckELBListenerExists(n, elbName, protocol string, InstancePort, LB
 			return err
 		}
 
-		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0]
+		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0]
 		foundListener := foundELB.ElasticLoadBalancerListenerDescriptions[0].Listener
 
 		if nifcloud.StringValue(foundELB.ElasticLoadBalancerId) != strings.Split(saved.Primary.ID, "_")[0] {
@@ -321,7 +321,7 @@ func testAccELBListenerResourceDestroy(s *terraform.State) error {
 			return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
 		}
 
-		if len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) > 0 {
+		if len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) > 0 {
 			return fmt.Errorf("elb listener (%s) still exists", rs.Primary.ID)
 		}
 	}

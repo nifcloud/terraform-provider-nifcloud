@@ -179,11 +179,11 @@ func testAccCheckELBExists(n string, elb *computing.ElasticLoadBalancerDescripti
 			return err
 		}
 
-		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0]
+		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0]
 
 		if nifcloud.StringValue(foundELB.ElasticLoadBalancerId) != saved.Primary.ID {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
@@ -407,7 +407,7 @@ func testAccELBResourceDestroy(s *terraform.State) error {
 			return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
 		}
 
-		if len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) > 0 {
+		if len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) > 0 {
 			return fmt.Errorf("elb (%s) still exists", rs.Primary.ID)
 		}
 	}
@@ -431,7 +431,7 @@ func testSweepELB(region string) error {
 	}
 
 	var sweepELBs []elb
-	for _, e := range res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions {
+	for _, e := range res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions {
 		for _, l := range e.ElasticLoadBalancerListenerDescriptions {
 			if strings.HasPrefix(nifcloud.StringValue(e.ElasticLoadBalancerName), prefix) {
 				sweepELBs = append(sweepELBs, elb{

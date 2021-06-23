@@ -90,10 +90,10 @@ func TestExpandRevokeSecurityGroupIngressInputList(t *testing.T) {
 							InOut:      computing.InOutOfIpPermissionsForRevokeSecurityGroupIngressIn,
 							FromPort:   nifcloud.Int64(1),
 							ToPort:     nifcloud.Int64(65535),
-							ListOfRequestIpRanges: []computing.RequestIpRangesOfRevokeSecurityGroupIngress{
+							ListOfRequestIpRanges: []computing.RequestIpRanges{
 								{CidrIp: nifcloud.String("0.0.0.0/0")},
 							},
-							ListOfRequestGroups: []computing.RequestGroupsOfRevokeSecurityGroupIngress{
+							ListOfRequestGroups: []computing.RequestGroups{
 								{GroupName: nifcloud.String("test_source_security_group_name")},
 							},
 						},

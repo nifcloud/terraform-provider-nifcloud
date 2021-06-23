@@ -100,9 +100,9 @@ func expandRegisterInstancesWithLoadBalancerInput(
 	d *schema.ResourceData,
 	list []interface{},
 ) *computing.RegisterInstancesWithLoadBalancerInput {
-	var instances []computing.RequestInstancesOfRegisterInstancesWithLoadBalancer
+	var instances []computing.RequestInstances
 	for _, i := range list {
-		instances = append(instances, computing.RequestInstancesOfRegisterInstancesWithLoadBalancer{
+		instances = append(instances, computing.RequestInstances{
 			InstanceId: nifcloud.String(i.(string)),
 		})
 	}

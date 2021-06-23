@@ -338,7 +338,7 @@ func TestExpandNiftyModifyElasticLoadBalancerAttributesInput(t *testing.T) {
 							ExpirationPeriod: nifcloud.Int64(1),
 						},
 					},
-					RequestSorryPage: &computing.RequestSorryPageOfNiftyModifyElasticLoadBalancerAttributes{
+					RequestSorryPage: &computing.RequestSorryPage{
 						Enable:      nifcloud.Bool(true),
 						RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
 					},
@@ -385,7 +385,7 @@ func TestExpandNiftyModifyElasticLoadBalancerAttributesInput(t *testing.T) {
 							ExpirationPeriod: nifcloud.Int64(1),
 						},
 					},
-					RequestSorryPage: &computing.RequestSorryPageOfNiftyModifyElasticLoadBalancerAttributes{
+					RequestSorryPage: &computing.RequestSorryPage{
 						Enable:      nifcloud.Bool(true),
 						RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
 					},

@@ -106,7 +106,7 @@ func expandNiftyModifyElasticLoadBalancerAttributesInput(d *schema.ResourceData)
 					ExpirationPeriod: nifcloud.Int64(int64(d.Get("session_stickiness_policy_expiration_period").(int))),
 				},
 			},
-			RequestSorryPage: &computing.RequestSorryPageOfNiftyModifyElasticLoadBalancerAttributes{
+			RequestSorryPage: &computing.RequestSorryPage{
 				Enable:      nifcloud.Bool(d.Get("sorry_page_enable").(bool)),
 				RedirectUrl: nifcloud.String(d.Get("sorry_page_redirect_url").(string)),
 			},

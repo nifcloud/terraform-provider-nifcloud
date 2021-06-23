@@ -11,11 +11,11 @@ import (
 
 func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersResponse) error {
 
-	if res == nil || len(res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions) == 0 {
+	if res == nil || len(res.DescribeLoadBalancersOutput.LoadBalancerDescriptions) == 0 {
 		d.SetId("")
 		return nil
 	}
-	loadBalancer := res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions[0]
+	loadBalancer := res.DescribeLoadBalancersOutput.LoadBalancerDescriptions[0]
 	if nifcloud.StringValue(loadBalancer.LoadBalancerName) != d.Get("load_balancer_name") {
 		return fmt.Errorf("unable to find load balancer within: %#v", loadBalancer.LoadBalancerName)
 	}

@@ -49,44 +49,42 @@ func TestFlatten(t *testing.T) {
 				d: rd,
 				res: &computing.NiftyDescribeElasticLoadBalancersResponse{
 					NiftyDescribeElasticLoadBalancersOutput: &computing.NiftyDescribeElasticLoadBalancersOutput{
-						NiftyDescribeElasticLoadBalancersResult: &computing.NiftyDescribeElasticLoadBalancersResult{
-							ElasticLoadBalancerDescriptions: []computing.ElasticLoadBalancerDescriptions{
-								{
-									ElasticLoadBalancerId: nifcloud.String("test-elb-id"),
-									ElasticLoadBalancerListenerDescriptions: []computing.ElasticLoadBalancerListenerDescriptions{
-										{
-											Listener: &computing.ListenerOfNiftyDescribeElasticLoadBalancers{
-												Description:             nifcloud.String("test_description"),
-												BalancingType:           nifcloud.Int64(1),
-												InstancePort:            nifcloud.Int64(1),
-												Protocol:                nifcloud.String("test_protocol"),
-												ElasticLoadBalancerPort: nifcloud.Int64(1),
-												SSLCertificateId:        nifcloud.String("test_ssl_certificate_id"),
-												HealthCheck: &computing.HealthCheckOfNiftyDescribeElasticLoadBalancers{
-													UnhealthyThreshold: nifcloud.Int64(1),
-													Target:             nifcloud.String("test_health_check_target"),
-													Interval:           nifcloud.Int64(1),
-													Path:               nifcloud.String("test_health_check_path"),
-													Expectation: []computing.ExpectationOfNiftyDescribeElasticLoadBalancers{
-														{
-															HttpCode: nifcloud.Int64(1),
-														},
-													},
-												},
-												Instances: []computing.InstancesOfNiftyDescribeElasticLoadBalancers{
+						ElasticLoadBalancerDescriptions: []computing.ElasticLoadBalancerDescriptions{
+							{
+								ElasticLoadBalancerId: nifcloud.String("test-elb-id"),
+								ElasticLoadBalancerListenerDescriptions: []computing.ElasticLoadBalancerListenerDescriptions{
+									{
+										Listener: &computing.ListenerOfNiftyDescribeElasticLoadBalancers{
+											Description:             nifcloud.String("test_description"),
+											BalancingType:           nifcloud.Int64(1),
+											InstancePort:            nifcloud.Int64(1),
+											Protocol:                nifcloud.String("test_protocol"),
+											ElasticLoadBalancerPort: nifcloud.Int64(1),
+											SSLCertificateId:        nifcloud.String("test_ssl_certificate_id"),
+											HealthCheck: &computing.HealthCheckOfNiftyDescribeElasticLoadBalancers{
+												UnhealthyThreshold: nifcloud.Int64(1),
+												Target:             nifcloud.String("test_health_check_target"),
+												Interval:           nifcloud.Int64(1),
+												Path:               nifcloud.String("test_health_check_path"),
+												Expectation: []computing.Expectation{
 													{
-														InstanceId: nifcloud.String("test_instances"),
+														HttpCode: nifcloud.Int64(1),
 													},
 												},
-												SessionStickinessPolicy: &computing.SessionStickinessPolicyOfNiftyDescribeElasticLoadBalancers{
-													Enabled:          nifcloud.Bool(true),
-													Method:           nifcloud.Int64(1),
-													ExpirationPeriod: nifcloud.Int64(1),
+											},
+											Instances: []computing.Instances{
+												{
+													InstanceId: nifcloud.String("test_instances"),
 												},
-												SorryPage: &computing.SorryPageOfNiftyDescribeElasticLoadBalancers{
-													Enabled:     nifcloud.Bool(true),
-													RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
-												},
+											},
+											SessionStickinessPolicy: &computing.SessionStickinessPolicyOfNiftyDescribeElasticLoadBalancers{
+												Enabled:          nifcloud.Bool(true),
+												Method:           nifcloud.Int64(1),
+												ExpirationPeriod: nifcloud.Int64(1),
+											},
+											SorryPage: &computing.SorryPageOfNiftyDescribeElasticLoadBalancers{
+												Enabled:     nifcloud.Bool(true),
+												RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
 											},
 										},
 									},
@@ -103,9 +101,7 @@ func TestFlatten(t *testing.T) {
 			args: args{
 				d: wantNotFoundRd,
 				res: &computing.NiftyDescribeElasticLoadBalancersResponse{
-					NiftyDescribeElasticLoadBalancersOutput: &computing.NiftyDescribeElasticLoadBalancersOutput{
-						NiftyDescribeElasticLoadBalancersResult: &computing.NiftyDescribeElasticLoadBalancersResult{},
-					},
+					NiftyDescribeElasticLoadBalancersOutput: &computing.NiftyDescribeElasticLoadBalancersOutput{},
 				},
 			},
 			want: wantNotFoundRd,
