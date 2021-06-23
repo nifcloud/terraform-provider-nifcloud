@@ -167,6 +167,7 @@ func newSchema() map[string]*schema.Schema {
 			Description:  "The type of NAS. (0: standard type, 1: high-speed type)",
 			Optional:     true,
 			Computed:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.IntInSlice([]int{0, 1}),
 		},
 	}
