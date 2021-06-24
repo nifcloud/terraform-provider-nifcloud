@@ -85,6 +85,7 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeBool,
 						Description: "The flag to enable or disable DHCP.",
 						Optional:    true,
+						Default:     true,
 					},
 					"dhcp_config_id": {
 						Type:        schema.TypeString,
