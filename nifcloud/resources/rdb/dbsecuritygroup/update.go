@@ -35,13 +35,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				return diag.FromErr(fmt.Errorf("failed updating db security group to delete rule: %s", err))
 			}
 
-			if rule["cidr_ip"] != "" {
-				err = svc.WaitUntilDBSecurityGroupIPRangesEmptied(ctx, expandDescribeDBSecurityGroupsInput(d))
-			} else if rule["security_group_name"] != "" {
-				err = svc.WaitUntilDBSecurityGroupEC2SecurityGroupsEmptied(ctx, expandDescribeDBSecurityGroupsInput(d))
-			}
-
-			if err != nil {
+			if err := waitUntilDBSecurityGroupRuleRevoked(ctx, d, svc, rule); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait db security group available: %s", err))
 			}
 		}
