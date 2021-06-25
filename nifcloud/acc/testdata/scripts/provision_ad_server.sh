@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+function change_apt_repository () {
+  sed -i.bak -e "s%http://[^ ]\+%http://ftp.riken.go.jp/Linux/ubuntu/%g" /etc/apt/sources.list
+}
+
+function disable_auto_update () {
+  echo 'APT::Periodic::Enable "0";' | tee /etc/apt/apt.conf.d/99disable-periodic
+}
+
 function configure_ad_server () {
   HOST_NAME="AD01"
   DOMAIN="TFACC"
@@ -51,4 +59,6 @@ EOF
   systemctl restart samba-ad-dc.service
 }
 
+disable_auto_update
+change_apt_repository
 configure_ad_server
