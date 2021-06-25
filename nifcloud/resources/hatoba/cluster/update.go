@@ -28,12 +28,12 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			return diag.FromErr(fmt.Errorf("failed updating Hatoba cluster: %s", err))
 		}
 
+		d.SetId(d.Get("name").(string))
+
 		err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for Hatoba cluster to become ready: %s", err))
 		}
-
-		d.SetId(d.Get("name").(string))
 	}
 
 	if d.HasChange("node_pools") {
