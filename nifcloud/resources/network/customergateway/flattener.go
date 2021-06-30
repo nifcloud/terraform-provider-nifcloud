@@ -43,5 +43,20 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 	if err := d.Set("lan_side_cidr_block", customerGateway.NiftyLanSideCidrBlock); err != nil {
 		return err
 	}
+
+	var connectionType string
+	if raw, ok := d.GetOk("type"); ok {
+		connectionType = raw.(string)
+	} else {
+		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) == "" {
+			connectionType = "L2TPv3 / IPsec"
+		} else {
+			connectionType = "IPsec"
+		}
+	}
+
+	if err := d.Set("type", connectionType); err != nil {
+		return err
+	}
 	return nil
 }

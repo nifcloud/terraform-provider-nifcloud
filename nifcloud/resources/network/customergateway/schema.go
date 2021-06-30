@@ -58,6 +58,7 @@ func newSchema() map[string]*schema.Schema {
 			Description:  "The type.",
 			Optional:     true,
 			ForceNew:     true,
+			Computed:     true,
 			ValidateFunc: validation.StringInSlice([]string{"IPsec", "IPsec VTI", "L2TPv3 / IPsec"}, false),
 		},
 		"ip_address": {
