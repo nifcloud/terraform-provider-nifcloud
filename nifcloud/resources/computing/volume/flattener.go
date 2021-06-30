@@ -47,14 +47,12 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVolumesResponse) err
 	if len(res.VolumeSet[0].AttachmentSet) != 0 {
 		instance := res.VolumeSet[0].AttachmentSet[0]
 
-		if _, ok := d.GetOk("instance_id"); ok {
-			if err := d.Set("instance_id", instance.InstanceId); err != nil {
-				return err
-			}
-		}
-
 		if _, ok := d.GetOk("instance_unique_id"); ok {
 			if err := d.Set("instance_unique_id", instance.InstanceUniqueId); err != nil {
+				return err
+			}
+		} else {
+			if err := d.Set("instance_id", instance.InstanceId); err != nil {
 				return err
 			}
 		}
