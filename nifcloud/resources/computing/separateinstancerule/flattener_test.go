@@ -39,7 +39,7 @@ func TestFlatten(t *testing.T) {
 						SeparateInstanceRulesInfo: []computing.SeparateInstanceRulesInfo{
 							{
 								SeparateInstanceRuleName:        nifcloud.String("test_separate_name"),
-								AvailabilityZone:                nifcloud.String(("test_availability_zone")),
+								AvailabilityZone:                nifcloud.String("test_availability_zone"),
 								SeparateInstanceRuleDescription: nifcloud.String("test_description"),
 								InstancesSet: []computing.InstancesSetOfNiftyDescribeSeparateInstanceRules{
 									{
@@ -101,4 +101,3 @@ func TestFlatten(t *testing.T) {
 		})
 	}
 }
-

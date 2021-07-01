@@ -27,7 +27,6 @@ func New() *schema.Resource {
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Default: schema.DefaultTimeout(5 * time.Minute),
-			Update:  schema.DefaultTimeout(20 * time.Minute),
 		},
 	}
 }
@@ -37,8 +36,7 @@ func newSchema() map[string]*schema.Schema {
 		"name": {
 			Type:        schema.TypeString,
 			Description: "The separate instance rule name.",
-			Optional:    true,
-			Computed:    true,
+			Required:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
 				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
@@ -48,7 +46,6 @@ func newSchema() map[string]*schema.Schema {
 			Type:        schema.TypeList,
 			Description: "The instance name.",
 			Optional:    true,
-			ForceNew:    true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString,
 				ValidateFunc: validation.All(
@@ -62,15 +59,13 @@ func newSchema() map[string]*schema.Schema {
 			Type:          schema.TypeList,
 			Description:   "The unique ID of instance.",
 			Optional:      true,
-			ForceNew:      true,
 			Elem:          &schema.Schema{Type: schema.TypeString},
 			ConflictsWith: []string{"instance_id"},
 		},
 		"availability_zone": {
 			Type:        schema.TypeString,
 			Description: "The availability zone.",
-			Optional:    true,
-			Computed:    true,
+			Required:    true,
 			ForceNew:    true,
 		},
 		"description": {

@@ -42,19 +42,19 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeSeparateInstanc
 }
 
 func flattenInstanceID(instancesSet []computing.InstancesSetOfNiftyDescribeSeparateInstanceRules) []string {
-	res := make([]string, len(instancesSet))
+	ids := make([]string, len(instancesSet))
 
-	for i, InstancesSetOfNiftyDescribeSeparateInstanceRules := range instancesSet {
-		res[i] = nifcloud.StringValue(InstancesSetOfNiftyDescribeSeparateInstanceRules.InstanceId)
+	for i, InstanceSetList := range instancesSet {
+		ids[i] = nifcloud.StringValue(InstanceSetList.InstanceId)
 	}
-	return res
+	return ids
 }
 
 func flattenInstanceUniqueID(instancesSet []computing.InstancesSetOfNiftyDescribeSeparateInstanceRules) []string {
-	res := make([]string, len(instancesSet))
+	ids := make([]string, len(instancesSet))
 
-	for i, InstancesSetOfNiftyDescribeSeparateInstanceRules := range instancesSet {
-		res[i] = nifcloud.StringValue(InstancesSetOfNiftyDescribeSeparateInstanceRules.InstanceUniqueId)
+	for i, InstanceSetList := range instancesSet {
+		ids[i] = nifcloud.StringValue(InstanceSetList.InstanceUniqueId)
 	}
-	return res
+	return ids
 }

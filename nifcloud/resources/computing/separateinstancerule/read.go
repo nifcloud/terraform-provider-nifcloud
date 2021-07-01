@@ -21,7 +21,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	if err != nil {
 		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SeparateInstanceRules" {
+		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Instance" {
 			d.SetId("")
 			return nil
 		}

@@ -7,7 +7,6 @@ import (
 )
 
 func expandNiftyCreateSeparateInstanceRuleInput(d *schema.ResourceData) *computing.NiftyCreateSeparateInstanceRuleInput {
-
 	return &computing.NiftyCreateSeparateInstanceRuleInput{
 		SeparateInstanceRuleName:        nifcloud.String(d.Get("name").(string)),
 		SeparateInstanceRuleDescription: nifcloud.String(d.Get("description").(string)),
@@ -24,12 +23,12 @@ func expandInstanceIds(raw []interface{}) []string {
 		return nil
 	}
 
-	res := make([]string, len(raw))
+	ids := make([]string, len(raw))
 	for i, l := range raw {
-		res[i] = l.(string)
+		ids[i] = l.(string)
 	}
 
-	return res
+	return ids
 }
 
 func expandNiftyDescribeSeparateInstanceRulesInput(d *schema.ResourceData) *computing.NiftyDescribeSeparateInstanceRulesInput {
@@ -56,5 +55,65 @@ func expandNiftyUpdateSeparateInstanceRuleInputForDescription(d *schema.Resource
 	return &computing.NiftyUpdateSeparateInstanceRuleInput{
 		SeparateInstanceRuleName:              nifcloud.String(d.Id()),
 		SeparateInstanceRuleDescriptionUpdate: nifcloud.String(d.Get("description").(string)),
+	}
+}
+
+func expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(
+	d *schema.ResourceData,
+	list []interface{},
+) *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput {
+	var instanceids []string
+	for _, i := range list {
+		instanceids = append(instanceids, i.(string))
+	}
+
+	return &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
+		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		InstanceId:               instanceids,
+	}
+}
+
+func expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(
+	d *schema.ResourceData,
+	list []interface{},
+) *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput {
+	var instanceids []string
+	for _, i := range list {
+		instanceids = append(instanceids, i.(string))
+	}
+
+	return &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
+		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		InstanceId:               instanceids,
+	}
+}
+
+func expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(
+	d *schema.ResourceData,
+	list []interface{},
+) *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput {
+	var instanceuniqueids []string
+	for _, i := range list {
+		instanceuniqueids = append(instanceuniqueids, i.(string))
+	}
+
+	return &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
+		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		InstanceUniqueId:         instanceuniqueids,
+	}
+}
+
+func expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput(
+	d *schema.ResourceData,
+	list []interface{},
+) *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput {
+	var instanceuniqueids []string
+	for _, i := range list {
+		instanceuniqueids = append(instanceuniqueids, i.(string))
+	}
+
+	return &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
+		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		InstanceUniqueId:         instanceuniqueids,
 	}
 }

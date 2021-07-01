@@ -16,7 +16,6 @@ func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceId(t *testing.T) {
 		"description":       "test_description",
 		"instance_id":       []interface{}{"test_instance_id1", "test_instance_id2"},
 	})
-
 	rd.SetId("test_separate_name")
 
 	tests := []struct {
@@ -53,7 +52,6 @@ func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceUniqueId(t *testin
 		"description":        "test_description",
 		"instance_unique_id": []interface{}{"test_instance_unique_id1", "ttest_instance_unique_id2"},
 	})
-
 	rd.SetId("test_separate_name")
 
 	tests := []struct {
@@ -101,7 +99,7 @@ func TestExpandNiftyUpdateSeparateInstanceRuleInputForName(t *testing.T) {
 			args: dn,
 			want: &computing.NiftyUpdateSeparateInstanceRuleInput{
 				SeparateInstanceRuleName:       nifcloud.String("test_separate_name"),
-				SeparateInstanceRuleNameUpdate: nifcloud.String("test_separate_name"),
+				SeparateInstanceRuleNameUpdate: nifcloud.String("test_separate_name2"),
 			},
 		},
 	}
