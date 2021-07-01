@@ -67,12 +67,14 @@ func newSchema() map[string]*schema.Schema {
 						Type:         schema.TypeInt,
 						Description:  "The source port.",
 						Optional:     true,
+						Computed:     true,
 						ValidateFunc: validation.IntBetween(0, 65535),
 					},
 					"translation_port": {
 						Type:         schema.TypeInt,
 						Description:  "The translation port.",
 						Optional:     true,
+						Computed:     true,
 						ValidateFunc: validation.IntBetween(0, 65535),
 					},
 					"outbound_interface_network_id": {
@@ -117,6 +119,7 @@ func newSchema() map[string]*schema.Schema {
 						Type:         schema.TypeInt,
 						Description:  "The destination port.",
 						Optional:     true,
+						Computed:     true,
 						ValidateFunc: validation.IntBetween(0, 65535),
 					},
 					"translation_address": {
@@ -129,6 +132,7 @@ func newSchema() map[string]*schema.Schema {
 						Type:         schema.TypeInt,
 						Description:  "The translation port.",
 						Optional:     true,
+						Computed:     true,
 						ValidateFunc: validation.IntBetween(0, 65535),
 					},
 					"inbound_interface_network_id": {
