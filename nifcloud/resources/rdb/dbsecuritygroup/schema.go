@@ -43,7 +43,6 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Description: "The CIDR IP Address that allow access. Cannot be specified with `security_group_name` .",
 						Optional:    true,
-						ForceNew:    true,
 						ValidateDiagFunc: validator.Any(
 							validator.CIDRNetworkAddress,
 							validator.IPAddress,
@@ -53,7 +52,6 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Description: "The security group name that allow access. Cannot be specified with `cidr_ip` .",
 						Optional:    true,
-						ForceNew:    true,
 						ValidateFunc: validation.All(
 							validation.StringLenBetween(1, 15),
 							validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
