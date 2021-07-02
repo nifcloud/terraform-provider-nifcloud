@@ -60,60 +60,40 @@ func expandNiftyUpdateSeparateInstanceRuleInputForDescription(d *schema.Resource
 
 func expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(
 	d *schema.ResourceData,
-	list []interface{},
+	instanceIDs []string,
 ) *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput {
-	var instanceids []string
-	for _, i := range list {
-		instanceids = append(instanceids, i.(string))
-	}
-
 	return &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
 		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
-		InstanceId:               instanceids,
+		InstanceId:               instanceIDs,
 	}
 }
 
 func expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(
 	d *schema.ResourceData,
-	list []interface{},
+	instanceIDs []string,
 ) *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput {
-	var instanceids []string
-	for _, i := range list {
-		instanceids = append(instanceids, i.(string))
-	}
-
 	return &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
 		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
-		InstanceId:               instanceids,
+		InstanceId:               instanceIDs,
 	}
 }
 
 func expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(
 	d *schema.ResourceData,
-	list []interface{},
+	instanceUniqueIDs []string,
 ) *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput {
-	var instanceuniqueids []string
-	for _, i := range list {
-		instanceuniqueids = append(instanceuniqueids, i.(string))
-	}
-
 	return &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
 		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
-		InstanceUniqueId:         instanceuniqueids,
+		InstanceUniqueId:         instanceUniqueIDs,
 	}
 }
 
 func expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput(
 	d *schema.ResourceData,
-	list []interface{},
+	instanceUniqueIDs []string,
 ) *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput {
-	var instanceuniqueids []string
-	for _, i := range list {
-		instanceuniqueids = append(instanceuniqueids, i.(string))
-	}
-
 	return &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
 		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
-		InstanceUniqueId:         instanceuniqueids,
+		InstanceUniqueId:         instanceUniqueIDs,
 	}
 }

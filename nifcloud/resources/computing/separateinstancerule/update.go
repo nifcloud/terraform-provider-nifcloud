@@ -38,16 +38,11 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	if d.HasChange("instance_id") {
-		o, n := d.GetChange("instance_id")
-		os := o.(*schema.Set)
-		ns := n.(*schema.Set)
+		before, after := d.GetChange("instance_id")
+		removeList, addList := instanceChangeList(before, after)
 
-		addInstances := ns.Difference(os).List()
-		delInstances := os.Difference(ns).List()
-
-		if len(delInstances) > 0 {
-			input := expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(d, delInstances)
-
+		if len(removeList) > 0 {
+			input := expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(d, removeList)
 			req := svc.NiftyDeregisterInstancesFromSeparateInstanceRuleRequest(input)
 
 			_, err := req.Send(ctx)
@@ -56,10 +51,10 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			}
 		}
 
-		if len(addInstances) > 0 {
-			input := expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(d, addInstances)
-
+		if len(addList) > 0 {
+			input := expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(d, addList)
 			req := svc.NiftyRegisterInstancesWithSeparateInstanceRuleRequest(input)
+
 			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed registering instances with separate instance rule: %s", err))
@@ -68,16 +63,11 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	if d.HasChange("instance_unique_id") {
-		o, n := d.GetChange("instance_unique_id")
-		os := o.(*schema.Set)
-		ns := n.(*schema.Set)
+		before, after := d.GetChange("instance_unique_id")
+		removeList, addList := instanceChangeList(before, after)
 
-		addInstances := ns.Difference(os).List()
-		delInstances := os.Difference(ns).List()
-
-		if len(delInstances) > 0 {
-			input := expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput(d, delInstances)
-
+		if len(removeList) > 0 {
+			input := expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput(d, removeList)
 			req := svc.NiftyDeregisterInstancesFromSeparateInstanceRuleRequest(input)
 
 			_, err := req.Send(ctx)
@@ -86,10 +76,10 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			}
 		}
 
-		if len(addInstances) > 0 {
-			input := expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(d, addInstances)
-
+		if len(addList) > 0 {
+			input := expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(d, addList)
 			req := svc.NiftyRegisterInstancesWithSeparateInstanceRuleRequest(input)
+
 			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed registering instances with separate instance rule: %s", err))
@@ -98,4 +88,35 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	return read(ctx, d, meta)
+}
+
+func instanceChangeList(before interface{}, after interface{}) ([]string, []string) {
+	var addList, removeList []string
+	for _, b := range before.([]interface{}) {
+		found := false
+		for _, a := range after.([]interface{}) {
+			if a.(string) == b.(string) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			removeList = append(removeList, b.(string))
+		}
+	}
+
+	for _, a := range after.([]interface{}) {
+		found := false
+		for _, b := range before.([]interface{}) {
+			if a.(string) == b.(string) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			addList = append(addList, a.(string))
+		}
+	}
+
+	return removeList, addList
 }
