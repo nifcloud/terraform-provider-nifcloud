@@ -5,26 +5,21 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 )
 
 func waitUntilDBSecurityGroupRuleRevoked(ctx context.Context, d *schema.ResourceData, svc *rdb.Client, rule map[string]interface{}) error {
-	const maxRetryCount = 20
-	const pollInterval = 10 * time.Second
+	const timeout = 200 * time.Second
 
-	retryCount := 0
-	for {
-		if retryCount > maxRetryCount {
-			return fmt.Errorf("max retry count exceeded about waiting db security group rule revoked: rule -> %v", rule)
-		}
-
+	err := resource.RetryContext(ctx, timeout, func() *resource.RetryError {
 		input := expandDescribeDBSecurityGroupsInput(d)
 		req := svc.DescribeDBSecurityGroupsRequest(input)
 		res, err := req.Send(ctx)
 		if err != nil {
-			return err
+			return resource.NonRetryableError(err)
 		}
 
 		targetExists := false
@@ -50,7 +45,8 @@ func waitUntilDBSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resource
 			return nil
 		}
 
-		time.Sleep(pollInterval)
-		retryCount++
-	}
+		return resource.RetryableError(fmt.Errorf("Ecpected rule to revoked but was in state revoking"))
+	})
+
+	return err
 }
