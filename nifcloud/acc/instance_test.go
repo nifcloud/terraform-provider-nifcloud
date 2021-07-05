@@ -32,7 +32,7 @@ func TestAcc_Instance(t *testing.T) {
 	var instance computing.InstancesSet
 
 	resourceName := "nifcloud_instance.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -90,6 +90,9 @@ func TestAcc_Instance(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"user_data",
+				},
 			},
 		},
 	})
@@ -99,7 +102,7 @@ func TestAcc_Instance_windows(t *testing.T) {
 	var instance computing.InstancesSet
 
 	resourceName := "nifcloud_instance.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -122,6 +125,12 @@ func TestAcc_Instance_windows(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"admin",
+					"license_name",
+					"license_num",
+					"password",
+				},
 			},
 		},
 	})
@@ -318,9 +327,10 @@ func testAccInstanceResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.Instance" {
-				return fmt.Errorf("failed DescribeSInstancesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Instance" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeInstancesRequest: %s", err)
 		}
 
 		if len(res.ReservationSet) > 0 {

@@ -57,7 +57,7 @@ func TestExpandRunInstancesInput(t *testing.T) {
 				Admin:                 nifcloud.String("test_admin"),
 				Password:              nifcloud.String("test_password"),
 				Agreement:             nifcloud.Bool(true),
-				UserData: &computing.RequestUserDataOfRunInstances{
+				UserData: &computing.RequestUserData{
 					Content:  nifcloud.String(base64.StdEncoding.EncodeToString([]byte("test_user_data"))),
 					Encoding: nifcloud.String("base64"),
 				},
@@ -406,7 +406,7 @@ func TestExpandNiftyUpdateInstanceNetworkInterfacesInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyUpdateInstanceNetworkInterfacesInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				NetworkInterface: []computing.RequestNetworkInterfaceOfNiftyUpdateInstanceNetworkInterfaces{{
+				NetworkInterface: []computing.RequestNetworkInterface{{
 					NetworkId:   nifcloud.String("test_network_id"),
 					NetworkName: nifcloud.String("test_network_name"),
 					IpAddress:   nifcloud.String("test_ip_address"),

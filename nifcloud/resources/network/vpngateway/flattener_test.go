@@ -64,7 +64,7 @@ func TestFlatten(t *testing.T) {
 										IpAddress: nifcloud.String("test_public_ip_address"),
 									},
 								},
-								GroupSet: []computing.GroupSetOfDescribeVpnGateways{
+								GroupSet: []computing.GroupSet{
 									{
 										GroupId: nifcloud.String("test_security_group"),
 									},

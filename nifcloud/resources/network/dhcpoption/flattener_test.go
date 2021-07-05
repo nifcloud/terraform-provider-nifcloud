@@ -41,10 +41,10 @@ func TestFlatten(t *testing.T) {
 					DescribeDhcpOptionsOutput: &computing.DescribeDhcpOptionsOutput{
 						DhcpOptionsSet: []computing.DhcpOptionsSet{
 							{
-								DhcpConfigurationSet: []computing.DhcpConfigurationSetOfDescribeDhcpOptions{
+								DhcpConfigurationSet: []computing.DhcpConfigurationSet{
 									{
 										Key: nifcloud.String("default-router"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_default_router"),
 											},
@@ -52,7 +52,7 @@ func TestFlatten(t *testing.T) {
 									},
 									{
 										Key: nifcloud.String("domain-name"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_domain_name"),
 											},
@@ -60,7 +60,7 @@ func TestFlatten(t *testing.T) {
 									},
 									{
 										Key: nifcloud.String("domain-name-servers"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_domain_name_servers1"),
 											},
@@ -71,7 +71,7 @@ func TestFlatten(t *testing.T) {
 									},
 									{
 										Key: nifcloud.String("ntp-servers"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_ntp_servers"),
 											},
@@ -79,7 +79,7 @@ func TestFlatten(t *testing.T) {
 									},
 									{
 										Key: nifcloud.String("netbios-name-servers"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_netbios_name_servers1"),
 											},
@@ -90,7 +90,7 @@ func TestFlatten(t *testing.T) {
 									},
 									{
 										Key: nifcloud.String("netbios-node-type"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_netbios_node_type"),
 											},
@@ -98,7 +98,7 @@ func TestFlatten(t *testing.T) {
 									},
 									{
 										Key: nifcloud.String("lease-time"),
-										ValueSet: []computing.ValueSetOfDescribeDhcpOptions{
+										ValueSet: []computing.ValueSet{
 											{
 												Value: nifcloud.String("test_lease_time"),
 											},

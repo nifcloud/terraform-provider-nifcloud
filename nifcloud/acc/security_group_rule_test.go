@@ -22,7 +22,7 @@ func TestAcc_SecurityGroupRule_Cidr(t *testing.T) {
 
 	resourceName := "nifcloud_security_group_rule.basic_cidr"
 
-	randName := prefix + acctest.RandStringFromCharSet(6, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(6)
 
 	fwName := randName + "1"
 	fwNameUpd := randName + "2"
@@ -69,7 +69,7 @@ func TestAcc_SecurityGroupRule_Source(t *testing.T) {
 
 	resourceName := "nifcloud_security_group_rule.basic_source"
 
-	randName := prefix + acctest.RandStringFromCharSet(6, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(6)
 
 	fwName := randName + "3"
 	fwNameUpd := randName + "4"
@@ -229,9 +229,10 @@ func testAccSecurityGroupRuleResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.SecurityGroup" {
-				return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
 		}
 
 		if len(res.SecurityGroupInfo) > 0 {

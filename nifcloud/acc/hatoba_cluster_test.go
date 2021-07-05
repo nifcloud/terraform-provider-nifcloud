@@ -29,7 +29,7 @@ func TestAcc_HatobaCluster(t *testing.T) {
 	var cluster hatoba.Cluster
 
 	resourceName := "nifcloud_hatoba_cluster.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },

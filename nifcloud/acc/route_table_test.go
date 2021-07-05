@@ -31,7 +31,7 @@ func TestAcc_RouteTable(t *testing.T) {
 	var routeTable computing.RouteTableSet
 
 	resourceName := "nifcloud_route_table.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -62,6 +62,9 @@ func TestAcc_RouteTable(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"route.0.network_name",
+				},
 			},
 		},
 	})
@@ -178,9 +181,10 @@ func testAccRouteTableResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.RouteTableId" {
-				return fmt.Errorf("failed DescribeRouteTablesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.RouteTableID" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeRouteTablesRequest: %s", err)
 		}
 
 		if len(res.RouteTableSet) > 0 {

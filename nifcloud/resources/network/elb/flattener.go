@@ -11,17 +11,17 @@ import (
 )
 
 func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBalancersResponse) error {
-	if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) == 0 {
+	if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) == 0 {
 		d.SetId("")
 		return nil
 	}
 
-	elb := res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0]
+	elb := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0]
 
 	if nifcloud.StringValue(elb.ElasticLoadBalancerId) != d.Id() {
 		return fmt.Errorf(
 			"unable to find elb within: %#v",
-			res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions,
+			res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions,
 		)
 	}
 

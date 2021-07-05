@@ -24,6 +24,11 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed reading routers: %s", err))
 	}
 
+	err := svc.WaitUntilRouterAvailable(ctx, describeRoutersInput)
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed waiting for router to become ready: %s", err))
+	}
+
 	deleteRoueterInput := expandNiftyDeleteRouterInput(d)
 	if _, err := svc.NiftyDeleteRouterRequest(deleteRoueterInput).Send(ctx); err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting router: %s", err))

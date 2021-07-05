@@ -32,7 +32,7 @@ func TestAcc_NetworkInterface(t *testing.T) {
 	var networkInterface computing.NetworkInterfaceSetOfDescribeNetworkInterfaces
 
 	resourceName := "nifcloud_network_interface.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -69,6 +69,9 @@ func TestAcc_NetworkInterface(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"ip_address",
+				},
 			},
 		},
 	})
@@ -185,9 +188,10 @@ func testAccNetworkInterfaceResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.NetworkInterfaceId" {
-				return fmt.Errorf("failed DescribeNetworkInterfacesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NetworkInterfaceId" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeNetworkInterfacesRequest: %s", err)
 		}
 
 		if len(res.NetworkInterfaceSet) > 0 {

@@ -60,7 +60,7 @@ func TestFlatten(t *testing.T) {
 							{
 								AvailabilityZone: nifcloud.String("test_availability_zone"),
 								Description:      nifcloud.String("test_description"),
-								GroupSet: []computing.GroupSetOfNiftyDescribeRouters{
+								GroupSet: []computing.GroupSet{
 									{
 										GroupId: nifcloud.String("test_security_group"),
 									},

@@ -30,7 +30,7 @@ func TestAcc_NatTable(t *testing.T) {
 	var natTable computing.NatTableSet
 
 	resourceName := "nifcloud_nat_table.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -74,6 +74,9 @@ func TestAcc_NatTable(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"dnat.0.inbound_interface_network",
+				},
 			},
 		},
 	})
@@ -243,9 +246,10 @@ func testAccNatTableResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.NatTableId" {
-				return fmt.Errorf("failed NiftyDescribeNatTablesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NatTableID" {
+				return nil
 			}
+			return fmt.Errorf("failed NiftyDescribeNatTablesRequest: %s", err)
 		}
 
 		if len(res.NatTableSet) > 0 {

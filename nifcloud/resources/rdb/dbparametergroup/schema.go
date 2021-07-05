@@ -40,7 +40,7 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 255),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z\-]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z\-]+$`), "Enter the name within 1-255 characters [0-9a-zA-Z-]."),
 			),
 		},
 		"family": {

@@ -29,7 +29,7 @@ func TestAcc_WebProxy(t *testing.T) {
 	var webProxy computing.WebProxyOfNiftyDescribeWebProxies
 
 	resourceName := "nifcloud_web_proxy.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -210,9 +210,10 @@ func testAccWebProxyResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.RouterId" {
-				return fmt.Errorf("failed listing web proxy: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.RouterId" {
+				return nil
 			}
+			return fmt.Errorf("failed listing web proxy: %s", err)
 		}
 
 		if len(res.WebProxy) > 0 {

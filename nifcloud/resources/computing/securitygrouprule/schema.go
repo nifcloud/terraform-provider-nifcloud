@@ -86,7 +86,7 @@ func newSchema() map[string]*schema.Schema {
 				Type: schema.TypeString,
 				ValidateFunc: validation.All(
 					validation.StringLenBetween(1, 15),
-					validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the security_group_names within 1-15 characters [0-9a-zA-Z]."),
 				),
 			},
 		},
@@ -98,7 +98,7 @@ func newSchema() map[string]*schema.Schema {
 			ConflictsWith: []string{"cidr_ip"},
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the source_security_group_name within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"to_port": {

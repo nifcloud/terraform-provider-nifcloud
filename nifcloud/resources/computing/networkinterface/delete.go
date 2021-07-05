@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
@@ -19,21 +18,11 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	req := svc.DeleteNetworkInterfaceRequest(input)
 
-	routerSet, err := getRouterSet(ctx, d, svc)
-	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed deleting network interface for get router set: %s", err))
+	if err := waitForRouterOfNetworkInterfaceAvailable(ctx, d, svc); err != nil {
+		return err
 	}
 
-	for _, r := range routerSet {
-		mutexKV.Lock(nifcloud.StringValue(r.RouterId))
-		defer mutexKV.Unlock(nifcloud.StringValue(r.RouterId))
-
-		if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{nifcloud.StringValue(r.RouterId)}}); err != nil {
-			return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
-		}
-	}
-
-	_, err = req.Send(ctx)
+	_, err := req.Send(ctx)
 	if err != nil {
 		var awsErr awserr.Error
 		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NetworkInterfaceId" {

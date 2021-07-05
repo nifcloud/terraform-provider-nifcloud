@@ -32,7 +32,7 @@ func TestAcc_Router(t *testing.T) {
 	var router computing.RouterSetOfNiftyDescribeRouters
 
 	resourceName := "nifcloud_router.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -82,6 +82,9 @@ func TestAcc_Router(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"network_interface.1.network_name",
+				},
 			},
 		},
 	})
@@ -310,9 +313,10 @@ func testAccRouterResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.RouterId" {
-				return fmt.Errorf("failed listing routers: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.RouterId" {
+				return nil
 			}
+			return fmt.Errorf("failed listing routers: %s", err)
 		}
 
 		if len(res.RouterSet) > 0 {

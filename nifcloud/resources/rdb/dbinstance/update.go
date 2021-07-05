@@ -12,6 +12,7 @@ import (
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).RDB
 
+	// lintignore:R019
 	if d.HasChanges(
 		"accounting_type",
 		"instance_class",

@@ -32,7 +32,7 @@ func TestAcc_DBParameterGroup(t *testing.T) {
 	var group rdb.DBParameterGroup
 
 	resourceName := "nifcloud_db_parameter_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(10)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -76,6 +76,9 @@ func TestAcc_DBParameterGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"parameter.",
+				},
 			},
 		},
 	})
@@ -262,10 +265,10 @@ func testAccDBParameterGroupResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.DBParameterGroup" {
-				return fmt.Errorf("failed DescribeDBParameterGroups: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBParameterGroup" {
+				return nil
 			}
-			return nil
+			return fmt.Errorf("failed DescribeDBParameterGroups: %s", err)
 		}
 
 		if len(res.DBParameterGroups) > 0 {

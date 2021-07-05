@@ -21,31 +21,43 @@ func flatten(d *schema.ResourceData, res *computing.DescribeDhcpOptionsResponse)
 	}
 
 	for _, dcf := range dhcpOption.DhcpConfigurationSet {
-		if dcf.Key == nifcloud.String("default-router") {
+		if nifcloud.StringValue(dcf.Key) == "default-router" {
 			if err := d.Set("default_router", dcf.ValueSet[0].Value); err != nil {
 				return err
 			}
-		} else if dcf.Key == nifcloud.String("domain-name") {
+		} else if nifcloud.StringValue(dcf.Key) == "domain-name" {
 			if err := d.Set("domain_name", dcf.ValueSet[0].Value); err != nil {
 				return err
 			}
-		} else if dcf.Key == nifcloud.String("domain-name-servers") {
-			if err := d.Set("domain_name_servers", dcf.ValueSet[0].Value); err != nil {
+		} else if nifcloud.StringValue(dcf.Key) == "domain-name-servers" {
+			domainNameServers := make([]string, len(dcf.ValueSet))
+			for i, val := range dcf.ValueSet {
+				domainNameServers[i] = nifcloud.StringValue(val.Value)
+			}
+			if err := d.Set("domain_name_servers", domainNameServers); err != nil {
 				return err
 			}
-		} else if dcf.Key == nifcloud.String("ntp-servers") {
-			if err := d.Set("ntp_servers", dcf.ValueSet[0].Value); err != nil {
+		} else if nifcloud.StringValue(dcf.Key) == "ntp-servers" {
+			ntpServers := make([]string, len(dcf.ValueSet))
+			for i, val := range dcf.ValueSet {
+				ntpServers[i] = nifcloud.StringValue(val.Value)
+			}
+			if err := d.Set("ntp_servers", ntpServers); err != nil {
 				return err
 			}
-		} else if dcf.Key == nifcloud.String("netbios-name-servers") {
-			if err := d.Set("netbios_name_servers", dcf.ValueSet[0].Value); err != nil {
+		} else if nifcloud.StringValue(dcf.Key) == "netbios-name-servers" {
+			netbionsServers := make([]string, len(dcf.ValueSet))
+			for i, val := range dcf.ValueSet {
+				netbionsServers[i] = nifcloud.StringValue(val.Value)
+			}
+			if err := d.Set("netbios_name_servers", netbionsServers); err != nil {
 				return err
 			}
-		} else if dcf.Key == nifcloud.String("netbios_node_type") {
+		} else if nifcloud.StringValue(dcf.Key) == "netbios-node-type" {
 			if err := d.Set("netbios_node_type", dcf.ValueSet[0].Value); err != nil {
 				return err
 			}
-		} else if dcf.Key == nifcloud.String("lease-time") {
+		} else if nifcloud.StringValue(dcf.Key) == "lease-time" {
 			if err := d.Set("lease_time", dcf.ValueSet[0].Value); err != nil {
 				return err
 			}

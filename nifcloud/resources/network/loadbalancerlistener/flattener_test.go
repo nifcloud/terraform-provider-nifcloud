@@ -43,66 +43,64 @@ func TestFlatten(t *testing.T) {
 				d: rd,
 				res: &computing.DescribeLoadBalancersResponse{
 					DescribeLoadBalancersOutput: &computing.DescribeLoadBalancersOutput{
-						DescribeLoadBalancersResult: &computing.DescribeLoadBalancersResult{
-							LoadBalancerDescriptions: []computing.LoadBalancerDescriptions{
-								{
-									AccountingType: nifcloud.String("1"),
-									DNSName:        nifcloud.String("test_dns_name"),
-									Filter: &computing.Filter{
-										FilterType: nifcloud.String("1"),
-										IPAddresses: []computing.IPAddresses{
-											{IPAddress: nifcloud.String("192.168.1.1")},
+						LoadBalancerDescriptions: []computing.LoadBalancerDescriptions{
+							{
+								AccountingType: nifcloud.String("1"),
+								DNSName:        nifcloud.String("test_dns_name"),
+								Filter: &computing.Filter{
+									FilterType: nifcloud.String("1"),
+									IPAddresses: []computing.IPAddresses{
+										{IPAddress: nifcloud.String("192.168.1.1")},
+									},
+								},
+								HealthCheck: &computing.HealthCheckOfDescribeLoadBalancers{
+									HealthyThreshold:   nifcloud.Int64(1),
+									Interval:           nifcloud.Int64(5),
+									Target:             nifcloud.String("test_target"),
+									Timeout:            nifcloud.Int64(5),
+									UnhealthyThreshold: nifcloud.Int64(1),
+								},
+								ListenerDescriptions: []computing.ListenerDescriptions{
+									{
+										Listener: &computing.Listener{
+											InstancePort:     nifcloud.Int64(int64(80)),
+											LoadBalancerPort: nifcloud.Int64(int64(80)),
+											SSLPolicy: &computing.SSLPolicy{
+												SSLPolicyId:   nifcloud.String("test_ssl_policy_id"),
+												SSLPolicyName: nifcloud.String("test_ssl_policy_name"),
+											},
 										},
 									},
-									HealthCheck: &computing.HealthCheckOfDescribeLoadBalancers{
-										HealthyThreshold:   nifcloud.Int64(1),
-										Interval:           nifcloud.Int64(5),
-										Target:             nifcloud.String("test_target"),
-										Timeout:            nifcloud.Int64(5),
-										UnhealthyThreshold: nifcloud.Int64(1),
+								},
+								Instances: []computing.Instances{
+									{
+										InstanceId: nifcloud.String("test_instance_id"),
 									},
-									ListenerDescriptions: []computing.ListenerDescriptions{
+								},
+								LoadBalancerName:        nifcloud.String("test_load_balancer_name"),
+								NetworkVolume:           nifcloud.Int64(10),
+								NextMonthAccountingType: nifcloud.String("test_accounting_type"),
+								Policies: &computing.Policies{
+									AppCookieStickinessPolicies: []computing.AppCookieStickinessPolicies{
 										{
-											Listener: &computing.Listener{
-												InstancePort:     nifcloud.Int64(int64(80)),
-												LoadBalancerPort: nifcloud.Int64(int64(80)),
-												SSLPolicy: &computing.SSLPolicy{
-													SSLPolicyId:   nifcloud.String("test_ssl_policy_id"),
-													SSLPolicyName: nifcloud.String("test_ssl_policy_name"),
-												},
-											},
+											CookieName: nifcloud.String("test_cookie_name"),
+											PolicyName: nifcloud.String("test_app_policy_name"),
 										},
 									},
-									Instances: []computing.InstancesOfDescribeLoadBalancers{
+									LBCookieStickinessPolicies: []computing.LBCookieStickinessPolicies{
 										{
-											InstanceId: nifcloud.String("test_instance_id"),
+											CookieExpirationPeriod: nifcloud.String("test_cookie_expiration_period"),
+											PolicyName:             nifcloud.String("test_lb_policy_name"),
 										},
 									},
-									LoadBalancerName:        nifcloud.String("test_load_balancer_name"),
-									NetworkVolume:           nifcloud.Int64(10),
-									NextMonthAccountingType: nifcloud.String("test_accounting_type"),
-									Policies: &computing.Policies{
-										AppCookieStickinessPolicies: []computing.AppCookieStickinessPolicies{
-											{
-												CookieName: nifcloud.String("test_cookie_name"),
-												PolicyName: nifcloud.String("test_app_policy_name"),
-											},
-										},
-										LBCookieStickinessPolicies: []computing.LBCookieStickinessPolicies{
-											{
-												CookieExpirationPeriod: nifcloud.String("test_cookie_expiration_period"),
-												PolicyName:             nifcloud.String("test_lb_policy_name"),
-											},
-										},
+								},
+								PolicyType: nifcloud.String("test_policy_type"),
+								Option: &computing.Option{
+									SessionStickinessPolicy: &computing.SessionStickinessPolicy{
+										Enabled: nifcloud.Bool(false),
 									},
-									PolicyType: nifcloud.String("test_policy_type"),
-									Option: &computing.Option{
-										SessionStickinessPolicy: &computing.SessionStickinessPolicy{
-											Enabled: nifcloud.Bool(false),
-										},
-										SorryPage: &computing.SorryPage{
-											Enabled: nifcloud.Bool(false),
-										},
+									SorryPage: &computing.SorryPage{
+										Enabled: nifcloud.Bool(false),
 									},
 								},
 							},
@@ -118,9 +116,7 @@ func TestFlatten(t *testing.T) {
 				d: wantNotFoundRd,
 				res: &computing.DescribeLoadBalancersResponse{
 					DescribeLoadBalancersOutput: &computing.DescribeLoadBalancersOutput{
-						DescribeLoadBalancersResult: &computing.DescribeLoadBalancersResult{
-							LoadBalancerDescriptions: []computing.LoadBalancerDescriptions{},
-						},
+						LoadBalancerDescriptions: []computing.LoadBalancerDescriptions{},
 					},
 				},
 			},

@@ -30,11 +30,11 @@ func init() {
 func TestAcc_LoadBalancerListener(t *testing.T) {
 	var loadBalancer computing.LoadBalancerDescriptions
 
-	instanceName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	instanceName := prefix + acctest.RandString(7)
 
 	resourceName := "nifcloud_load_balancer_listener.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
-	sshKey := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
+	sshKey := prefix + acctest.RandString(7)
 
 	caKey := helper.GeneratePrivateKey(t, 2048)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)
@@ -95,7 +95,6 @@ func TestAcc_LoadBalancerListener(t *testing.T) {
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateIdFunc: testAccLoadBalancerListenerImportStateIDFunc(resourceName),
 				ImportStateVerify: true,
 			},
 		},
@@ -133,11 +132,11 @@ func testAccCheckLoadBalancerListenerExists(lbName string, lbPort, instancePort 
 		if err != nil {
 			return err
 		}
-		if res == nil || len(res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.DescribeLoadBalancersOutput.LoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", lbName)
 		}
 
-		foundLoadBalancer := res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions[0]
+		foundLoadBalancer := res.DescribeLoadBalancersOutput.LoadBalancerDescriptions[0]
 
 		if nifcloud.StringValue(foundLoadBalancer.LoadBalancerName) != lbName {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", lbName)
@@ -317,9 +316,10 @@ func testAccLoadBalancerListenerResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.LoadBalancerName" {
-				return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.LoadBalancer" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
 		}
 
 		if len(res.LoadBalancerDescriptions) > 0 {
@@ -345,7 +345,7 @@ func testSweepLoadBalancerListener(region string) error {
 	}
 
 	var sweepLBs []lb
-	for _, b := range res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions {
+	for _, b := range res.DescribeLoadBalancersOutput.LoadBalancerDescriptions {
 		for _, l := range b.ListenerDescriptions {
 			if strings.HasPrefix(nifcloud.StringValue(b.LoadBalancerName), prefix) {
 				sweepLBs = append(sweepLBs, lb{
@@ -377,26 +377,4 @@ func testSweepLoadBalancerListener(region string) error {
 		return err
 	}
 	return nil
-}
-
-func testAccLoadBalancerListenerImportStateIDFunc(resourceName string) resource.ImportStateIdFunc {
-	return func(s *terraform.State) (string, error) {
-
-		rs, ok := s.RootModule().Resources[resourceName]
-		if !ok {
-			return "", fmt.Errorf("not found: %s", resourceName)
-		}
-
-		lbID := rs.Primary.Attributes["load_balancer_name"]
-		lbPort := rs.Primary.Attributes["load_balancer_port"]
-		instancePort := rs.Primary.Attributes["instance_port"]
-
-		var parts []string
-		parts = append(parts, lbID)
-		parts = append(parts, lbPort)
-		parts = append(parts, instancePort)
-
-		id := strings.Join(parts, "_")
-		return id, nil
-	}
 }

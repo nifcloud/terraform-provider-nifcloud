@@ -115,7 +115,7 @@ func expandNiftyDeregisterRoutersFromSecurityGroupInput(d *schema.ResourceData) 
 	securityGroup, _ := d.GetChange("security_group")
 	return &computing.NiftyDeregisterRoutersFromSecurityGroupInput{
 		GroupName: nifcloud.String(securityGroup.(string)),
-		RouterSet: []computing.RequestRouterSetOfNiftyDeregisterRoutersFromSecurityGroup{
+		RouterSet: []computing.RequestRouterSet{
 			{
 				RouterId: nifcloud.String(d.Id()),
 			},

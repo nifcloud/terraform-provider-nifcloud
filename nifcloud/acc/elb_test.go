@@ -30,7 +30,7 @@ func TestAcc_ELB(t *testing.T) {
 	var elb computing.ElasticLoadBalancerDescriptions
 
 	resourceName := "nifcloud_elb.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	caKey := helper.GeneratePrivateKey(t, 2048)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)
@@ -132,6 +132,9 @@ func TestAcc_ELB(t *testing.T) {
 				ImportState:       true,
 				ImportStateIdFunc: testAccELBImportStateIDFunc(resourceName),
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"network_interface",
+				},
 			},
 		},
 	})
@@ -176,11 +179,11 @@ func testAccCheckELBExists(n string, elb *computing.ElasticLoadBalancerDescripti
 			return err
 		}
 
-		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0]
+		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0]
 
 		if nifcloud.StringValue(foundELB.ElasticLoadBalancerId) != saved.Primary.ID {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
@@ -398,12 +401,13 @@ func testAccELBResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.ElasticLoadBalancerId" {
-				return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
+				return nil
 			}
+			return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
 		}
 
-		if len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) > 0 {
+		if len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) > 0 {
 			return fmt.Errorf("elb (%s) still exists", rs.Primary.ID)
 		}
 	}
@@ -427,7 +431,7 @@ func testSweepELB(region string) error {
 	}
 
 	var sweepELBs []elb
-	for _, e := range res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions {
+	for _, e := range res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions {
 		for _, l := range e.ElasticLoadBalancerListenerDescriptions {
 			if strings.HasPrefix(nifcloud.StringValue(e.ElasticLoadBalancerName), prefix) {
 				sweepELBs = append(sweepELBs, elb{

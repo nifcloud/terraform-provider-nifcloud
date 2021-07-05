@@ -77,14 +77,14 @@ func expandRevokeSecurityGroupIngressInputList(d *schema.ResourceData) []*comput
 	if raw, ok := d.GetOk("cidr_ip"); ok {
 		ipPermission.ListOfRequestIpRanges = append(
 			ipPermission.ListOfRequestIpRanges,
-			computing.RequestIpRangesOfRevokeSecurityGroupIngress{CidrIp: nifcloud.String(raw.(string))},
+			computing.RequestIpRanges{CidrIp: nifcloud.String(raw.(string))},
 		)
 	}
 
 	if raw, ok := d.GetOk("source_security_group_name"); ok {
 		ipPermission.ListOfRequestGroups = append(
 			ipPermission.ListOfRequestGroups,
-			computing.RequestGroupsOfRevokeSecurityGroupIngress{GroupName: nifcloud.String(raw.(string))},
+			computing.RequestGroups{GroupName: nifcloud.String(raw.(string))},
 		)
 	}
 	groupNames := d.Get("security_group_names").([]interface{})

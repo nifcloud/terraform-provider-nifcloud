@@ -199,9 +199,10 @@ func testAccDhcpConfigResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.DhcpConfigId" {
-				return fmt.Errorf("failed NiftyDescribeDhcpConfigsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DhcpConfigId" {
+				return nil
 			}
+			return fmt.Errorf("failed NiftyDescribeDhcpConfigsRequest: %s", err)
 		}
 
 		if len(res.DhcpConfigsSet) > 0 {

@@ -55,7 +55,7 @@ func newSchema() map[string]*schema.Schema {
 			Computed:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 32),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the volume_id within 1-32 characters [0-9a-zA-Z]."),
 			),
 		},
 		"disk_type": {
@@ -71,7 +71,7 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the instance_id within 1-15 characters [0-9a-zA-Z]."),
 			),
 			ConflictsWith: []string{"instance_unique_id"},
 		},

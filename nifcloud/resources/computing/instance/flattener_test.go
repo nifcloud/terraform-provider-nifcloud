@@ -81,7 +81,7 @@ func TestFlatten(t *testing.T) {
 												NiftyNetworkName:   nifcloud.String("test_network_name"),
 												PrivateIpAddress:   nifcloud.String("test_ip_address"),
 												NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
-												Attachment: &computing.AttachmentOfDescribeInstances{
+												Attachment: &computing.Attachment{
 													AttachmentId: nifcloud.String("test_network_interface_attachment_id"),
 												},
 											},

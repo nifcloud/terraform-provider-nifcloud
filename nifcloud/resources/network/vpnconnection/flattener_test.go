@@ -60,7 +60,7 @@ func TestFlatten(t *testing.T) {
 								NiftyVpnGatewayName:      nifcloud.String("test_vpn_gateway_name"),
 								CustomerGatewayId:        nifcloud.String("test_customer_gateway_id"),
 								NiftyCustomerGatewayName: nifcloud.String("test_customer_gateway_name"),
-								NiftyTunnel: &computing.NiftyTunnelOfDescribeVpnConnections{
+								NiftyTunnel: &computing.NiftyTunnel{
 									Type:            nifcloud.String("L2TPv3"),
 									Mode:            nifcloud.String("Unmanaged"),
 									Encapsulation:   nifcloud.String("UDP"),
@@ -71,7 +71,7 @@ func TestFlatten(t *testing.T) {
 									SourcePort:      nifcloud.String("7777"),
 									DestinationPort: nifcloud.String("7777"),
 								},
-								NiftyIpsecConfiguration: &computing.NiftyIpsecConfigurationOfDescribeVpnConnections{
+								NiftyIpsecConfiguration: &computing.NiftyIpsecConfiguration{
 									EncryptionAlgorithm:                  nifcloud.String("AES256"),
 									HashingAlgorithm:                     nifcloud.String("SHA256"),
 									PreSharedKey:                         nifcloud.String("test_pre_shared_key"),

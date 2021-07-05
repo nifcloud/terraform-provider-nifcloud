@@ -131,8 +131,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	return read(ctx, d, meta)
 }
 func waitForVpnGatewayAvailable(ctx context.Context, d *schema.ResourceData, svc *computing.Client) diag.Diagnostics {
-	// The status of the VpnGateway changes shortly after calling the modify API.
-	// So, wait a few seconds as initial delay.
+	// lintignore:R018
 	time.Sleep(waiterInitialDelayForUpdate * time.Second)
 
 	if err := svc.WaitUntilVpnGatewayAvailable(ctx, expandDescribeVpnGatewaysInput(d)); err != nil {

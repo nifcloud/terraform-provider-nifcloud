@@ -33,7 +33,7 @@ func TestAcc_SecurityGroup(t *testing.T) {
 	var securityGroup computing.SecurityGroupInfo
 
 	resourceName := "nifcloud_security_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -69,6 +69,9 @@ func TestAcc_SecurityGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"revoke_rules_on_delete",
+				},
 			},
 		},
 	})
@@ -174,9 +177,10 @@ func testAccSecurityGroupResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.SecurityGroup" {
-				return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
 		}
 
 		if len(res.SecurityGroupInfo) > 0 {

@@ -333,7 +333,7 @@ func TestExpandNiftyDeregisterRoutersFromSecurityGroupInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyDeregisterRoutersFromSecurityGroupInput{
 				GroupName: nifcloud.String("test_security_group"),
-				RouterSet: []computing.RequestRouterSetOfNiftyDeregisterRoutersFromSecurityGroup{
+				RouterSet: []computing.RequestRouterSet{
 					{
 						RouterId: nifcloud.String("test_router_id"),
 					},

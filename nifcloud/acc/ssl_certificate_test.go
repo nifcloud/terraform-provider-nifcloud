@@ -30,7 +30,7 @@ func TestAcc_SSLCertificate(t *testing.T) {
 	var sslCertificate computing.CertsSet
 
 	resourceName := "nifcloud_ssl_certificate.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(10)
 
 	caKey := helper.GeneratePrivateKey(t, 4096)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)
@@ -241,9 +241,10 @@ func testAccSSLCertificateResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.SslCertificate" {
-				return fmt.Errorf("failed DesribeSslCertificates: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SslCertificate" {
+				return nil
 			}
+			return fmt.Errorf("failed DesribeSslCertificates: %s", err)
 		}
 
 		if len(res.CertsSet) > 0 {

@@ -32,7 +32,7 @@ func TestAcc_DbSecurityGroup(t *testing.T) {
 	var dbSecurityGroup rdb.DBSecurityGroup
 
 	resourceName := "nifcloud_db_security_group.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -67,6 +67,9 @@ func TestAcc_DbSecurityGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"rule.",
+				},
 			},
 		},
 	})
@@ -237,8 +240,9 @@ func testAccDbSecurityGroupResourceDestroy(s *terraform.State) error {
 		if err != nil {
 			var awsErr awserr.Error
 			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBSecurityGroup" {
-				return fmt.Errorf("failed DescribeDBSecurityGroupsRequest: %s", err)
+				return nil
 			}
+			return fmt.Errorf("failed DescribeDBSecurityGroupsRequest: %s", err)
 		}
 
 		if len(res.DBSecurityGroups) > 0 {

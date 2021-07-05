@@ -171,8 +171,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 }
 
 func waitForRouterAvailable(ctx context.Context, d *schema.ResourceData, svc *computing.Client) diag.Diagnostics {
-	// The status of the router changes shortly after calling the modify API.
-	// So, wait a few seconds as initial delay.
+	// lintignore:R018
 	time.Sleep(waiterInitialDelay * time.Second)
 
 	if err := svc.WaitUntilRouterAvailable(ctx, expandNiftyDescribeRoutersInput(d)); err != nil {

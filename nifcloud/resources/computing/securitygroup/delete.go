@@ -46,6 +46,11 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}
 
+	err = svc.WaitUntilSecurityGroupDeleted(ctx, expandDescribeSecurityGroupsInput(d))
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed deleting for wait until deleted security group error: %s", err))
+	}
+
 	d.SetId("")
 	return nil
 }
@@ -77,13 +82,13 @@ func forceRevokeSecurityGroupRules(ctx context.Context, svc *computing.Client, d
 			for _, ipRange := range i.IpRanges {
 				ipPermission.ListOfRequestIpRanges = append(
 					ipPermission.ListOfRequestIpRanges,
-					computing.RequestIpRangesOfRevokeSecurityGroupIngress{CidrIp: ipRange.CidrIp},
+					computing.RequestIpRanges{CidrIp: ipRange.CidrIp},
 				)
 			}
 			for _, group := range i.Groups {
 				ipPermission.ListOfRequestGroups = append(
 					ipPermission.ListOfRequestGroups,
-					computing.RequestGroupsOfRevokeSecurityGroupIngress{GroupName: group.GroupName},
+					computing.RequestGroups{GroupName: group.GroupName},
 				)
 			}
 			ipPermissions = append(ipPermissions, ipPermission)

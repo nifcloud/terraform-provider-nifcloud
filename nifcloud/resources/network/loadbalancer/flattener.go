@@ -11,11 +11,11 @@ import (
 
 func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersResponse) error {
 
-	if res == nil || len(res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions) == 0 {
+	if res == nil || len(res.DescribeLoadBalancersOutput.LoadBalancerDescriptions) == 0 {
 		d.SetId("")
 		return nil
 	}
-	loadBalancer := res.DescribeLoadBalancersOutput.DescribeLoadBalancersResult.LoadBalancerDescriptions[0]
+	loadBalancer := res.DescribeLoadBalancersOutput.LoadBalancerDescriptions[0]
 	if nifcloud.StringValue(loadBalancer.LoadBalancerName) != d.Get("load_balancer_name") {
 		return fmt.Errorf("unable to find load balancer within: %#v", loadBalancer.LoadBalancerName)
 	}
@@ -105,16 +105,12 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 	}
 
 	if listener.Listener.SSLPolicy != nil {
-		if _, ok := d.GetOk("ssl_policy_id"); ok {
-			if err := d.Set("ssl_policy_id", listener.Listener.SSLPolicy.SSLPolicyId); err != nil {
-				return err
-			}
+		if err := d.Set("ssl_policy_id", listener.Listener.SSLPolicy.SSLPolicyId); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("ssl_policy_name"); ok {
-			if err := d.Set("ssl_policy_name", listener.Listener.SSLPolicy.SSLPolicyName); err != nil {
-				return err
-			}
+		if err := d.Set("ssl_policy_name", listener.Listener.SSLPolicy.SSLPolicyName); err != nil {
+			return err
 		}
 	}
 

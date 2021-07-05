@@ -22,7 +22,7 @@ func TestAcc_ELBListener(t *testing.T) {
 	var listener computing.ListenerOfNiftyDescribeElasticLoadBalancers
 
 	resourceName := "nifcloud_elb_listener.basic"
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	caKey := helper.GeneratePrivateKey(t, 2048)
 	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)
@@ -87,7 +87,6 @@ func TestAcc_ELBListener(t *testing.T) {
 			{
 				ResourceName:      resourceName,
 				ImportState:       true,
-				ImportStateIdFunc: testAccELBImportStateIDFunc(resourceName),
 				ImportStateVerify: true,
 			},
 		},
@@ -136,11 +135,11 @@ func testAccCheckELBListenerExists(n, elbName, protocol string, InstancePort, LB
 			return err
 		}
 
-		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0]
+		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0]
 		foundListener := foundELB.ElasticLoadBalancerListenerDescriptions[0].Listener
 
 		if nifcloud.StringValue(foundELB.ElasticLoadBalancerId) != strings.Split(saved.Primary.ID, "_")[0] {
@@ -316,12 +315,13 @@ func testAccELBListenerResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
-				return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
+				return nil
 			}
+			return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
 		}
 
-		if len(res.NiftyDescribeElasticLoadBalancersOutput.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) > 0 {
+		if len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) > 0 {
 			return fmt.Errorf("elb listener (%s) still exists", rs.Primary.ID)
 		}
 	}

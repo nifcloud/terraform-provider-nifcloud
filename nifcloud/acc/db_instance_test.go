@@ -32,7 +32,7 @@ func TestAcc_DBInstance(t *testing.T) {
 	resourceNameReplica := "nifcloud_db_instance.replica"
 	resourceNameRestore := "nifcloud_db_instance.restore"
 
-	randName := prefix + acctest.RandStringFromCharSet(7, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -129,6 +129,14 @@ func TestAcc_DBInstance(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"apply_immediately",
+					"custom_binlog_retention_period",
+					"final_snapshot_identifier",
+					"password",
+					"read_replica_identifier",
+					"skip_final_snapshot",
+				},
 			},
 		},
 	})
@@ -360,9 +368,10 @@ func testAccDBInstanceResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.DBInstance" {
-				return fmt.Errorf("failed DescribeDBInstancesRequest: %s", err)
+			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBInstance" {
+				return nil
 			}
+			return fmt.Errorf("failed DescribeDBInstancesRequest: %s", err)
 		}
 
 		if len(res.DBInstances) > 0 {

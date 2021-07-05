@@ -53,7 +53,7 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the name within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"type": {
@@ -83,7 +83,7 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the network_id within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"network_name": {
@@ -93,7 +93,7 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the network_name within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"ip_address": {
@@ -113,7 +113,7 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the security_group within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"route_table_association_id": {
