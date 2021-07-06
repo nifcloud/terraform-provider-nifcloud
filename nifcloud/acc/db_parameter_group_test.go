@@ -76,9 +76,6 @@ func TestAcc_DBParameterGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"parameter.",
-				},
 			},
 		},
 	})

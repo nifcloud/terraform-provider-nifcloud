@@ -43,6 +43,8 @@ func expandDescribeDBParametersInput(d *schema.ResourceData, marker string) *rdb
 		input.Marker = nifcloud.String(marker)
 	}
 
+	input.Source = nifcloud.String("user")
+
 	return input
 }
 

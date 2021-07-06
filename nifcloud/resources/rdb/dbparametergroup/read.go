@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
@@ -34,11 +35,13 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed reading DBParameters: %s", err))
 		}
+
+		parameters = append(parameters, describeDBParametersRes.Parameters...)
+
 		if describeDBParametersRes.Marker == nil {
 			break
 		}
-		marker = *describeDBParametersRes.Marker
-		parameters = append(parameters, describeDBParametersRes.Parameters...)
+		marker = nifcloud.StringValue(describeDBParametersRes.Marker)
 	}
 
 	if err := flatten(d, describeDBParameterGroupsRes, parameters); err != nil {
