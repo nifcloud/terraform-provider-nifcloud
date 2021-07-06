@@ -8,6 +8,7 @@ resource "nifcloud_router" "basic" {
 
   network_interface {
     network_id = "net-COMMON_GLOBAL"
+    dhcp       = false
   }
 
   network_interface {

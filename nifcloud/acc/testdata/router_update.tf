@@ -14,6 +14,7 @@ resource "nifcloud_router" "basic" {
 
   network_interface {
     network_id = "net-COMMON_GLOBAL"
+    dhcp       = false
   }
 
   network_interface {
@@ -26,15 +27,15 @@ resource "nifcloud_router" "basic" {
 }
 
 resource "nifcloud_dhcp_config" "basic" {
-    ipaddress_pool {
-        ipaddress_pool_start = "192.168.1.50"
-        ipaddress_pool_stop  = "192.168.1.100"
-    }
+  ipaddress_pool {
+    ipaddress_pool_start = "192.168.1.50"
+    ipaddress_pool_stop  = "192.168.1.100"
+  }
 }
 
 resource "nifcloud_dhcp_option" "basic" {
-    default_router      = "192.168.1.1"
-    domain_name_servers = ["8.8.8.8", "8.8.4.4"]
+  default_router      = "192.168.1.1"
+  domain_name_servers = ["8.8.8.8", "8.8.4.4"]
 }
 
 resource "nifcloud_route_table" "basic" {
