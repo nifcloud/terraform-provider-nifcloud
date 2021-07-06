@@ -66,9 +66,6 @@ func TestAcc_NASSecurityGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"rule.",
-				},
 			},
 		},
 	})
