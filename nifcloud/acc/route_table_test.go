@@ -64,6 +64,7 @@ func TestAcc_RouteTable(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"route.0.network_name",
+					"route.0.network_id",
 				},
 			},
 		},
