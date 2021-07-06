@@ -28,26 +28,22 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnConnectionsRespon
 		return err
 	}
 
-	if _, ok := d.GetOk("vpn_gateway_id"); ok {
-		if err := d.Set("vpn_gateway_id", vpnConnection.VpnGatewayId); err != nil {
-			return err
-		}
-	}
-
 	if _, ok := d.GetOk("vpn_gateway_name"); ok {
 		if err := d.Set("vpn_gateway_name", vpnConnection.NiftyVpnGatewayName); err != nil {
 			return err
 		}
-	}
-
-	if _, ok := d.GetOk("customer_gateway_id"); ok {
-		if err := d.Set("customer_gateway_id", vpnConnection.CustomerGatewayId); err != nil {
+	} else {
+		if err := d.Set("vpn_gateway_id", vpnConnection.VpnGatewayId); err != nil {
 			return err
 		}
 	}
 
 	if _, ok := d.GetOk("customer_gateway_name"); ok {
 		if err := d.Set("customer_gateway_name", vpnConnection.NiftyCustomerGatewayName); err != nil {
+			return err
+		}
+	} else {
+		if err := d.Set("customer_gateway_id", vpnConnection.CustomerGatewayId); err != nil {
 			return err
 		}
 	}
@@ -69,40 +65,28 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnConnectionsRespon
 			return err
 		}
 
-		if _, ok := d.GetOk("tunnel_id"); ok {
-			if err := d.Set("tunnel_id", vpnConnection.NiftyTunnel.TunnelId); err != nil {
-				return err
-			}
+		if err := d.Set("tunnel_id", vpnConnection.NiftyTunnel.TunnelId); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("tunnel_peer_id"); ok {
-			if err := d.Set("tunnel_peer_id", vpnConnection.NiftyTunnel.PeerTunnelId); err != nil {
-				return err
-			}
+		if err := d.Set("tunnel_peer_id", vpnConnection.NiftyTunnel.PeerTunnelId); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("tunnel_session_id"); ok {
-			if err := d.Set("tunnel_session_id", vpnConnection.NiftyTunnel.SessionId); err != nil {
-				return err
-			}
+		if err := d.Set("tunnel_session_id", vpnConnection.NiftyTunnel.SessionId); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("tunnel_peer_session_id"); ok {
-			if err := d.Set("tunnel_peer_session_id", vpnConnection.NiftyTunnel.PeerSessionId); err != nil {
-				return err
-			}
+		if err := d.Set("tunnel_peer_session_id", vpnConnection.NiftyTunnel.PeerSessionId); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("tunnel_source_port"); ok {
-			if err := d.Set("tunnel_source_port", vpnConnection.NiftyTunnel.SourcePort); err != nil {
-				return err
-			}
+		if err := d.Set("tunnel_source_port", vpnConnection.NiftyTunnel.SourcePort); err != nil {
+			return err
 		}
 
-		if _, ok := d.GetOk("tunnel_destination_port"); ok {
-			if err := d.Set("tunnel_destination_port", vpnConnection.NiftyTunnel.DestinationPort); err != nil {
-				return err
-			}
+		if err := d.Set("tunnel_destination_port", vpnConnection.NiftyTunnel.DestinationPort); err != nil {
+			return err
 		}
 	}
 
