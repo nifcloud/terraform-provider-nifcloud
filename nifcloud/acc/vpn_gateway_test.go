@@ -81,6 +81,7 @@ func TestAcc_VpnGateway(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"network_name",
+					"network_id",
 					"route_table_id",
 				},
 			},

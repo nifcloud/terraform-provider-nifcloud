@@ -51,13 +51,12 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 				return err
 			}
 		default:
-			if _, ok := d.GetOk("network_id"); ok {
-				if err := d.Set("network_id", n.NetworkId); err != nil {
-					return err
-				}
-			}
 			if _, ok := d.GetOk("network_name"); ok {
 				if err := d.Set("network_name", n.NetworkName); err != nil {
+					return err
+				}
+			} else {
+				if err := d.Set("network_id", n.NetworkId); err != nil {
 					return err
 				}
 			}
