@@ -86,7 +86,7 @@ func TestExpandNiftyUpdateSeparateInstanceRuleInputForName(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, r.Schema, map[string]interface{}{
 		"name": "test_separate_name",
 	})
-	rd.SetId("test_separate_name")
+	rd.SetId("test_separate_name2")
 	dn := r.Data(rd.State())
 
 	tests := []struct {
@@ -99,7 +99,7 @@ func TestExpandNiftyUpdateSeparateInstanceRuleInputForName(t *testing.T) {
 			args: dn,
 			want: &computing.NiftyUpdateSeparateInstanceRuleInput{
 				SeparateInstanceRuleName:       nifcloud.String("test_separate_name"),
-				SeparateInstanceRuleNameUpdate: nifcloud.String("test_separate_name2"),
+				SeparateInstanceRuleNameUpdate: nifcloud.String("test_separate_name"),
 			},
 		},
 	}
