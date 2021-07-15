@@ -77,7 +77,7 @@ func TestAcc_SeparateInstanceRule_Unique_Id(t *testing.T) {
 	var separateInstanceRules computing.SeparateInstanceRulesInfo
 
 	resourceName := "nifcloud_separate_instance_rule.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
