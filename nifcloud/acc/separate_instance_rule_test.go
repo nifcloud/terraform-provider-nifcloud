@@ -173,11 +173,11 @@ func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *computing.Sep
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) != rName {
-			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
+			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) != rName {
-			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
+			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
 		}
 		return nil
 	}
@@ -198,11 +198,11 @@ func testAccCheckSeparateInstanceRuleUniqueIDValues(separateInstanceRules *compu
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceUniqueId) != "" {
-			return fmt.Errorf("bad availability_zone state,  expected not nil, got: nil")
+			return fmt.Errorf("bad instance_unique_id state,  expected not nil, got: nil")
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceUniqueId) != "" {
-			return fmt.Errorf("bad availability_zone state,  expected not nil, got: nil")
+			return fmt.Errorf("bad instance_unique_id state,  expected not nil, got: nil")
 		}
 		return nil
 	}
@@ -223,11 +223,11 @@ func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *comput
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) != rName {
-			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
+			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) != rName {
-			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
+			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
 		}
 		return nil
 	}
