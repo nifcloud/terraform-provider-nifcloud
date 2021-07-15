@@ -47,6 +47,8 @@ func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse)
 			} else {
 				route["network_name"] = nifcloud.StringValue(r.NetworkName)
 			}
+		} else {
+			route["network_id"] = nifcloud.StringValue(r.NetworkId)
 		}
 
 		routes = append(routes, route)

@@ -120,7 +120,6 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersResponse
 				}
 			} else {
 				ni["network_id"] = nifcloud.StringValue(n.NetworkId)
-				ni["network_name"] = nifcloud.StringValue(n.NetworkName)
 				ni["ip_address"] = nifcloud.StringValue(n.IpAddress)
 				ni["dhcp"] = nifcloud.BoolValue(n.Dhcp)
 				ni["dhcp_options_id"] = nifcloud.StringValue(n.DhcpOptionsId)

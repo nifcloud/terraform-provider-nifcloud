@@ -155,6 +155,7 @@ func TestExpandDescribeDBParametersInput(t *testing.T) {
 			},
 			want: &rdb.DescribeDBParametersInput{
 				DBParameterGroupName: nifcloud.String("test_db_parameter_group_id"),
+				Source:               nifcloud.String("user"),
 			},
 		},
 		{
@@ -166,6 +167,7 @@ func TestExpandDescribeDBParametersInput(t *testing.T) {
 			want: &rdb.DescribeDBParametersInput{
 				DBParameterGroupName: nifcloud.String("test_db_parameter_group_id"),
 				Marker:               nifcloud.String("test_marker"),
+				Source:               nifcloud.String("user"),
 			},
 		},
 	}

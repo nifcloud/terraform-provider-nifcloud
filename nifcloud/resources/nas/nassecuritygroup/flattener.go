@@ -28,45 +28,19 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASSecurityGroupsResponse)
 
 	if len(nasSecurityGroup.IPRanges) != 0 {
 		for _, r := range nasSecurityGroup.IPRanges {
-			var findElm map[string]interface{}
-
-			for _, e := range d.Get("rule").(*schema.Set).List() {
-				elm := e.(map[string]interface{})
-
-				if elm["cidr_ip"] == nifcloud.StringValue(r.CIDRIP) {
-					findElm = elm
-					break
-				}
+			rule := map[string]interface{}{
+				"cidr_ip": r.CIDRIP,
 			}
-
-			if findElm != nil {
-				rule := map[string]interface{}{
-					"cidr_ip": r.CIDRIP,
-				}
-				rules = append(rules, rule)
-			}
+			rules = append(rules, rule)
 		}
 	}
 
 	if len(nasSecurityGroup.SecurityGroups) != 0 {
 		for _, r := range nasSecurityGroup.SecurityGroups {
-			var findElm map[string]interface{}
-
-			for _, e := range d.Get("rule").(*schema.Set).List() {
-				elm := e.(map[string]interface{})
-
-				if elm["security_group_name"] == nifcloud.StringValue(r.SecurityGroupName) {
-					findElm = elm
-					break
-				}
+			rule := map[string]interface{}{
+				"security_group_name": r.SecurityGroupName,
 			}
-
-			if findElm != nil {
-				rule := map[string]interface{}{
-					"security_group_name": r.SecurityGroupName,
-				}
-				rules = append(rules, rule)
-			}
+			rules = append(rules, rule)
 		}
 	}
 

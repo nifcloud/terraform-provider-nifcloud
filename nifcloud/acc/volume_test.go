@@ -69,7 +69,6 @@ func TestAcc_Volume(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"instance_id",
 					"reboot",
 				},
 			},
@@ -107,6 +106,7 @@ func TestAcc_Volume_Unique_Id(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
+					"instance_id",
 					"instance_unique_id",
 					"reboot",
 				},

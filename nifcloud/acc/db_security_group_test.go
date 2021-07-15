@@ -67,9 +67,6 @@ func TestAcc_DbSecurityGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"rule.",
-				},
 			},
 		},
 	})

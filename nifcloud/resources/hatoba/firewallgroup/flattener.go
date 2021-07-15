@@ -37,35 +37,23 @@ func flatten(d *schema.ResourceData, res *hatoba.GetFirewallGroupResponse) error
 					break
 				}
 			}
+			rule := map[string]interface{}{
+				"cidr_ip":     r.CidrIp,
+				"id":          r.Id,
+				"protocol":    r.Protocol,
+				"direction":   r.Direction,
+				"from_port":   r.FromPort,
+				"description": r.Description,
+			}
 
 			if findElm != nil {
-				rule := map[string]interface{}{
-					"cidr_ip": r.CidrIp,
-					"id":      r.Id,
-				}
-
-				if findElm["protocol"] != nil && findElm["protocol"] != "" {
-					rule["protocol"] = r.Protocol
-				}
-
-				if findElm["direction"] != nil && findElm["direction"] != "" {
-					rule["direction"] = r.Direction
-				}
-
-				if findElm["from_port"] != nil && findElm["from_port"].(int) != 0 {
-					rule["from_port"] = r.FromPort
-				}
-
 				if findElm["to_port"] != nil && findElm["to_port"].(int) != 0 {
 					rule["to_port"] = r.ToPort
 				}
-
-				if findElm["description"] != nil && findElm["description"] != "" {
-					rule["description"] = r.Description
-				}
-
-				rules = append(rules, rule)
+			} else {
+				rule["to_port"] = r.ToPort
 			}
+			rules = append(rules, rule)
 		}
 	}
 

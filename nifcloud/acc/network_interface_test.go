@@ -69,9 +69,6 @@ func TestAcc_NetworkInterface(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"ip_address",
-				},
 			},
 		},
 	})

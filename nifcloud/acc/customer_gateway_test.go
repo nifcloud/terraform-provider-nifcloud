@@ -69,9 +69,6 @@ func TestAcc_CustomerGateway(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"type",
-				},
 			},
 		},
 	})

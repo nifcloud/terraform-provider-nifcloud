@@ -82,9 +82,6 @@ func TestAcc_Router(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"network_interface.1.network_name",
-				},
 			},
 		},
 	})

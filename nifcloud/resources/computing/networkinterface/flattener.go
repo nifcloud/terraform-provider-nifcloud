@@ -39,8 +39,8 @@ func flatten(d *schema.ResourceData, res *computing.DescribeNetworkInterfacesRes
 		return err
 	}
 
-	if row, ok := d.GetOk("ip_address"); ok {
-		if row == "static" {
+	if raw, ok := d.GetOk("ip_address"); ok {
+		if raw == "static" {
 			if err := d.Set("ip_address", "static"); err != nil {
 				return err
 			}
@@ -48,6 +48,10 @@ func flatten(d *schema.ResourceData, res *computing.DescribeNetworkInterfacesRes
 			if err := d.Set("ip_address", networkInterface.PrivateIpAddress); err != nil {
 				return err
 			}
+		}
+	} else {
+		if err := d.Set("ip_address", networkInterface.PrivateIpAddress); err != nil {
+			return err
 		}
 	}
 

@@ -71,7 +71,8 @@ func TestAcc_VpnConnection(t *testing.T) {
 				ImportStateVerifyIgnore: []string{
 					"customer_gateway_name",
 					"vpn_gateway_name",
-					"tunnel",
+					"customer_gateway_id",
+					"vpn_gateway_id",
 				},
 			},
 		},
@@ -112,8 +113,6 @@ func TestAcc_VpnConnection_Id_No_Tunnel(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"customer_gateway_id",
-					"vpn_gateway_id",
 					"mtu",
 				},
 			},

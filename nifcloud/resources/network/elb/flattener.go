@@ -140,6 +140,8 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBala
 				ni["network_name"] = nifcloud.StringValue(n.NetworkName)
 			}
 
+		} else {
+			ni["network_id"] = nifcloud.StringValue(n.NetworkId)
 		}
 		networkInterfaces = append(networkInterfaces, ni)
 	}

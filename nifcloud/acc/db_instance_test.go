@@ -131,10 +131,9 @@ func TestAcc_DBInstance(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"apply_immediately",
-					"custom_binlog_retention_period",
 					"final_snapshot_identifier",
 					"password",
-					"read_replica_identifier",
+					"read_replica_identifier", // TODO to fix after fixed nifcloud-sdk-go bug
 					"skip_final_snapshot",
 				},
 			},

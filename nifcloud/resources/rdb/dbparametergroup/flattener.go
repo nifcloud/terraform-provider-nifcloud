@@ -45,18 +45,21 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 			continue
 		}
 
-		for _, cp := range confParams {
-			if cp.ParameterName == nil {
-				continue
-			}
+		if param.ApplyMethod == nil {
+			param.ApplyMethod = nifcloud.String("immediate")
+			for _, cp := range confParams {
+				if cp.ParameterName == nil {
+					continue
+				}
 
-			if nifcloud.StringValue(cp.ParameterName) == nifcloud.StringValue(param.ParameterName) {
-				// override ApplyMethod with config value because RDB API does not return this field.
-				param.ApplyMethod = cp.ApplyMethod
-				userParams = append(userParams, param)
-				break
+				if nifcloud.StringValue(cp.ParameterName) == nifcloud.StringValue(param.ParameterName) {
+					// override ApplyMethod with config value because RDB API does not return this field.
+					param.ApplyMethod = cp.ApplyMethod
+					break
+				}
 			}
 		}
+		userParams = append(userParams, param)
 	}
 
 	if err := d.Set("parameter", flattenParameters(userParams)); err != nil {

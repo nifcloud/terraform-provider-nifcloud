@@ -21,6 +21,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		"allocated_storage",
 		"identifier",
 		"backup_retention_period",
+		"binlog_retention_period",
 		"backup_window",
 		"maintenance_window",
 		"multi_az",

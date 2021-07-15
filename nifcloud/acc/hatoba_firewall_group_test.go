@@ -60,9 +60,6 @@ func TestAcc_HatobaFirewallGroup(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"rule.",
-				},
 			},
 		},
 	})

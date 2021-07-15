@@ -74,6 +74,9 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 	}
 
 	if binlogRetentionPeriod, err := strconv.Atoi(nifcloud.StringValue(dbInstance.BinlogRetentionPeriod)); err == nil {
+		if err := d.Set("custom_binlog_retention_period", true); err != nil {
+			return err
+		}
 		if err := d.Set("binlog_retention_period", binlogRetentionPeriod); err != nil {
 			return err
 		}

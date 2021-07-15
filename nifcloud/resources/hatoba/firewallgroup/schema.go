@@ -42,6 +42,7 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Optional:    true,
 						Description: "The protocol.",
+						Default:     "TCP",
 						ValidateFunc: validation.StringInSlice([]string{
 							"ANY", "TCP", "UDP", "ICMP", "SSH", "HTTP", "HTTPS", "RDP", "GRE", "ESP", "AH", "VRRP", "L2TP",
 						}, false),
@@ -50,6 +51,7 @@ func newSchema() map[string]*schema.Schema {
 						Type:         schema.TypeString,
 						Optional:     true,
 						Description:  "The direction of rule being created.",
+						Default:      "IN",
 						ValidateFunc: validation.StringInSlice([]string{"IN", "OUT"}, false),
 					},
 					"from_port": {
