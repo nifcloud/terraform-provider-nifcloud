@@ -41,8 +41,8 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleValues(&separateInstanceRules, randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.1", "testrun001"),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.2", "testrun002"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id.1", randName),
+					resource.TestCheckResourceAttr(resourceName, "instance_id.2", randName),
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
@@ -53,8 +53,8 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleValuesUpdated(&separateInstanceRules, randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.1", "testrun001"),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.2", "testrun002"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id.1", randName),
+					resource.TestCheckResourceAttr(resourceName, "instance_id.2", randName),
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo-upd"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
