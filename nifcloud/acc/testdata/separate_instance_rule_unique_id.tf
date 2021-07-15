@@ -3,7 +3,7 @@ provider "nifcloud" {
 }
 
 resource "nifcloud_separate_instance_rule" "basic" {
-  instance_id        = [nifcloud_instance.basic1.instance_id, nifcloud_instance.basic2.instance_id]
+  instance_id        = [nifcloud_instance.basic1.unique_id, nifcloud_instance.basic2.unique_id]
   availability_zone  = "east-21"
   description        = "memo"
   name               = "%s"

@@ -29,7 +29,7 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 	var separateInstanceRules computing.SeparateInstanceRulesInfo
 
 	resourceName := "nifcloud_separate_instance_rule.basic"
-	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+	randName := prefix + acctest.RandString(7)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
@@ -41,12 +41,11 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleValues(&separateInstanceRules, randName),
-					//Terraform上のステートの値がTerrafromConfigで指定した値の通りになっているか確認
+					resource.TestCheckResourceAttr(resourceName, "instance_id.1", "testrun001"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id.2", "testrun002"),
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
-					resource.TestCheckResourceAttr(resourceName, "description", "test"),
-					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-11"),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.0", randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.1", randName),
+					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
+					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
 				),
 			},
 			{
@@ -54,12 +53,11 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleValuesUpdated(&separateInstanceRules, randName),
-					//TerrafromConfigを更新した場合、Terraform上のステートの値がTerrafromConfigで指定した値の通りになっているか確認
+					resource.TestCheckResourceAttr(resourceName, "instance_id.1", "testrun001"),
+					resource.TestCheckResourceAttr(resourceName, "instance_id.2", "testrun002"),
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo-upd"),
-					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-11"),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.0", randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.1", randName),
+					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
 				),
 			},
 			{
@@ -67,25 +65,64 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"instance_id",
-					"reboot",
+					"instance_id.1",
+					"instance_id.2",
 				},
 			},
 		},
 	})
 }
 
-func testAccSeparateInstanceRule(t *testing.T, fileName, SeparateInstanceRuleName string) string {
+func TestAcc_SeparateInstanceRule_Unique_Id(t *testing.T) {
+	var separateInstanceRules computing.SeparateInstanceRulesInfo
+
+	resourceName := "nifcloud_separate_instance_rule.basic"
+	randName := prefix + acctest.RandStringFromCharSet(10, acctest.CharSetAlphaNum)
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactory,
+		CheckDestroy:      testAccSeparateInstanceRuleResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccSeparateInstanceRule(t, "testdata/separate_instance_rule_unique_id.tf", randName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
+					testAccCheckSeparateInstanceRuleUniqueIDValues(&separateInstanceRules, randName),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_unique_id.1"),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_unique_id.2"),
+					resource.TestCheckResourceAttr(resourceName, "name", randName),
+					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
+					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"instance_unique_id.1",
+					"instance_unique_id.2",
+				},
+			},
+		},
+	})
+}
+
+func testAccSeparateInstanceRule(t *testing.T, fileName, rName string) string {
 	b, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}
 	return fmt.Sprintf(string(b),
-		SeparateInstanceRuleName,
+		rName,
+		rName,
+		rName,
+		rName,
+		rName,
 	)
 }
 
-//作成されたリソースが実際のクラウド上に存在するかの確認
 func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *computing.SeparateInstanceRulesInfo) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
@@ -121,11 +158,10 @@ func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *com
 	}
 }
 
-//クラウドに作成されたリソースの値がTerrafromConfigで指定した値の通りになっているか確認
-func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *computing.SeparateInstanceRulesInfo, SeparateInstanceRuleName string) resource.TestCheckFunc {
+func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != SeparateInstanceRuleName {
-			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", SeparateInstanceRuleName, separateInstanceRules.SeparateInstanceRuleName)
+		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName {
+			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, separateInstanceRules.SeparateInstanceRuleName)
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo" {
@@ -136,18 +172,46 @@ func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *computing.Sep
 			return fmt.Errorf("bad availability_zone state,  expected \"east-11\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
 
-		/*if nifcloud.StringValue(volume.AttachmentSet[0].InstanceId) != rName {
-			return fmt.Errorf("bad instance_id state, expected \"%s\", got: %#v", rName, volume.AttachmentSet[0].InstanceId)
-		}*/
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) != rName {
+			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) != rName {
+			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
+		}
 		return nil
 	}
 }
 
-//TerrafromConfigを更新した場合、クラウド上のリソースの値も更新されていることの確認
-func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *computing.SeparateInstanceRulesInfo, SeparateInstanceRuleName string) resource.TestCheckFunc {
+func testAccCheckSeparateInstanceRuleUniqueIDValues(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != SeparateInstanceRuleName {
-			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", SeparateInstanceRuleName, separateInstanceRules.SeparateInstanceRuleName)
+		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName {
+			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, separateInstanceRules.SeparateInstanceRuleName)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo" {
+			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-11" {
+			return fmt.Errorf("bad availability_zone state,  expected \"east-11\", got: %#v", separateInstanceRules.AvailabilityZone)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceUniqueId) != "" {
+			return fmt.Errorf("bad availability_zone state,  expected not nil, got: nil")
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceUniqueId) != "" {
+			return fmt.Errorf("bad availability_zone state,  expected not nil, got: nil")
+		}
+		return nil
+	}
+}
+
+func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName {
+			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, separateInstanceRules.SeparateInstanceRuleName)
 		}
 
 		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo-upd" {
@@ -157,11 +221,18 @@ func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *comput
 		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-11" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-11\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) != rName {
+			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) != rName {
+			return fmt.Errorf("bad availability_zone state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
+		}
 		return nil
 	}
 }
 
-//テスト終了後にクラウド上のリソースが削除されているか確認
 func testAccSeparateInstanceRuleResourceDestroy(s *terraform.State) error {
 	svc := testAccProvider.Meta().(*client.Client).Computing
 
@@ -188,7 +259,6 @@ func testAccSeparateInstanceRuleResourceDestroy(s *terraform.State) error {
 	return nil
 }
 
-//テスト実施前にクラウド上リソースを掃除する用の関数
 func testSweepSeparateInstanceRule(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
@@ -207,10 +277,10 @@ func testSweepSeparateInstanceRule(region string) error {
 
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, n := range sweepSeparateInstanceRules {
-		SeparateInstanceRuleName := n
+		separateInstanceRuleName := n
 		eg.Go(func() error {
 			_, err := svc.NiftyDeleteSeparateInstanceRuleRequest(&computing.NiftyDeleteSeparateInstanceRuleInput{
-				SeparateInstanceRuleName: nifcloud.String(SeparateInstanceRuleName),
+				SeparateInstanceRuleName: nifcloud.String(separateInstanceRuleName),
 			}).Send(ctx)
 			return err
 		})

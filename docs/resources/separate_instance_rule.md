@@ -36,14 +36,6 @@ resource "nifcloud_security_group" "web" {
   availability_zone = "east-11"
 }
 
-resource "nifcloud_security_group_rule" "web" {
-  security_group_names = [nifcloud_security_group.web.group_name]
-  type                 = "IN"
-  from_port            = 80
-  protocol             = "TCP"
-  cidr_ip              = "0.0.0.0/0"
-}
-
 resource "nifcloud_key_pair" "web" {
   key_name   = "webkey"
   public_key = "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCZ1FEVjJpcjBTWjUvWTBCRm9DK1pRMVU4SUpISWZTWkc2QUljbHFCclhqaTNYZ2h3eG9PYzgxUkZmTW55aVB3OGRsakVodlFTcnl0eXpZNkhkVDZZZVR1OWhYWE9sckw3SlExbDVWbEZmT3VsZGlWQi92YTVzL2ZNQlR2SG50aHh4a3hiTm9BYkphQ1lxQVJucStHemU2clNGOEFHOC9DckUwckxuK2tlK1Jkb0d6Mk9uRlc0MDZId01uZVBkRm1QSzFKYjhUZVZMNzUyN3pUaUs0anV2SXU2TlQ2MU96aDh4OHZzRkhzNm52NWRRR0FCdm8rMjUycDJMdUlwczlnNDIydmg1VGhpQ0FPTmRXdjQvZHZrVWg4NDN6a1VRL0tISGNhWkpjcG1zdXNPNUhnbzdKLzk4VVVBU0NPVGgwSVZxZjFtQXdxRkZLVjFkTEw2YnJES2lTTFMwQVkwWUdkMHMvN3lGMTdIK2o1VDVPNjd2Z0RqbTR3K041MFhvUVIwbU5BY0t3UVM0NHhkWkRxallXTzVuc0ZVOWZZY3RsejQ2Qk5xTk51My9GOWJVbFhBM0dkY2FHRmw5elZZQjVwWTdqOW9jbFQ1VWNXdkY1UXByYWFRZGhxVEkxZjFRclRLRkN6Vm1Dc1ROWkZBZU1VMVcwTWFUU1QreVljK0NNc2xSa009IFNDSjAwMDg3QHVidW50dQo="
