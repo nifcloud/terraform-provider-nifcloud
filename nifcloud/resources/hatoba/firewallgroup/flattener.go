@@ -51,9 +51,7 @@ func flatten(d *schema.ResourceData, res *hatoba.GetFirewallGroupResponse) error
 					rule["to_port"] = r.ToPort
 				}
 			} else {
-				if nifcloud.Int64Value(r.FromPort) != nifcloud.Int64Value(r.ToPort) {
-					rule["to_port"] = r.ToPort
-				}
+				rule["to_port"] = r.ToPort
 			}
 			rules = append(rules, rule)
 		}
