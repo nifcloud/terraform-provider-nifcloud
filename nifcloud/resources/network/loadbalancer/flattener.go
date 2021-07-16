@@ -115,20 +115,22 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 	}
 
 	if loadBalancer.Option != nil {
-		if err := d.Set("session_stickiness_policy_enable", loadBalancer.Option.SessionStickinessPolicy.Enabled); err != nil {
-			return err
+		if loadBalancer.Option.SessionStickinessPolicy != nil {
+			if err := d.Set("session_stickiness_policy_enable", loadBalancer.Option.SessionStickinessPolicy.Enabled); err != nil {
+				return err
+			}
+			if err := d.Set("session_stickiness_policy_expiration_period", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod); err != nil {
+				return err
+			}
 		}
-		if err := d.Set("session_stickiness_policy_expiration_period", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod); err != nil {
-			return err
-		}
-	}
 
-	if loadBalancer.Option != nil {
-		if err := d.Set("sorry_page_enable", loadBalancer.Option.SorryPage.Enabled); err != nil {
-			return err
-		}
-		if err := d.Set("sorry_page_status_code", loadBalancer.Option.SorryPage.StatusCode); err != nil {
-			return err
+		if loadBalancer.Option.SorryPage != nil {
+			if err := d.Set("sorry_page_enable", loadBalancer.Option.SorryPage.Enabled); err != nil {
+				return err
+			}
+			if err := d.Set("sorry_page_status_code", loadBalancer.Option.SorryPage.StatusCode); err != nil {
+				return err
+			}
 		}
 	}
 
