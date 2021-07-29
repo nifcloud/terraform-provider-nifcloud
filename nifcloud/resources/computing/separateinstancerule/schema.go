@@ -72,7 +72,6 @@ func newSchema() map[string]*schema.Schema {
 			Type:             schema.TypeString,
 			Description:      "The separate instance rule description.",
 			Optional:         true,
-			Computed:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(0, 40),
 		},
 	}
