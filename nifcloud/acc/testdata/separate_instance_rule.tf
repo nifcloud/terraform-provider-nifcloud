@@ -20,7 +20,7 @@ resource "nifcloud_key_pair" "basic" {
 }
 
 resource "nifcloud_instance" "basic1" {
-  instance_id       = "%s"
+  instance_id       = "%s1"
   availability_zone = "east-21"
   image_id          = data.nifcloud_image.ubuntu.id
   key_name          = nifcloud_key_pair.basic.key_name
@@ -39,7 +39,7 @@ resource "nifcloud_instance" "basic1" {
 }
 
 resource "nifcloud_instance" "basic2" {
-  instance_id       = "%s"
+  instance_id       = "%s2"
   availability_zone = "east-21"
   image_id          = data.nifcloud_image.ubuntu.id
   key_name          = nifcloud_key_pair.basic.key_name

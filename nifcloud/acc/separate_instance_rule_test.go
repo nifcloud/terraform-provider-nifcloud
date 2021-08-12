@@ -41,8 +41,8 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleValues(&separateInstanceRules, randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.1", randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.2", randName),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_id.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_id.1"),
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
@@ -53,9 +53,9 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleValuesUpdated(&separateInstanceRules, randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.1", randName),
-					resource.TestCheckResourceAttr(resourceName, "instance_id.2", randName),
-					resource.TestCheckResourceAttr(resourceName, "name", randName),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_id.0"),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_id.1"),
+					resource.TestCheckResourceAttr(resourceName, "name", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo-upd"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
 				),
@@ -64,10 +64,6 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"instance_id.1",
-					"instance_id.2",
-				},
 			},
 		},
 	})
@@ -89,8 +85,8 @@ func TestAcc_SeparateInstanceRule_Unique_Id(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSeparateInstanceRuleExists(resourceName, &separateInstanceRules),
 					testAccCheckSeparateInstanceRuleUniqueIDValues(&separateInstanceRules, randName),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_unique_id.0"),
 					resource.TestCheckResourceAttrSet(resourceName, "instance_unique_id.1"),
-					resource.TestCheckResourceAttrSet(resourceName, "instance_unique_id.2"),
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
 					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
@@ -101,8 +97,8 @@ func TestAcc_SeparateInstanceRule_Unique_Id(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"instance_unique_id.1",
-					"instance_unique_id.2",
+					"instance_id.",
+					"instance_unique_id.",
 				},
 			},
 		},
@@ -168,16 +164,41 @@ func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *computing.Sep
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-11" {
-			return fmt.Errorf("bad availability_zone state,  expected \"east-11\", got: %#v", separateInstanceRules.AvailabilityZone)
+		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) != rName {
-			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) == "" {
+			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) != rName {
-			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) == "" {
+			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
+		}
+		return nil
+	}
+}
+
+func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName+"upd" {
+			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName+"upd", separateInstanceRules.SeparateInstanceRuleName)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo-upd" {
+			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", separateInstanceRules.AvailabilityZone)
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) == "" {
+			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
+		}
+
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) == "" {
+			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
 		}
 		return nil
 	}
@@ -193,41 +214,16 @@ func testAccCheckSeparateInstanceRuleUniqueIDValues(separateInstanceRules *compu
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-11" {
-			return fmt.Errorf("bad availability_zone state,  expected \"east-11\", got: %#v", separateInstanceRules.AvailabilityZone)
+		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceUniqueId) != "" {
-			return fmt.Errorf("bad instance_unique_id state,  expected not nil, got: nil")
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceUniqueId) == "" {
+			return fmt.Errorf("bad instance_unique_id state, expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceUniqueId) != "" {
-			return fmt.Errorf("bad instance_unique_id state,  expected not nil, got: nil")
-		}
-		return nil
-	}
-}
-
-func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName {
-			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, separateInstanceRules.SeparateInstanceRuleName)
-		}
-
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo-upd" {
-			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
-		}
-
-		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-11" {
-			return fmt.Errorf("bad availability_zone state,  expected \"east-11\", got: %#v", separateInstanceRules.AvailabilityZone)
-		}
-
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) != rName {
-			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[0].InstanceId)
-		}
-
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) != rName {
-			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, separateInstanceRules.InstancesSet[1].InstanceId)
+		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceUniqueId) == "" {
+			return fmt.Errorf("bad instance_unique_id state, expected not nil, got: nil")
 		}
 		return nil
 	}
