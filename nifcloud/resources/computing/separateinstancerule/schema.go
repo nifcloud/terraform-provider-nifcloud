@@ -39,7 +39,7 @@ func newSchema() map[string]*schema.Schema {
 			Required:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 15),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the name within 1-15 characters [0-9a-zA-Z]."),
 			),
 		},
 		"instance_id": {
@@ -50,7 +50,7 @@ func newSchema() map[string]*schema.Schema {
 				Type: schema.TypeString,
 				ValidateFunc: validation.All(
 					validation.StringLenBetween(1, 15),
-					validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), ""),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z]+$`), "Enter the name within 1-15 characters [0-9a-zA-Z]."),
 				),
 			},
 			ConflictsWith: []string{"instance_unique_id"},
