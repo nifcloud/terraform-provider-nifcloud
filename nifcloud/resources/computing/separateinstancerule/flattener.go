@@ -26,15 +26,16 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeSeparateInstanc
 		return err
 	}
 
-	if _, ok := d.GetOk("instance_id"); ok {
-		if err := d.Set("instance_id", flattenInstanceID(separateInstanceRule.InstancesSet)); err != nil {
-			return err
-		}
-	}
+	if len(separateInstanceRule.InstancesSet) != 0 {
 
-	if _, ok := d.GetOk("instance_unique_id"); ok {
-		if err := d.Set("instance_unique_id", flattenInstanceUniqueID(separateInstanceRule.InstancesSet)); err != nil {
-			return err
+		if _, ok := d.GetOk("instance_unique_id"); ok {
+			if err := d.Set("instance_unique_id", flattenInstanceUniqueID(separateInstanceRule.InstancesSet)); err != nil {
+				return err
+			}
+		} else {
+			if err := d.Set("instance_id", flattenInstanceID(separateInstanceRule.InstancesSet)); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -43,7 +43,7 @@ func newSchema() map[string]*schema.Schema {
 			),
 		},
 		"instance_id": {
-			Type:        schema.TypeList,
+			Type:        schema.TypeSet,
 			Description: "The instance name.",
 			Optional:    true,
 			Elem: &schema.Schema{
@@ -56,7 +56,7 @@ func newSchema() map[string]*schema.Schema {
 			ConflictsWith: []string{"instance_unique_id"},
 		},
 		"instance_unique_id": {
-			Type:          schema.TypeList,
+			Type:          schema.TypeSet,
 			Description:   "The unique ID of instance.",
 			Optional:      true,
 			Elem:          &schema.Schema{Type: schema.TypeString},

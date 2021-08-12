@@ -92,9 +92,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 func instanceChangeList(before interface{}, after interface{}) ([]string, []string) {
 	var addList, removeList []string
-	for _, b := range before.([]interface{}) {
+	for _, b := range before.(*schema.Set).List() {
 		found := false
-		for _, a := range after.([]interface{}) {
+		for _, a := range after.(*schema.Set).List() {
 			if a.(string) == b.(string) {
 				found = true
 				break
@@ -105,9 +105,9 @@ func instanceChangeList(before interface{}, after interface{}) ([]string, []stri
 		}
 	}
 
-	for _, a := range after.([]interface{}) {
+	for _, a := range after.(*schema.Set).List() {
 		found := false
-		for _, b := range before.([]interface{}) {
+		for _, b := range before.(*schema.Set).List() {
 			if a.(string) == b.(string) {
 				found = true
 				break

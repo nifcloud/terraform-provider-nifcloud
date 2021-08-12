@@ -10,8 +10,8 @@ func expandNiftyCreateSeparateInstanceRuleInput(d *schema.ResourceData) *computi
 	return &computing.NiftyCreateSeparateInstanceRuleInput{
 		SeparateInstanceRuleName:        nifcloud.String(d.Get("name").(string)),
 		SeparateInstanceRuleDescription: nifcloud.String(d.Get("description").(string)),
-		InstanceId:                      expandInstanceIds(d.Get("instance_id").([]interface{})),
-		InstanceUniqueId:                expandInstanceIds(d.Get("instance_unique_id").([]interface{})),
+		InstanceId:                      expandInstanceIds(d.Get("instance_id").(*schema.Set).List()),
+		InstanceUniqueId:                expandInstanceIds(d.Get("instance_unique_id").(*schema.Set).List()),
 		Placement: &computing.RequestPlacementOfNiftyCreateSeparateInstanceRule{
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
