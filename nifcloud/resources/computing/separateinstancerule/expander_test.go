@@ -12,7 +12,7 @@ import (
 func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceId(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"name":              "test_separate_name",
-		"availability_zone": "test_availability",
+		"availability_zone": "test_availability_zone",
 		"description":       "test_description",
 		"instance_id":       []interface{}{"test_instance_id1", "test_instance_id2"},
 	})
@@ -48,9 +48,9 @@ func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceId(t *testing.T) {
 func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceUniqueId(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"name":               "test_separate_name",
-		"availability_zone":  "test_availability",
+		"availability_zone":  "test_availability_zone",
 		"description":        "test_description",
-		"instance_unique_id": []interface{}{"test_instance_unique_id1", "ttest_instance_unique_id2"},
+		"instance_unique_id": []interface{}{"test_instance_unique_id1", "test_instance_unique_id2"},
 	})
 	rd.SetId("test_separate_name")
 
