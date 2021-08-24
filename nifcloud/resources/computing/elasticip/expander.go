@@ -1,6 +1,8 @@
 package elasticip
 
 import (
+	"net"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
@@ -18,27 +20,26 @@ func expandAllocateAddressInput(d *schema.ResourceData) *computing.AllocateAddre
 func expandNiftyModifyAddressAttributeInput(d *schema.ResourceData) *computing.NiftyModifyAddressAttributeInput {
 	input := &computing.NiftyModifyAddressAttributeInput{}
 
-	if d.Get("ip_type").(bool) {
-		input.PrivateIpAddress = nifcloud.String(d.Id())
-	}
-	if !(d.Get("ip_type").(bool)) {
-		input.PublicIp = nifcloud.String(d.Id())
+	ip := net.ParseIP(d.Id())
+	if ip.IsPrivate() {
+		input.PrivateIpAddress = nifcloud.String(ip.String())
+	} else {
+		input.PublicIp = nifcloud.String(ip.String())
 	}
 
 	input.Attribute = "description"
 	input.Value = nifcloud.String(d.Get("description").(string))
-
 	return input
 }
 
 func expandDescribeAddressesInput(d *schema.ResourceData) *computing.DescribeAddressesInput {
 	input := &computing.DescribeAddressesInput{}
 
-	if d.Get("ip_type").(bool) {
-		input.PrivateIpAddress = []string{d.Id()}
-	}
-	if !(d.Get("ip_type").(bool)) {
-		input.PublicIp = []string{d.Id()}
+	ip := net.ParseIP(d.Id())
+	if ip.IsPrivate() {
+		input.PrivateIpAddress = []string{ip.String()}
+	} else {
+		input.PublicIp = []string{ip.String()}
 	}
 	return input
 }
@@ -46,11 +47,11 @@ func expandDescribeAddressesInput(d *schema.ResourceData) *computing.DescribeAdd
 func expandReleaseAddressInput(d *schema.ResourceData) *computing.ReleaseAddressInput {
 	input := &computing.ReleaseAddressInput{}
 
-	if d.Get("ip_type").(bool) {
-		input.PrivateIpAddress = nifcloud.String(d.Id())
-	}
-	if !(d.Get("ip_type").(bool)) {
-		input.PublicIp = nifcloud.String(d.Id())
+	ip := net.ParseIP(d.Id())
+	if ip.IsPrivate() {
+		input.PrivateIpAddress = nifcloud.String(ip.String())
+	} else {
+		input.PublicIp = nifcloud.String(ip.String())
 	}
 	return input
 }
