@@ -84,9 +84,9 @@ func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceUniqueId(t *testin
 func TestExpandNiftyUpdateSeparateInstanceRuleInputForName(t *testing.T) {
 	r := New()
 	rd := schema.TestResourceDataRaw(t, r.Schema, map[string]interface{}{
-		"name": "test_separate_name",
+		"name": "test_separate_name_new",
 	})
-	rd.SetId("test_separate_name2")
+	rd.SetId("test_separate_name")
 	dn := r.Data(rd.State())
 
 	tests := []struct {
@@ -99,7 +99,7 @@ func TestExpandNiftyUpdateSeparateInstanceRuleInputForName(t *testing.T) {
 			args: dn,
 			want: &computing.NiftyUpdateSeparateInstanceRuleInput{
 				SeparateInstanceRuleName:       nifcloud.String("test_separate_name"),
-				SeparateInstanceRuleNameUpdate: nifcloud.String("test_separate_name"),
+				SeparateInstanceRuleNameUpdate: nifcloud.String("test_separate_name_new"),
 			},
 		},
 	}
@@ -193,6 +193,118 @@ func TestExpandNiftyDeleteSeparateInstanceRuleInput(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := expandNiftyDeleteSeparateInstanceRuleInput(tt.args)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(t *testing.T) {
+	instanceId := []string{"test_instance_id1", "test_instance_id2"}
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
+	rd.SetId("test_separate_name")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
+				SeparateInstanceRuleName: nifcloud.String("test_separate_name"),
+				InstanceId:               []string{"test_instance_id1", "test_instance_id2"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(tt.args, instanceId)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(t *testing.T) {
+	instanceId := []string{"test_instance_id1", "test_instance_id2"}
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
+	rd.SetId("test_separate_name")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
+				SeparateInstanceRuleName: nifcloud.String("test_separate_name"),
+				InstanceId:               []string{"test_instance_id1", "test_instance_id2"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(tt.args, instanceId)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(t *testing.T) {
+	instanceUniqueId := []string{"test_instance_unique_id1", "test_instance_unique_id2"}
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
+	rd.SetId("test_separate_name")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
+				SeparateInstanceRuleName: nifcloud.String("test_separate_name"),
+				InstanceUniqueId:         []string{"test_instance_unique_id1", "test_instance_unique_id2"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(tt.args, instanceUniqueId)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput(t *testing.T) {
+	instanceUniqueId := []string{"test_instance_unique_id1", "test_instance_unique_id2"}
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
+	rd.SetId("test_separate_name")
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput
+	}{
+		{
+			name: "expands the resource data",
+			args: rd,
+			want: &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
+				SeparateInstanceRuleName: nifcloud.String("test_separate_name"),
+				InstanceUniqueId:         []string{"test_instance_unique_id1", "test_instance_unique_id2"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput(tt.args, instanceUniqueId)
 			assert.Equal(t, tt.want, got)
 		})
 	}

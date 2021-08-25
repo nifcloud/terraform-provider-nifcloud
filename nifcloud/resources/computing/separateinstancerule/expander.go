@@ -44,10 +44,9 @@ func expandNiftyDeleteSeparateInstanceRuleInput(d *schema.ResourceData) *computi
 }
 
 func expandNiftyUpdateSeparateInstanceRuleInputForName(d *schema.ResourceData) *computing.NiftyUpdateSeparateInstanceRuleInput {
-	before, after := d.GetChange("name")
 	return &computing.NiftyUpdateSeparateInstanceRuleInput{
-		SeparateInstanceRuleName:       nifcloud.String(before.(string)),
-		SeparateInstanceRuleNameUpdate: nifcloud.String(after.(string)),
+		SeparateInstanceRuleName:       nifcloud.String(d.Id()),
+		SeparateInstanceRuleNameUpdate: nifcloud.String(d.Get("name").(string)),
 	}
 }
 
@@ -63,7 +62,7 @@ func expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceIDInput(
 	instanceIDs []string,
 ) *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput {
 	return &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
-		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		SeparateInstanceRuleName: nifcloud.String(d.Id()),
 		InstanceId:               instanceIDs,
 	}
 }
@@ -73,7 +72,7 @@ func expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceIDInput(
 	instanceIDs []string,
 ) *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput {
 	return &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
-		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		SeparateInstanceRuleName: nifcloud.String(d.Id()),
 		InstanceId:               instanceIDs,
 	}
 }
@@ -83,7 +82,7 @@ func expandNiftyRegisterInstancesWithSeparateInstanceRuleInstanceUniqueIDInput(
 	instanceUniqueIDs []string,
 ) *computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput {
 	return &computing.NiftyRegisterInstancesWithSeparateInstanceRuleInput{
-		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		SeparateInstanceRuleName: nifcloud.String(d.Id()),
 		InstanceUniqueId:         instanceUniqueIDs,
 	}
 }
@@ -93,7 +92,7 @@ func expandNiftyDeregisterInstancesFromSeparateInstanceRuleInstanceUniqueIDInput
 	instanceUniqueIDs []string,
 ) *computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput {
 	return &computing.NiftyDeregisterInstancesFromSeparateInstanceRuleInput{
-		SeparateInstanceRuleName: nifcloud.String(d.Get("name").(string)),
+		SeparateInstanceRuleName: nifcloud.String(d.Id()),
 		InstanceUniqueId:         instanceUniqueIDs,
 	}
 }
