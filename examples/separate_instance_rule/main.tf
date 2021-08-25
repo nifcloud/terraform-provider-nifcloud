@@ -6,6 +6,10 @@ terraform {
   }
 }
 
+provider "nifcloud" {
+  region = "jp-east-1"
+}
+
 resource "nifcloud_separate_instance_rule" "web" {
   instance_id        = [nifcloud_instance.web1.instance_id, nifcloud_instance.web2.instance_id]
   availability_zone  = "east-11"
