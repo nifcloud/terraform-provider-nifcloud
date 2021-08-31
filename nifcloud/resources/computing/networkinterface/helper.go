@@ -12,7 +12,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
 
-const waiterInitialDelay = 3
+const waiterInitialDelay = 30
 
 var mutexKV = mutexkv.NewMutexKV()
 

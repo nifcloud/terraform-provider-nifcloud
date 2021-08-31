@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -26,6 +27,14 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("ip_address") {
 		if err := waitForRouterOfNetworkInterfaceAvailable(ctx, d, svc); err != nil {
 			return err
+		}
+
+		if raw, ok := d.GetOk("network_id"); ok && len(raw.(string)) > 0 {
+			key, err := mutexkv.LockPrivateLan(ctx, raw.(string), svc)
+			if err != nil {
+				return diag.FromErr(err)
+			}
+			defer mutexkv.UnlockPrivateLan(key)
 		}
 
 		input := expandModifyNetworkInterfaceAttributeInputForIPAddress(d)
