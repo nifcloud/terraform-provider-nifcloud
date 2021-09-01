@@ -38,6 +38,9 @@ func New() *schema.Resource {
 
 		Timeouts: &schema.ResourceTimeout{
 			Default: schema.DefaultTimeout(5 * time.Minute),
+			Create:  schema.DefaultTimeout(30 * time.Minute),
+			Update:  schema.DefaultTimeout(20 * time.Minute),
+			Delete:  schema.DefaultTimeout(10 * time.Minute),
 		},
 	}
 }

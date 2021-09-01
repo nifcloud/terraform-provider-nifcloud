@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
 
 const waiterInitialDelay = 3
@@ -72,6 +73,25 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	if d.HasChange("network_interface") {
 		input := expandNiftyUpdateRouterNetworkInterfacesInput(d)
+
+		for _, ni := range d.Get("network_interface").(*schema.Set).List() {
+			if v, ok := ni.(map[string]interface{}); ok {
+				if raw, ok := v["network_id"]; ok && len(raw.(string)) > 0 {
+					key, err := mutexkv.LockPrivateLan(ctx, raw.(string), svc)
+					if err != nil {
+						return diag.FromErr(err)
+					}
+					defer mutexkv.UnlockPrivateLan(key)
+				}
+				if raw, ok := v["network_name"]; ok && len(raw.(string)) > 0 {
+					key, err := mutexkv.LockPrivateLanByName(ctx, raw.(string), svc)
+					if err != nil {
+						return diag.FromErr(err)
+					}
+					defer mutexkv.UnlockPrivateLan(key)
+				}
+			}
+		}
 
 		req := svc.NiftyUpdateRouterNetworkInterfacesRequest(input)
 		if _, err := req.Send(ctx); err != nil {
