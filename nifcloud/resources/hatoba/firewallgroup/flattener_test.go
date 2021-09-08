@@ -38,10 +38,10 @@ func TestFlatten(t *testing.T) {
 				d: rd,
 				res: &hatoba.GetFirewallGroupResponse{
 					GetFirewallGroupOutput: &hatoba.GetFirewallGroupOutput{
-						FirewallGroup: &hatoba.FirewallGroupResponse{
+						FirewallGroup: &hatoba.FirewallGroup{
 							Name:        nifcloud.String("test_name"),
 							Description: nifcloud.String("test_description"),
-							Rules: []hatoba.FirewallRule{
+							Rules: []hatoba.Rules{
 								{
 									Protocol: nifcloud.String("ANY"),
 									CidrIp:   nifcloud.String("0.0.0.0/0"),
@@ -60,7 +60,7 @@ func TestFlatten(t *testing.T) {
 				d: wantNotFoundRd,
 				res: &hatoba.GetFirewallGroupResponse{
 					GetFirewallGroupOutput: &hatoba.GetFirewallGroupOutput{
-						FirewallGroup: &hatoba.FirewallGroupResponse{},
+						FirewallGroup: &hatoba.FirewallGroup{},
 					},
 				},
 			},

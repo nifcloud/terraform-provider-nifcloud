@@ -8,7 +8,7 @@ import (
 
 func expandCreateFirewallGroupInput(d *schema.ResourceData) *hatoba.CreateFirewallGroupInput {
 	return &hatoba.CreateFirewallGroupInput{
-		FirewallGroup: &hatoba.CreateFirewallGroupRequestFirewallGroup{
+		FirewallGroup: &hatoba.RequestFirewallGroup{
 			Name:        nifcloud.String(d.Get("name").(string)),
 			Description: nifcloud.String(d.Get("description").(string)),
 		},
@@ -16,7 +16,7 @@ func expandCreateFirewallGroupInput(d *schema.ResourceData) *hatoba.CreateFirewa
 }
 
 func expandAuthorizeFirewallGroupInput(d *schema.ResourceData, rule map[string]interface{}) *hatoba.AuthorizeFirewallGroupInput {
-	r := hatoba.AuthorizeFirewallGroupRequestFirewallRule{
+	r := hatoba.RequestRules{
 		Protocol:    nifcloud.String(rule["protocol"].(string)),
 		Direction:   nifcloud.String(rule["direction"].(string)),
 		CidrIp:      nifcloud.String(rule["cidr_ip"].(string)),
@@ -32,7 +32,7 @@ func expandAuthorizeFirewallGroupInput(d *schema.ResourceData, rule map[string]i
 
 	return &hatoba.AuthorizeFirewallGroupInput{
 		FirewallGroupName: nifcloud.String(d.Id()),
-		Rules:             []hatoba.AuthorizeFirewallGroupRequestFirewallRule{r},
+		Rules:             []hatoba.RequestRules{r},
 	}
 }
 
@@ -52,7 +52,7 @@ func expandGetFirewallGroupInput(d *schema.ResourceData) *hatoba.GetFirewallGrou
 func expandUpdateFirewallGroupInput(d *schema.ResourceData) *hatoba.UpdateFirewallGroupInput {
 	input := &hatoba.UpdateFirewallGroupInput{
 		FirewallGroupName: nifcloud.String(d.Id()),
-		FirewallGroup: &hatoba.UpdateFirewallGroupRequestFirewallGroup{
+		FirewallGroup: &hatoba.RequestFirewallGroupOfUpdateFirewallGroup{
 			Description: nifcloud.String(d.Get("description").(string)),
 		},
 	}

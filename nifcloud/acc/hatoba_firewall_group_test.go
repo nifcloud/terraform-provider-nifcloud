@@ -19,14 +19,16 @@ import (
 
 func init() {
 	resource.AddTestSweepers("nifcloud_hatoba_firewall_group", &resource.Sweeper{
-		Name:         "nifcloud_hatoba_firewall_group",
-		F:            testSweepHatobaFirewallGroup,
-		Dependencies: []string{},
+		Name: "nifcloud_hatoba_firewall_group",
+		F:    testSweepHatobaFirewallGroup,
+		Dependencies: []string{
+			"nifcloud_hatoba_cluster",
+		},
 	})
 }
 
 func TestAcc_HatobaFirewallGroup(t *testing.T) {
-	var firewallGroup hatoba.FirewallGroupResponse
+	var firewallGroup hatoba.FirewallGroup
 
 	resourceName := "nifcloud_hatoba_firewall_group.basic"
 	randName := prefix + acctest.RandString(7)
@@ -75,7 +77,7 @@ func testAccHatobaFirewallGroup(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckHatobaFirewallGroupExists(n string, firewallGroup *hatoba.FirewallGroupResponse) resource.TestCheckFunc {
+func testAccCheckHatobaFirewallGroupExists(n string, firewallGroup *hatoba.FirewallGroup) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -106,7 +108,7 @@ func testAccCheckHatobaFirewallGroupExists(n string, firewallGroup *hatoba.Firew
 	}
 }
 
-func testAccCheckHatobaFirewallGroupValues(firewallGroup *hatoba.FirewallGroupResponse, name string) resource.TestCheckFunc {
+func testAccCheckHatobaFirewallGroupValues(firewallGroup *hatoba.FirewallGroup, name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(firewallGroup.Name) != name {
 			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", name, nifcloud.StringValue(firewallGroup.Name))
@@ -116,7 +118,7 @@ func testAccCheckHatobaFirewallGroupValues(firewallGroup *hatoba.FirewallGroupRe
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.StringValue(firewallGroup.Description))
 		}
 
-		wantRules := []hatoba.FirewallRule{
+		wantRules := []hatoba.Rules{
 			{
 				Protocol:    nifcloud.String("TCP"),
 				Direction:   nifcloud.String("IN"),
@@ -152,7 +154,7 @@ func testAccCheckHatobaFirewallGroupValues(firewallGroup *hatoba.FirewallGroupRe
 			return fmt.Errorf("bad rule[*] state, expected length is %d, got length: %d", len(wantRules), len(firewallGroup.Rules))
 		}
 
-		found := map[string]hatoba.FirewallRule{}
+		found := map[string]hatoba.Rules{}
 		for _, gr := range firewallGroup.Rules {
 			for _, wr := range wantRules {
 				if nifcloud.StringValue(gr.Protocol) == nifcloud.StringValue(wr.Protocol) &&
@@ -175,7 +177,7 @@ func testAccCheckHatobaFirewallGroupValues(firewallGroup *hatoba.FirewallGroupRe
 	}
 }
 
-func testAccCheckHatobaFirewallGroupValuesUpdated(firewallGroup *hatoba.FirewallGroupResponse, name string) resource.TestCheckFunc {
+func testAccCheckHatobaFirewallGroupValuesUpdated(firewallGroup *hatoba.FirewallGroup, name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(firewallGroup.Name) != name+"upd" {
 			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", name+"upd", nifcloud.StringValue(firewallGroup.Name))
@@ -185,7 +187,7 @@ func testAccCheckHatobaFirewallGroupValuesUpdated(firewallGroup *hatoba.Firewall
 			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.StringValue(firewallGroup.Description))
 		}
 
-		wantRules := []hatoba.FirewallRule{
+		wantRules := []hatoba.Rules{
 			{
 				Protocol:    nifcloud.String("TCP"),
 				Direction:   nifcloud.String("IN"),
@@ -210,7 +212,7 @@ func testAccCheckHatobaFirewallGroupValuesUpdated(firewallGroup *hatoba.Firewall
 			return fmt.Errorf("bad rule[*] state, expected length is %d, got length: %d", len(wantRules), len(firewallGroup.Rules))
 		}
 
-		found := map[string]hatoba.FirewallRule{}
+		found := map[string]hatoba.Rules{}
 		for _, gr := range firewallGroup.Rules {
 			for _, wr := range wantRules {
 				if nifcloud.StringValue(gr.Protocol) == nifcloud.StringValue(wr.Protocol) &&
