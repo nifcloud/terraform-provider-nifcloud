@@ -66,29 +66,29 @@ func TestFlatten(t *testing.T) {
 				d: rd,
 				res: &rdb.DescribeDBInstancesResponse{
 					DescribeDBInstancesOutput: &rdb.DescribeDBInstancesOutput{
-						DBInstances: []rdb.DBInstance{
+						DBInstances: []rdb.DBInstances{
 							{
-								AccountingType:          nifcloud.Int64(1),
-								AllocatedStorage:        nifcloud.String("1"),
+								AccountingType:          nifcloud.String("1"),
+								AllocatedStorage:        nifcloud.Int64(1),
 								AvailabilityZone:        nifcloud.String("test_availability_zone"),
-								BackupRetentionPeriod:   nifcloud.String("1"),
-								BinlogRetentionPeriod:   nifcloud.String("1"),
+								BackupRetentionPeriod:   nifcloud.Int64(1),
+								BinlogRetentionPeriod:   nifcloud.Int64(1),
 								CACertificateIdentifier: nifcloud.String("test_ca_cert_identifier"),
 								DBInstanceClass:         nifcloud.String("test_instance_class"),
 								DBInstanceIdentifier:    nifcloud.String("test_identifier"),
 								DBName:                  nifcloud.String("test_db_name"),
-								DBParameterGroups: []rdb.DBParameterGroup{{
+								DBParameterGroups: []rdb.DBParameterGroups{{
 									DBParameterGroupName: nifcloud.String("test_parameter_group_name")},
 								},
-								DBSecurityGroups: []rdb.DBSecurityGroup{{
+								DBSecurityGroups: []rdb.DBSecurityGroups{{
 									DBSecurityGroupName: nifcloud.String("test_db_security_group_name")},
 								},
 								Endpoint:                              &rdb.Endpoint{Address: nifcloud.String("address")},
 								Engine:                                nifcloud.String("test_engine"),
 								EngineVersion:                         nifcloud.String("test_engine_version"),
 								MasterUsername:                        nifcloud.String("test_username"),
-								MultiAZ:                               nifcloud.String("true"),
-								NextMonthAccountingType:               nifcloud.Int64(1),
+								MultiAZ:                               nifcloud.Bool(true),
+								NextMonthAccountingType:               nifcloud.String("1"),
 								NiftyMasterPrivateAddress:             nifcloud.String("test_master_private_address"),
 								NiftyMultiAZType:                      nifcloud.String("1"),
 								NiftyNetworkId:                        nifcloud.String("test_network_id"),

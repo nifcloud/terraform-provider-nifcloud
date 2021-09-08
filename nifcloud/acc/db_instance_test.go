@@ -26,7 +26,7 @@ func init() {
 }
 
 func TestAcc_DBInstance(t *testing.T) {
-	var dbInstance, dbInstanceReplica, dbInstanceRestore rdb.DBInstance
+	var dbInstance, dbInstanceReplica, dbInstanceRestore rdb.DBInstances
 
 	resourceName := "nifcloud_db_instance.basic"
 	resourceNameReplica := "nifcloud_db_instance.replica"
@@ -133,7 +133,6 @@ func TestAcc_DBInstance(t *testing.T) {
 					"apply_immediately",
 					"final_snapshot_identifier",
 					"password",
-					"read_replica_identifier", // TODO to fix after fixed nifcloud-sdk-go bug
 					"skip_final_snapshot",
 				},
 			},
@@ -160,7 +159,7 @@ func testAccDBInstance(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckDBInstanceExists(n string, dbInstance *rdb.DBInstance) resource.TestCheckFunc {
+func testAccCheckDBInstanceExists(n string, dbInstance *rdb.DBInstances) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -195,13 +194,13 @@ func testAccCheckDBInstanceExists(n string, dbInstance *rdb.DBInstance) resource
 	}
 }
 
-func testAccCheckDBInstanceValues(dbInstance *rdb.DBInstance, rName string) resource.TestCheckFunc {
+func testAccCheckDBInstanceValues(dbInstance *rdb.DBInstances, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(dbInstance.DBInstanceIdentifier) != rName {
 			return fmt.Errorf("bad identifier state,  expected \"%s\", got: %#v", rName, dbInstance.DBInstanceIdentifier)
 		}
 
-		if nifcloud.Int64Value(dbInstance.NextMonthAccountingType) != 1 {
+		if nifcloud.StringValue(dbInstance.NextMonthAccountingType) != "1" {
 			return fmt.Errorf("bad accounting_type state,  expected \"1\", got: %#v", dbInstance.NextMonthAccountingType)
 		}
 
@@ -229,15 +228,15 @@ func testAccCheckDBInstanceValues(dbInstance *rdb.DBInstance, rName string) reso
 			return fmt.Errorf("bad engine_version state,  expected \"5.7.15\", got: %#v", dbInstance.EngineVersion)
 		}
 
-		if nifcloud.StringValue(dbInstance.AllocatedStorage) != "50" {
+		if nifcloud.Int64Value(dbInstance.AllocatedStorage) != 50 {
 			return fmt.Errorf("bad allocated_storage state,  expected \"50\", got: %#v", dbInstance.AllocatedStorage)
 		}
 
-		if nifcloud.StringValue(dbInstance.BackupRetentionPeriod) != "1" {
+		if nifcloud.Int64Value(dbInstance.BackupRetentionPeriod) != 1 {
 			return fmt.Errorf("bad backup_retention_period state,  expected \"1\", got: %#v", dbInstance.BackupRetentionPeriod)
 		}
 
-		if nifcloud.StringValue(dbInstance.BinlogRetentionPeriod) != "1" {
+		if nifcloud.Int64Value(dbInstance.BinlogRetentionPeriod) != 1 {
 			return fmt.Errorf("bad binlog_retention_period state,  expected \"1\", got: %#v", dbInstance.BinlogRetentionPeriod)
 		}
 
@@ -249,7 +248,7 @@ func testAccCheckDBInstanceValues(dbInstance *rdb.DBInstance, rName string) reso
 			return fmt.Errorf("bad maintenance_window state,  expected \"sun:23:00-sun:23:30\", got: %#v", dbInstance.PreferredMaintenanceWindow)
 		}
 
-		if nifcloud.StringValue(dbInstance.MultiAZ) != "true" {
+		if nifcloud.BoolValue(dbInstance.MultiAZ) != true {
 			return fmt.Errorf("bad multi_az state,  expected \"true\", got: %#v", dbInstance.MultiAZ)
 		}
 
@@ -257,7 +256,7 @@ func testAccCheckDBInstanceValues(dbInstance *rdb.DBInstance, rName string) reso
 			return fmt.Errorf("bad multi_az_type state,  expected \"0\", got: %#v", dbInstance.NiftyMultiAZType)
 		}
 
-		if nifcloud.StringValue(dbInstance.Endpoint.Port) != "3306" {
+		if nifcloud.Int64Value(dbInstance.Endpoint.Port) != 3306 {
 			return fmt.Errorf("bad port state,  expected \"3306\", got: %#v", dbInstance.Endpoint.Port)
 		}
 
@@ -276,13 +275,13 @@ func testAccCheckDBInstanceValues(dbInstance *rdb.DBInstance, rName string) reso
 	}
 }
 
-func testAccCheckDBInstanceValuesUpdated(dbInstance *rdb.DBInstance, rName string) resource.TestCheckFunc {
+func testAccCheckDBInstanceValuesUpdated(dbInstance *rdb.DBInstances, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(dbInstance.DBInstanceIdentifier) != rName+"upd" {
 			return fmt.Errorf("bad identifier state,  expected \"%s\", got: %#v", rName+"upd", dbInstance.DBInstanceIdentifier)
 		}
 
-		if nifcloud.Int64Value(dbInstance.NextMonthAccountingType) != 2 {
+		if nifcloud.StringValue(dbInstance.NextMonthAccountingType) != "2" {
 			return fmt.Errorf("bad accounting_type state,  expected \"2\", got: %#v", dbInstance.NextMonthAccountingType)
 		}
 
@@ -310,15 +309,15 @@ func testAccCheckDBInstanceValuesUpdated(dbInstance *rdb.DBInstance, rName strin
 			return fmt.Errorf("bad engine_version state,  expected \"5.7.15\", got: %#v", dbInstance.EngineVersion)
 		}
 
-		if nifcloud.StringValue(dbInstance.AllocatedStorage) != "100" {
+		if nifcloud.Int64Value(dbInstance.AllocatedStorage) != 100 {
 			return fmt.Errorf("bad allocated_storage state,  expected \"100\", got: %#v", dbInstance.AllocatedStorage)
 		}
 
-		if nifcloud.StringValue(dbInstance.BackupRetentionPeriod) != "2" {
+		if nifcloud.Int64Value(dbInstance.BackupRetentionPeriod) != 2 {
 			return fmt.Errorf("bad backup_retention_period state,  expected \"2\", got: %#v", dbInstance.BackupRetentionPeriod)
 		}
 
-		if nifcloud.StringValue(dbInstance.BinlogRetentionPeriod) != "2" {
+		if nifcloud.Int64Value(dbInstance.BinlogRetentionPeriod) != 2 {
 			return fmt.Errorf("bad binlog_retention_period state,  expected \"2\", got: %#v", dbInstance.BinlogRetentionPeriod)
 		}
 
@@ -330,11 +329,11 @@ func testAccCheckDBInstanceValuesUpdated(dbInstance *rdb.DBInstance, rName strin
 			return fmt.Errorf("bad maintenance_window state,  expected \"sun:22:00-sun:22:30\", got: %#v", dbInstance.PreferredMaintenanceWindow)
 		}
 
-		if nifcloud.StringValue(dbInstance.MultiAZ) != "false" {
+		if nifcloud.BoolValue(dbInstance.MultiAZ) != false {
 			return fmt.Errorf("bad multi_az state,  expected \"true\", got: %#v", dbInstance.MultiAZ)
 		}
 
-		if nifcloud.StringValue(dbInstance.Endpoint.Port) != "3306" {
+		if nifcloud.Int64Value(dbInstance.Endpoint.Port) != 3306 {
 			return fmt.Errorf("bad port state,  expected \"3306\", got: %#v", dbInstance.Endpoint.Port)
 		}
 
