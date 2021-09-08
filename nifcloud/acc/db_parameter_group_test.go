@@ -29,7 +29,7 @@ func init() {
 }
 
 func TestAcc_DBParameterGroup(t *testing.T) {
-	var group rdb.DBParameterGroup
+	var group rdb.DBParameterGroupsOfDescribeDBParameterGroups
 
 	resourceName := "nifcloud_db_parameter_group.basic"
 	randName := prefix + acctest.RandString(10)
@@ -89,7 +89,7 @@ func testAccDBParameterGroup(t *testing.T, fileName, rName string) string {
 	return fmt.Sprintf(string(b), rName)
 }
 
-func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroup) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroupsOfDescribeDBParameterGroups) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -124,7 +124,7 @@ func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroup) r
 	}
 }
 
-func testAccCheckDBParameterGroupValues(group *rdb.DBParameterGroup, rName string) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupValues(group *rdb.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(group.DBParameterGroupName) != rName {
 			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.StringValue(group.DBParameterGroupName))
@@ -161,7 +161,7 @@ func testAccCheckDBParameterGroupValues(group *rdb.DBParameterGroup, rName strin
 	}
 }
 
-func testAccCheckDBParameterGroupValuesUpdatedOnlyParameters(group *rdb.DBParameterGroup, rName string) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupValuesUpdatedOnlyParameters(group *rdb.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(group.DBParameterGroupName) != rName {
 			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.StringValue(group.DBParameterGroupName))
@@ -198,7 +198,7 @@ func testAccCheckDBParameterGroupValuesUpdatedOnlyParameters(group *rdb.DBParame
 	}
 }
 
-func testAccCheckDBParameterGroupValuesUpdatedAll(group *rdb.DBParameterGroup, rName string) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupValuesUpdatedAll(group *rdb.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(group.DBParameterGroupName) != rName+"upd" {
 			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName+"upd", group.DBParameterGroupName)
@@ -234,7 +234,7 @@ func testAccCheckDBParameterGroupValuesUpdatedAll(group *rdb.DBParameterGroup, r
 	}
 }
 
-func checkParameter(params []rdb.Parameter, expected map[string]string) error {
+func checkParameter(params []rdb.Parameters, expected map[string]string) error {
 	for _, p := range params {
 		if val, ok := expected[*p.ParameterName]; ok {
 			if nifcloud.StringValue(p.ParameterValue) != val {
