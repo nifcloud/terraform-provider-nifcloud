@@ -135,7 +135,7 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 				NASSecurityGroups:        []string{"test_group_name"},
 				NetworkId:                nifcloud.String("test_network_id"),
 				NewNASInstanceIdentifier: nifcloud.String("test_new_identifier"),
-				NoRootSquash:             nifcloud.String("true"),
+				NoRootSquash:             nifcloud.Bool(true),
 			},
 		},
 		{
@@ -160,7 +160,7 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 				NASSecurityGroups:        []string{"test_group_name"},
 				NetworkId:                nifcloud.String("test_network_id"),
 				NewNASInstanceIdentifier: nifcloud.String("test_new_identifier"),
-				NoRootSquash:             nifcloud.String("true"),
+				NoRootSquash:             nifcloud.Bool(true),
 			},
 		},
 	}

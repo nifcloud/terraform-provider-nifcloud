@@ -27,7 +27,7 @@ func init() {
 }
 
 func TestAcc_NASInstance_NFS(t *testing.T) {
-	var nasInstance nas.NASInstance
+	var nasInstance nas.NASInstances
 
 	resourceName := "nifcloud_nas_instance.basic"
 	randName := prefix + acctest.RandString(7)
@@ -79,7 +79,7 @@ func TestAcc_NASInstance_NFS(t *testing.T) {
 }
 
 func TestAcc_NASInstance_CIFS(t *testing.T) {
-	var nasInstance nas.NASInstance
+	var nasInstance nas.NASInstances
 
 	resourceName := "nifcloud_nas_instance.basic"
 	randName := prefix + acctest.RandString(7)
@@ -178,7 +178,7 @@ func testAccNASInstanceForCIFS(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckNASInstanceForNFSExists(n string, nasInstance *nas.NASInstance) resource.TestCheckFunc {
+func testAccCheckNASInstanceForNFSExists(n string, nasInstance *nas.NASInstances) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -213,7 +213,7 @@ func testAccCheckNASInstanceForNFSExists(n string, nasInstance *nas.NASInstance)
 	}
 }
 
-func testAccCheckNASInstanceForCIFSExists(n string, nasInstance *nas.NASInstance) resource.TestCheckFunc {
+func testAccCheckNASInstanceForCIFSExists(n string, nasInstance *nas.NASInstances) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -248,7 +248,7 @@ func testAccCheckNASInstanceForCIFSExists(n string, nasInstance *nas.NASInstance
 	}
 }
 
-func testAccCheckNASInstanceValuesForNFS(nasInstance *nas.NASInstance, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesForNFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier {
 			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier, nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
@@ -266,23 +266,23 @@ func testAccCheckNASInstanceValuesForNFS(nasInstance *nas.NASInstance, identifie
 			return fmt.Errorf("bad protocol state, expected \"nfs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
 		}
 
-		if nifcloud.StringValue(nasInstance.AllocatedStorage) != "100" {
-			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.StringValue(nasInstance.AllocatedStorage))
+		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 100 {
+			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
 		}
 
 		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
 			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.StringValue(nasInstance.NoRootSquash) != "false" {
-			return fmt.Errorf("bad no_root_squash state, expected \"false\", got: %#v", nifcloud.StringValue(nasInstance.NoRootSquash))
+		if nifcloud.BoolValue(nasInstance.NoRootSquash) != false {
+			return fmt.Errorf("bad no_root_squash state, expected \"false\", got: %#v", nifcloud.BoolValue(nasInstance.NoRootSquash))
 		}
 
 		return nil
 	}
 }
 
-func testAccCheckNASInstanceValuesUpdatedForNFS(nasInstance *nas.NASInstance, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesUpdatedForNFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier+"upd" {
 			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier+"upd", nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
@@ -300,23 +300,23 @@ func testAccCheckNASInstanceValuesUpdatedForNFS(nasInstance *nas.NASInstance, id
 			return fmt.Errorf("bad protocol state, expected \"nfs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
 		}
 
-		if nifcloud.StringValue(nasInstance.AllocatedStorage) != "200" {
-			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.StringValue(nasInstance.AllocatedStorage))
+		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 200 {
+			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
 		}
 
 		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
 			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.StringValue(nasInstance.NoRootSquash) != "true" {
-			return fmt.Errorf("bad no_root_squash state, expected \"true\", got: %#v", nifcloud.StringValue(nasInstance.NoRootSquash))
+		if nifcloud.BoolValue(nasInstance.NoRootSquash) != true {
+			return fmt.Errorf("bad no_root_squash state, expected \"true\", got: %#v", nifcloud.BoolValue(nasInstance.NoRootSquash))
 		}
 
 		return nil
 	}
 }
 
-func testAccCheckNASInstanceValuesForCIFS(nasInstance *nas.NASInstance, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesForCIFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier {
 			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier, nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
@@ -334,8 +334,8 @@ func testAccCheckNASInstanceValuesForCIFS(nasInstance *nas.NASInstance, identifi
 			return fmt.Errorf("bad protocol state, expected \"cifs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
 		}
 
-		if nifcloud.StringValue(nasInstance.AllocatedStorage) != "100" {
-			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.StringValue(nasInstance.AllocatedStorage))
+		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 100 {
+			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
 		}
 
 		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
@@ -354,7 +354,7 @@ func testAccCheckNASInstanceValuesForCIFS(nasInstance *nas.NASInstance, identifi
 	}
 }
 
-func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *nas.NASInstance, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier+"upd" {
 			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier+"upd", nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
@@ -372,8 +372,8 @@ func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *nas.NASInstance, i
 			return fmt.Errorf("bad protocol state, expected \"cifs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
 		}
 
-		if nifcloud.StringValue(nasInstance.AllocatedStorage) != "200" {
-			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.StringValue(nasInstance.AllocatedStorage))
+		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 200 {
+			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
 		}
 
 		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {

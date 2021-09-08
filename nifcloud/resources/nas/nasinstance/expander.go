@@ -1,8 +1,6 @@
 package nasinstance
 
 import (
-	"strconv"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
@@ -38,7 +36,7 @@ func expandModifyNASInstanceInput(d *schema.ResourceData) *nas.ModifyNASInstance
 		NASSecurityGroups:      []string{d.Get("nas_security_group_name").(string)},
 		NetworkId:              nifcloud.String(d.Get("network_id").(string)),
 		MasterPrivateAddress:   nifcloud.String(d.Get("private_ip_address").(string) + d.Get("private_ip_address_subnet_mask").(string)),
-		NoRootSquash:           nifcloud.String(strconv.FormatBool(d.Get("no_root_squash").(bool))),
+		NoRootSquash:           nifcloud.Bool(d.Get("no_root_squash").(bool)),
 	}
 
 	if d.Get("protocol").(string) == "cifs" {
