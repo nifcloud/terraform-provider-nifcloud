@@ -685,8 +685,8 @@ github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d/go.mod h1:o96d
 github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 h1:4kuARK6Y6FxaNu/BnU2OAaLF86eTVhP2hjTB6iMvItA=
 github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354/go.mod h1:KSVJerMDfblTH7p5MZaTt+8zaT2iEk3AkVb9PQdZuE8=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/nifcloud/nifcloud-sdk-go v1.7.0 h1:niW9U8XmA4sU6P8qW1aYk8YhBfspZd4/0jiAdiRjNTQ=
-github.com/nifcloud/nifcloud-sdk-go v1.7.0/go.mod h1:W4Qs1quyJDiJ5GJ6J+scXUHxy5d4hlrzBZd1oUyyUqo=
+github.com/nifcloud/nifcloud-sdk-go v1.11.0 h1:JPrDt77G4E8FCCTdo9OjeZOVPIYj+YXmY8Si9/IVhA8=
+github.com/nifcloud/nifcloud-sdk-go v1.11.0/go.mod h1:6nXfxsxIFsh8V1yv5ltwoPIT1wSN4FZmioSIdU417SM=
 github.com/nishanths/exhaustive v0.0.0-20200708172631-8866003e3856/go.mod h1:wBEpHwM2OdmeNpdCvRPUlkEbBuaFmcK4Wv8Q7FuGW3c=
 github.com/nishanths/exhaustive v0.1.0 h1:kVlMw8h2LHPMGUVqUj6230oQjjTMFjwcZrnkhXzFfl8=
 github.com/nishanths/exhaustive v0.1.0/go.mod h1:S1j9110vxV1ECdCudXRkeMnFQ/DQk9ajLT0Uf2MYZQQ=
