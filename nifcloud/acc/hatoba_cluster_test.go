@@ -335,10 +335,12 @@ func testSweepHatobaCluster(region string) error {
 		}
 	}
 
-	if _, err := svc.DeleteClustersRequest(&hatoba.DeleteClustersInput{
-		Names: nifcloud.String(strings.Join(sweepHatobaClusters, ",")),
-	}).Send(ctx); err != nil {
-		return err
+	if len(sweepHatobaClusters) > 0 {
+		if _, err := svc.DeleteClustersRequest(&hatoba.DeleteClustersInput{
+			Names: nifcloud.String(strings.Join(sweepHatobaClusters, ",")),
+		}).Send(ctx); err != nil {
+			return err
+		}
 	}
 
 	return nil

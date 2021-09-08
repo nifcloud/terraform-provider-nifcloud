@@ -10,15 +10,15 @@ import (
 
 func expandCreateClusterInput(d *schema.ResourceData) *hatoba.CreateClusterInput {
 	return &hatoba.CreateClusterInput{
-		Cluster: &hatoba.CreateClusterRequestCluster{
-			Name:              nifcloud.String(d.Get("name").(string)),
-			Description:       nifcloud.String(d.Get("description").(string)),
-			KubernetesVersion: nifcloud.String(d.Get("kubernetes_version").(string)),
-			Locations:         expandLocations(d.Get("locations").([]interface{})),
-			FirewallGroup:     nifcloud.String(d.Get("firewall_group").(string)),
-			AddonsConfig:      expandAddonsConfig(d.Get("addons_config").([]interface{})),
-			NetworkConfig:     expandNetworkConfig(d.Get("network_config").([]interface{})),
-			NodePools:         expandNodePools(d.Get("node_pools").(*schema.Set).List()),
+		Cluster: &hatoba.RequestCluster{
+			Name:                   nifcloud.String(d.Get("name").(string)),
+			Description:            nifcloud.String(d.Get("description").(string)),
+			KubernetesVersion:      nifcloud.String(d.Get("kubernetes_version").(string)),
+			ListOfRequestLocations: expandLocations(d.Get("locations").([]interface{})),
+			FirewallGroup:          nifcloud.String(d.Get("firewall_group").(string)),
+			RequestAddonsConfig:    expandAddonsConfig(d.Get("addons_config").([]interface{})),
+			RequestNetworkConfig:   expandNetworkConfig(d.Get("network_config").([]interface{})),
+			ListOfRequestNodePools: expandNodePools(d.Get("node_pools").(*schema.Set).List()),
 		},
 	}
 }
@@ -36,17 +36,17 @@ func expandLocations(raw []interface{}) []string {
 	return res
 }
 
-func expandAddonsConfig(raw []interface{}) *hatoba.AddonsConfig {
+func expandAddonsConfig(raw []interface{}) *hatoba.RequestAddonsConfig {
 	if len(raw) == 0 || raw[0] == nil {
 		return nil
 	}
 
 	config := raw[0].(map[string]interface{})
-	res := &hatoba.AddonsConfig{}
+	res := &hatoba.RequestAddonsConfig{}
 
 	if value, ok := config["http_load_balancing"]; ok && len(value.([]interface{})) > 0 {
 		addon := value.([]interface{})[0].(map[string]interface{})
-		res.HttpLoadBalancing = &hatoba.HttpLoadBalancing{
+		res.RequestHttpLoadBalancing = &hatoba.RequestHttpLoadBalancing{
 			Disabled: nifcloud.Bool(addon["disabled"].(bool)),
 		}
 	}
@@ -54,13 +54,13 @@ func expandAddonsConfig(raw []interface{}) *hatoba.AddonsConfig {
 	return res
 }
 
-func expandNetworkConfig(raw []interface{}) *hatoba.NetworkConfig {
+func expandNetworkConfig(raw []interface{}) *hatoba.RequestNetworkConfig {
 	if len(raw) == 0 || raw[0] == nil {
 		return nil
 	}
 
 	config := raw[0].(map[string]interface{})
-	res := &hatoba.NetworkConfig{}
+	res := &hatoba.RequestNetworkConfig{}
 
 	if value, ok := config["network_id"]; ok {
 		res.NetworkId = nifcloud.String(value.(string))
@@ -69,15 +69,15 @@ func expandNetworkConfig(raw []interface{}) *hatoba.NetworkConfig {
 	return res
 }
 
-func expandNodePools(raw []interface{}) []hatoba.CreateClusterRequestNodePool {
+func expandNodePools(raw []interface{}) []hatoba.RequestNodePools {
 	if len(raw) == 0 {
 		return nil
 	}
 
-	res := make([]hatoba.CreateClusterRequestNodePool, len(raw))
+	res := make([]hatoba.RequestNodePools, len(raw))
 	for i, r := range raw {
 		np := r.(map[string]interface{})
-		res[i] = hatoba.CreateClusterRequestNodePool{
+		res[i] = hatoba.RequestNodePools{
 			Name:         nifcloud.String(np["name"].(string)),
 			InstanceType: nifcloud.String(np["instance_type"].(string)),
 			NodeCount:    nifcloud.Int64(int64(np["node_count"].(int))),
@@ -96,10 +96,10 @@ func expandGetClusterInput(d *schema.ResourceData) *hatoba.GetClusterInput {
 func expandUpdateClusterInput(d *schema.ResourceData) *hatoba.UpdateClusterInput {
 	input := &hatoba.UpdateClusterInput{
 		ClusterName: nifcloud.String(d.Id()),
-		Cluster: &hatoba.UpdateClusterRequestCluster{
-			Description:       nifcloud.String(d.Get("description").(string)),
-			KubernetesVersion: nifcloud.String(d.Get("kubernetes_version").(string)),
-			AddonsConfig:      expandAddonsConfig(d.Get("addons_config").([]interface{})),
+		Cluster: &hatoba.RequestClusterOfUpdateCluster{
+			Description:         nifcloud.String(d.Get("description").(string)),
+			KubernetesVersion:   nifcloud.String(d.Get("kubernetes_version").(string)),
+			RequestAddonsConfig: expandAddonsConfig(d.Get("addons_config").([]interface{})),
 		},
 	}
 
@@ -113,7 +113,7 @@ func expandUpdateClusterInput(d *schema.ResourceData) *hatoba.UpdateClusterInput
 func expandCreateNodePoolInput(d *schema.ResourceData, targetNodePool map[string]interface{}) *hatoba.CreateNodePoolInput {
 	return &hatoba.CreateNodePoolInput{
 		ClusterName: nifcloud.String(d.Id()),
-		NodePool: &hatoba.CreateClusterRequestNodePool{
+		NodePool: &hatoba.RequestNodePool{
 			Name:         nifcloud.String(targetNodePool["name"].(string)),
 			InstanceType: nifcloud.String(targetNodePool["instance_type"].(string)),
 			NodeCount:    nifcloud.Int64(int64(targetNodePool["node_count"].(int))),
