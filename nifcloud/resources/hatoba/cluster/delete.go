@@ -25,8 +25,8 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed reading cluster: %s", err))
 	}
 
-	if err := svc.WaitUntilClusterDeleted(ctx, getClusterInput); err != nil {
-		return diag.FromErr(fmt.Errorf("failed to wait for deletion of Hatoba cluster: %s", err))
+	if err := svc.WaitUntilClusterRunning(ctx, getClusterInput); err != nil {
+		return diag.FromErr(fmt.Errorf("failed to wait for running of Hatoba cluster: %s", err))
 	}
 
 	input := expandDeleteClusterInput(d)
