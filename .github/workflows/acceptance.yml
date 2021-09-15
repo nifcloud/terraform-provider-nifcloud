@@ -3,7 +3,7 @@ name: Acceptance
 on:
   push:
     branches:
-      - master
+      - main
       - 'release/*'
 
 jobs:
