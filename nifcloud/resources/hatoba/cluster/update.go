@@ -3,11 +3,14 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
+
+const asyncActionWaitDelay = 15 // 15sec
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Hatoba
@@ -29,6 +32,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 
 		d.SetId(d.Get("name").(string))
+
+		time.Sleep(asyncActionWaitDelay * time.Second)
 
 		err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d))
 		if err != nil {
@@ -60,6 +65,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				return diag.Errorf(err.Error())
 			}
 
+			time.Sleep(asyncActionWaitDelay * time.Second)
+
 			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
 			}
@@ -71,6 +78,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			if _, err := req.Send(ctx); err != nil {
 				return diag.FromErr(fmt.Errorf("failed creating Hatoba cluster node pool: %s", err))
 			}
+
+			time.Sleep(asyncActionWaitDelay * time.Second)
 
 			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
@@ -88,6 +97,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			if _, err := req.Send(ctx); err != nil {
 				return diag.FromErr(fmt.Errorf("failed deleting Hatoba cluster node pools: %s", err))
 			}
+
+			time.Sleep(asyncActionWaitDelay * time.Second)
 
 			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
