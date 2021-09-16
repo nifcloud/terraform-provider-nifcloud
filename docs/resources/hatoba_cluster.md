@@ -84,6 +84,7 @@ The following arguments are supported:
 ## Attributes Reference
 
 * `cluster.node_pools.*.nodes` - The list of node information. see [node](#node)
+* `kube_config_raw` - The raw Kubernetes config to be used by kubectl and other compatible tools.
 
 ### node
 

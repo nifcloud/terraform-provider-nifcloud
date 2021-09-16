@@ -153,3 +153,58 @@ func TestFlatten(t *testing.T) {
 		})
 	}
 }
+
+func TestFlattenCredentials(t *testing.T) {
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"kube_config_raw": "test_kube_config_raw",
+	})
+	rd.SetId("test_name")
+
+	type args struct {
+		res *hatoba.GetClusterCredentialsResponse
+		d   *schema.ResourceData
+	}
+	tests := []struct {
+		name string
+		args args
+		want *schema.ResourceData
+	}{
+		{
+			name: "flattens the response",
+			args: args{
+				d: rd,
+				res: &hatoba.GetClusterCredentialsResponse{
+					GetClusterCredentialsOutput: &hatoba.GetClusterCredentialsOutput{
+						Credentials: nifcloud.String("kube_config_raw"),
+					},
+				},
+			},
+			want: rd,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := flattenCredentials(tt.args.d, tt.args.res)
+			assert.NoError(t, err)
+
+			if tt.args.res == nil {
+				return
+			}
+
+			wantState := tt.want.State()
+			if wantState == nil {
+				tt.want.SetId("some")
+				wantState = tt.want.State()
+			}
+
+			gotState := tt.args.d.State()
+			if gotState == nil {
+				tt.args.d.SetId("some")
+				gotState = tt.args.d.State()
+			}
+
+			assert.Equal(t, wantState.Attributes, gotState.Attributes)
+		})
+	}
+}

@@ -30,5 +30,17 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 		return diag.FromErr(err)
 	}
 
+	getClusterCredentialsRes, err := svc.GetClusterCredentialsRequest(
+		expandGetClusterCredentialsInput(d),
+	).Send(ctx)
+
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed reading Hatoba cluster credentials: %s", err))
+	}
+
+	if err := flattenCredentials(d, getClusterCredentialsRes); err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
 }

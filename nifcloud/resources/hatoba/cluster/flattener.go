@@ -108,3 +108,7 @@ func flattenNodes(nodes []hatoba.Nodes) []map[string]interface{} {
 
 	return res
 }
+
+func flattenCredentials(d *schema.ResourceData, res *hatoba.GetClusterCredentialsResponse) error {
+	return d.Set("kube_config_raw", res.Credentials)
+}
