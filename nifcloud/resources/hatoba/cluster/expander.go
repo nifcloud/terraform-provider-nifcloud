@@ -141,3 +141,9 @@ func expandDeleteClusterInput(d *schema.ResourceData) *hatoba.DeleteClusterInput
 		ClusterName: nifcloud.String(d.Id()),
 	}
 }
+
+func expandGetClusterCredentialsInput(d *schema.ResourceData) *hatoba.GetClusterCredentialsInput {
+	return &hatoba.GetClusterCredentialsInput{
+		ClusterName: nifcloud.String(d.Id()),
+	}
+}

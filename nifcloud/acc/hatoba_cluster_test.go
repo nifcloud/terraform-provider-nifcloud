@@ -52,6 +52,7 @@ func TestAcc_HatobaCluster(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_config.0.network_id", "net-COMMON_PRIVATE"),
 					resource.TestCheckResourceAttr(resourceName, "node_pools.#", "2"),
+					resource.TestCheckResourceAttrSet(resourceName, "kube_config_raw"),
 				),
 			},
 			{
@@ -72,6 +73,7 @@ func TestAcc_HatobaCluster(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_config.0.network_id", "net-COMMON_PRIVATE"),
 					resource.TestCheckResourceAttr(resourceName, "node_pools.#", "2"),
+					resource.TestCheckResourceAttrSet(resourceName, "kube_config_raw"),
 				),
 			},
 			{

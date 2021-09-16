@@ -51,6 +51,12 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Computed:    true,
 		},
+		"kube_config_raw": {
+			Type:        schema.TypeString,
+			Description: "The raw Kubernetes config to be used by kubectl and other compatible tools.",
+			Computed:    true,
+			Sensitive:   true,
+		},
 		"locations": {
 			Type:        schema.TypeList,
 			Description: "The cluster location. availability zone can be specified.",
