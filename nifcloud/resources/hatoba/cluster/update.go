@@ -33,6 +33,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 		d.SetId(d.Get("name").(string))
 
+		// lintignore:R018
 		time.Sleep(asyncActionWaitDelay * time.Second)
 
 		err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d))
@@ -65,6 +66,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				return diag.Errorf(err.Error())
 			}
 
+			// lintignore:R018
 			time.Sleep(asyncActionWaitDelay * time.Second)
 
 			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
@@ -79,6 +81,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				return diag.FromErr(fmt.Errorf("failed creating Hatoba cluster node pool: %s", err))
 			}
 
+			// lintignore:R018
 			time.Sleep(asyncActionWaitDelay * time.Second)
 
 			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
@@ -98,6 +101,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				return diag.FromErr(fmt.Errorf("failed deleting Hatoba cluster node pools: %s", err))
 			}
 
+			// lintignore:R018
 			time.Sleep(asyncActionWaitDelay * time.Second)
 
 			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
