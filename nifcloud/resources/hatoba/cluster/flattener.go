@@ -79,7 +79,7 @@ func flattenNetworkConfig(c *hatoba.NetworkConfig) []map[string]interface{} {
 	return []map[string]interface{}{res}
 }
 
-func flattenNodePools(nodePools []hatoba.NodePool) []map[string]interface{} {
+func flattenNodePools(nodePools []hatoba.NodePools) []map[string]interface{} {
 	res := make([]map[string]interface{}, len(nodePools))
 
 	for i, nodePool := range nodePools {
@@ -94,7 +94,7 @@ func flattenNodePools(nodePools []hatoba.NodePool) []map[string]interface{} {
 	return res
 }
 
-func flattenNodes(nodes []hatoba.Node) []map[string]interface{} {
+func flattenNodes(nodes []hatoba.Nodes) []map[string]interface{} {
 	res := make([]map[string]interface{}, len(nodes))
 
 	for i, n := range nodes {

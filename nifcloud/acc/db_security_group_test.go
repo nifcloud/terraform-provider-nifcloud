@@ -29,7 +29,7 @@ func init() {
 }
 
 func TestAcc_DbSecurityGroup(t *testing.T) {
-	var dbSecurityGroup rdb.DBSecurityGroup
+	var dbSecurityGroup rdb.DBSecurityGroupsOfDescribeDBSecurityGroups
 
 	resourceName := "nifcloud_db_security_group.basic"
 	randName := prefix + acctest.RandString(7)
@@ -83,7 +83,7 @@ func testAccDbSecurityGroup(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurityGroup) resource.TestCheckFunc {
+func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurityGroupsOfDescribeDBSecurityGroups) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -118,7 +118,7 @@ func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurity
 	}
 }
 
-func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroup, groupName string) resource.TestCheckFunc {
+func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroupsOfDescribeDBSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if len(dbSecurityGroup.IPRanges) != 1 {
 			return fmt.Errorf("bad cidr_ip rules: %#v", dbSecurityGroup.IPRanges)
@@ -140,8 +140,8 @@ func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroup, gro
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", dbSecurityGroup.NiftyAvailabilityZone)
 		}
 
-		cidrIPRule := make(map[int]rdb.IPRange)
-		securityGroupNameRule := make(map[int]rdb.EC2SecurityGroup)
+		cidrIPRule := make(map[int]rdb.IPRanges)
+		securityGroupNameRule := make(map[int]rdb.EC2SecurityGroups)
 
 		for _, c := range dbSecurityGroup.IPRanges {
 			cidrIPRule[0] = c
@@ -170,7 +170,7 @@ func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroup, gro
 	}
 }
 
-func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *rdb.DBSecurityGroup, groupName string) resource.TestCheckFunc {
+func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *rdb.DBSecurityGroupsOfDescribeDBSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if len(dbSecurityGroup.IPRanges) != 1 {
 			return fmt.Errorf("bad cidr_ip rules: %#v", dbSecurityGroup.IPRanges)
@@ -192,8 +192,8 @@ func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *rdb.DBSecurityGro
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", dbSecurityGroup.NiftyAvailabilityZone)
 		}
 
-		cidrIPRule := make(map[int]rdb.IPRange)
-		securityGroupNameRule := make(map[int]rdb.EC2SecurityGroup)
+		cidrIPRule := make(map[int]rdb.IPRanges)
+		securityGroupNameRule := make(map[int]rdb.EC2SecurityGroups)
 
 		for _, c := range dbSecurityGroup.IPRanges {
 			cidrIPRule[0] = c

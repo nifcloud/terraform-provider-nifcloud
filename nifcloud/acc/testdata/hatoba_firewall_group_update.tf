@@ -8,6 +8,7 @@ resource "nifcloud_hatoba_firewall_group" "basic" {
 
   rule {
     from_port   = 443
+    to_port     = 443
     cidr_ip     = "0.0.0.0/0"
     description = "HTTPS incomming"
   }

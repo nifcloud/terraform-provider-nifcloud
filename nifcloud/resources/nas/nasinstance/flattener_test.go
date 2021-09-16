@@ -50,13 +50,13 @@ func TestFlatten(t *testing.T) {
 				d: rd,
 				res: &nas.DescribeNASInstancesResponse{
 					DescribeNASInstancesOutput: &nas.DescribeNASInstancesOutput{
-						NASInstances: []nas.NASInstance{
+						NASInstances: []nas.NASInstances{
 							{
 								NASInstanceIdentifier:  nifcloud.String("test_identifier"),
-								AllocatedStorage:       nifcloud.String("100"),
+								AllocatedStorage:       nifcloud.Int64(100),
 								AvailabilityZone:       nifcloud.String("test_availability_zone"),
 								NASInstanceDescription: nifcloud.String("test_description"),
-								NASSecurityGroups: []nas.NASSecurityGroup{
+								NASSecurityGroups: []nas.NASSecurityGroups{
 									{
 										NASSecurityGroupName: nifcloud.String("test_nas_security_group_name"),
 									},
@@ -70,14 +70,14 @@ func TestFlatten(t *testing.T) {
 								NetworkId:                  nifcloud.String("test_network_id"),
 								AuthenticationType:         nifcloud.Int64(1),
 								DirectoryServiceDomainName: nifcloud.String("test_directory_service_domain_name"),
-								DomainControllers: []nas.DomainController{
+								DomainControllers: []nas.DomainControllers{
 									{
 										Hostname:  nifcloud.String("test_hostname"),
 										IPAddress: nifcloud.String("test_ip_address"),
 									},
 								},
 								NASInstanceType: nifcloud.Int64(0),
-								NoRootSquash:    nifcloud.String("false"),
+								NoRootSquash:    nifcloud.Bool(false),
 							},
 						},
 					},

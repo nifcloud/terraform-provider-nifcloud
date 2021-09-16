@@ -24,7 +24,7 @@ func TestExpandCreateFirewallGroupInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &hatoba.CreateFirewallGroupInput{
-				FirewallGroup: &hatoba.CreateFirewallGroupRequestFirewallGroup{
+				FirewallGroup: &hatoba.RequestFirewallGroup{
 					Name:        nifcloud.String("test_name"),
 					Description: nifcloud.String("test_description"),
 				},
@@ -65,7 +65,7 @@ func TestExpandAuthorizeFirewallGroupInput(t *testing.T) {
 			args: rd,
 			want: &hatoba.AuthorizeFirewallGroupInput{
 				FirewallGroupName: nifcloud.String("test_name"),
-				Rules: []hatoba.AuthorizeFirewallGroupRequestFirewallRule{
+				Rules: []hatoba.RequestRules{
 					{
 						Protocol:    nifcloud.String("TCP"),
 						Direction:   nifcloud.String("IN"),
@@ -163,7 +163,7 @@ func TestExpandUpdateFirewallGroupInput(t *testing.T) {
 			args: rd,
 			want: &hatoba.UpdateFirewallGroupInput{
 				FirewallGroupName: nifcloud.String("test_name"),
-				FirewallGroup: &hatoba.UpdateFirewallGroupRequestFirewallGroup{
+				FirewallGroup: &hatoba.RequestFirewallGroupOfUpdateFirewallGroup{
 					Name:        nifcloud.String("test_updated_name"),
 					Description: nifcloud.String("test_description"),
 				},

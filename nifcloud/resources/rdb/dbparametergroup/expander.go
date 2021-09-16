@@ -54,8 +54,8 @@ func expandDeleteDBParameterGroupInput(d *schema.ResourceData) *rdb.DeleteDBPara
 	}
 }
 
-func expandParameters(configured []interface{}) []rdb.Parameter {
-	var parameters []rdb.Parameter
+func expandParameters(configured []interface{}) []rdb.Parameters {
+	var parameters []rdb.Parameters
 
 	for _, raw := range configured {
 		rawParam := raw.(map[string]interface{})
@@ -64,7 +64,7 @@ func expandParameters(configured []interface{}) []rdb.Parameter {
 			continue
 		}
 
-		param := rdb.Parameter{
+		param := rdb.Parameters{
 			ParameterName:  nifcloud.String(rawParam["name"].(string)),
 			ParameterValue: nifcloud.String(rawParam["value"].(string)),
 			ApplyMethod:    nifcloud.String(rawParam["apply_method"].(string)),

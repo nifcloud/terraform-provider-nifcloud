@@ -2,7 +2,6 @@ package nasinstance
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -29,11 +28,7 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesResponse) erro
 		return err
 	}
 
-	allocatedStorage, err := strconv.Atoi(nifcloud.StringValue(nasInstance.AllocatedStorage))
-	if err != nil {
-		return err
-	}
-	if err := d.Set("allocated_storage", allocatedStorage); err != nil {
+	if err := d.Set("allocated_storage", nasInstance.AllocatedStorage); err != nil {
 		return err
 	}
 
@@ -85,11 +80,7 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesResponse) erro
 		return err
 	}
 
-	noRootSquash, err := strconv.ParseBool(nifcloud.StringValue(nasInstance.NoRootSquash))
-	if err != nil {
-		return err
-	}
-	if err := d.Set("no_root_squash", noRootSquash); err != nil {
+	if err := d.Set("no_root_squash", nasInstance.NoRootSquash); err != nil {
 		return err
 	}
 

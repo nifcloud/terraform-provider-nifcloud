@@ -9,7 +9,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 )
 
-func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsResponse, parameters []rdb.Parameter) error {
+func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsResponse, parameters []rdb.Parameters) error {
 	if groups == nil || len(groups.DBParameterGroups) == 0 {
 		d.SetId("")
 		return nil
@@ -38,7 +38,7 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 	}
 
 	configParams := d.Get("parameter").(*schema.Set)
-	var userParams []rdb.Parameter
+	var userParams []rdb.Parameters
 	confParams := expandParameters(configParams.List())
 	for _, param := range parameters {
 		if param.ParameterName == nil {
@@ -69,7 +69,7 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 	return nil
 }
 
-func flattenParameters(list []rdb.Parameter) []map[string]interface{} {
+func flattenParameters(list []rdb.Parameters) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(list))
 	for _, i := range list {
 		if i.ParameterName != nil {

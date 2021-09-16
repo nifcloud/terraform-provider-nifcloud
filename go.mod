@@ -9,9 +9,9 @@ require (
 	github.com/client9/misspell v0.3.4
 	github.com/golangci/golangci-lint v1.40.1
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.1
 	github.com/katbyte/terrafmt v0.3.0
-	github.com/nifcloud/nifcloud-sdk-go v1.7.0
+	github.com/nifcloud/nifcloud-sdk-go v1.11.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 )
@@ -77,7 +77,7 @@ require (
 	github.com/golangci/misspell v0.3.5 // indirect
 	github.com/golangci/revgrep v0.0.0-20210208091834-cd28932614b5 // indirect
 	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4 // indirect
-	github.com/google/go-cmp v0.5.5 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/gookit/color v1.3.8 // indirect
@@ -92,15 +92,15 @@ require (
 	github.com/hashicorp/go-getter v1.5.3 // indirect
 	github.com/hashicorp/go-hclog v0.15.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/go-plugin v1.4.0 // indirect
+	github.com/hashicorp/go-plugin v1.4.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.1 // indirect
 	github.com/hashicorp/go-version v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.8.2 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
-	github.com/hashicorp/terraform-exec v0.13.3 // indirect
-	github.com/hashicorp/terraform-json v0.10.0 // indirect
+	github.com/hashicorp/terraform-exec v0.14.0 // indirect
+	github.com/hashicorp/terraform-json v0.12.0 // indirect
 	github.com/hashicorp/terraform-plugin-go v0.3.0 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
@@ -131,12 +131,12 @@ require (
 	github.com/mgechev/dots v0.0.0-20190921121421-c36f7dcfbb81 // indirect
 	github.com/mgechev/revive v1.0.6 // indirect
 	github.com/mitchellh/cli v1.1.2 // indirect
-	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.0.4 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
-	github.com/mitchellh/reflectwalk v1.0.1 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moricho/tparallel v0.2.1 // indirect
 	github.com/nakabonne/nestif v0.3.0 // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 // indirect
@@ -187,9 +187,9 @@ require (
 	github.com/yeya24/promlinter v0.1.0 // indirect
 	github.com/yuin/goldmark v1.3.5 // indirect
 	github.com/yuin/goldmark-meta v0.0.0-20191126180153-f0638e958b60 // indirect
-	github.com/zclconf/go-cty v1.8.2 // indirect
+	github.com/zclconf/go-cty v1.8.4 // indirect
 	go.opencensus.io v0.22.4 // indirect
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
+	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect

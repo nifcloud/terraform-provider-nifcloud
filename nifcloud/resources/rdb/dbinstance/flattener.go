@@ -21,7 +21,7 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 		return fmt.Errorf("unable to find DB instance within: %#v", res.DBInstances)
 	}
 
-	if err := d.Set("accounting_type", strconv.FormatInt(nifcloud.Int64Value(dbInstance.NextMonthAccountingType), 10)); err != nil {
+	if err := d.Set("accounting_type", dbInstance.NextMonthAccountingType); err != nil {
 		return err
 	}
 
@@ -49,10 +49,8 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 		return err
 	}
 
-	if allocatedStorage, err := strconv.Atoi(nifcloud.StringValue(dbInstance.AllocatedStorage)); err == nil {
-		if err := d.Set("allocated_storage", allocatedStorage); err != nil {
-			return err
-		}
+	if err := d.Set("allocated_storage", dbInstance.AllocatedStorage); err != nil {
+		return err
 	}
 
 	if err := d.Set("storage_type", dbInstance.NiftyStorageType); err != nil {
@@ -67,13 +65,11 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 		return err
 	}
 
-	if backupRetentionPeriod, err := strconv.Atoi(nifcloud.StringValue(dbInstance.BackupRetentionPeriod)); err == nil {
-		if err := d.Set("backup_retention_period", backupRetentionPeriod); err != nil {
-			return err
-		}
+	if err := d.Set("backup_retention_period", dbInstance.BackupRetentionPeriod); err != nil {
+		return err
 	}
 
-	if binlogRetentionPeriod, err := strconv.Atoi(nifcloud.StringValue(dbInstance.BinlogRetentionPeriod)); err == nil {
+	if binlogRetentionPeriod := dbInstance.BinlogRetentionPeriod; binlogRetentionPeriod != nil {
 		if err := d.Set("custom_binlog_retention_period", true); err != nil {
 			return err
 		}
@@ -90,22 +86,31 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 		return err
 	}
 
-	if multiAZ, err := strconv.ParseBool(nifcloud.StringValue(dbInstance.MultiAZ)); err == nil {
-		if err := d.Set("multi_az", multiAZ); err != nil {
-			return err
-		}
+	if err := d.Set("multi_az", dbInstance.MultiAZ); err != nil {
+		return err
 	}
 
 	if multiAZType, err := strconv.Atoi(nifcloud.StringValue(dbInstance.NiftyMultiAZType)); err == nil {
 		if err := d.Set("multi_az_type", multiAZType); err != nil {
 			return err
 		}
+
+		// for performance priority
+		if multiAZType == 1 && len(dbInstance.ReadReplicaDBInstanceIdentifiers) > 0 {
+			rrIdentifier := dbInstance.ReadReplicaDBInstanceIdentifiers[0]
+			for _, rr := range dbInstance.ReadReplicaDBInstanceIdentifiers {
+				if d.Get("read_replica_identifier").(string) == rr {
+					rrIdentifier = rr
+				}
+			}
+			if err := d.Set("read_replica_identifier", rrIdentifier); err != nil {
+				return err
+			}
+		}
 	}
 
-	if port, err := strconv.Atoi(nifcloud.StringValue(dbInstance.Endpoint.Port)); err == nil {
-		if err := d.Set("port", port); err != nil {
-			return err
-		}
+	if err := d.Set("port", dbInstance.Endpoint.Port); err != nil {
+		return err
 	}
 
 	if err := d.Set("publicly_accessible", dbInstance.PubliclyAccessible); err != nil {

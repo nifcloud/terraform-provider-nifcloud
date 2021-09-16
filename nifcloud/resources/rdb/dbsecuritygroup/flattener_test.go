@@ -37,12 +37,12 @@ func TestFlattenForCidrIP(t *testing.T) {
 				d: rd,
 				res: &rdb.DescribeDBSecurityGroupsResponse{
 					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroup{
+						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{
 							{
 								DBSecurityGroupName:        nifcloud.String("test_group_name"),
 								DBSecurityGroupDescription: nifcloud.String("test_description"),
 								NiftyAvailabilityZone:      nifcloud.String("test_zone"),
-								IPRanges: []rdb.IPRange{
+								IPRanges: []rdb.IPRanges{
 									{
 										CIDRIP: nifcloud.String("0.0.0.0/0"),
 									},
@@ -60,7 +60,7 @@ func TestFlattenForCidrIP(t *testing.T) {
 				d: wantNotFoundRd,
 				res: &rdb.DescribeDBSecurityGroupsResponse{
 					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroup{},
+						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{},
 					},
 				},
 			},
@@ -122,12 +122,12 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 				d: rd,
 				res: &rdb.DescribeDBSecurityGroupsResponse{
 					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroup{
+						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{
 							{
 								DBSecurityGroupName:        nifcloud.String("test_group_name"),
 								DBSecurityGroupDescription: nifcloud.String("test_description"),
 								NiftyAvailabilityZone:      nifcloud.String("test_zone"),
-								EC2SecurityGroups: []rdb.EC2SecurityGroup{
+								EC2SecurityGroups: []rdb.EC2SecurityGroups{
 									{
 										EC2SecurityGroupName: nifcloud.String("test_security_group_name"),
 									},
@@ -145,7 +145,7 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 				d: wantNotFoundRd,
 				res: &rdb.DescribeDBSecurityGroupsResponse{
 					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroup{},
+						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{},
 					},
 				},
 			},

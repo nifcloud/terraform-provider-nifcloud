@@ -81,12 +81,12 @@ func TestFlatten(t *testing.T) {
 							NetworkConfig: &hatoba.NetworkConfig{
 								NetworkId: nifcloud.String("test_network_id"),
 							},
-							NodePools: []hatoba.NodePool{
+							NodePools: []hatoba.NodePools{
 								{
 									Name:         nifcloud.String("test_node_pool_name"),
 									InstanceType: nifcloud.String("test_instance_type"),
 									NodeCount:    nifcloud.Int64(3),
-									Nodes: []hatoba.Node{
+									Nodes: []hatoba.Nodes{
 										{
 											Name:             nifcloud.String("test_node01"),
 											AvailabilityZone: nifcloud.String("test_availability_zone"),

@@ -229,12 +229,12 @@ func TestExpandParameters(t *testing.T) {
 	tests := []struct {
 		name string
 		args []interface{}
-		want []rdb.Parameter
+		want []rdb.Parameters
 	}{
 		{
 			name: "expands the resource data",
 			args: rd.Get("parameter").(*schema.Set).List(),
-			want: []rdb.Parameter{
+			want: []rdb.Parameters{
 				{
 					ParameterName:  nifcloud.String("test_name_02"),
 					ParameterValue: nifcloud.String("test_value_02"),

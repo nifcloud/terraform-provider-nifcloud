@@ -38,7 +38,7 @@ func TestFlatten(t *testing.T) {
 
 	type args struct {
 		groups     *rdb.DescribeDBParameterGroupsResponse
-		parameters []rdb.Parameter
+		parameters []rdb.Parameters
 		d          *schema.ResourceData
 	}
 	tests := []struct {
@@ -52,7 +52,7 @@ func TestFlatten(t *testing.T) {
 				d: rd,
 				groups: &rdb.DescribeDBParameterGroupsResponse{
 					DescribeDBParameterGroupsOutput: &rdb.DescribeDBParameterGroupsOutput{
-						DBParameterGroups: []rdb.DBParameterGroup{
+						DBParameterGroups: []rdb.DBParameterGroupsOfDescribeDBParameterGroups{
 							{
 								DBParameterGroupName:   nifcloud.String("test_name"),
 								DBParameterGroupFamily: nifcloud.String("test_family"),
@@ -61,7 +61,7 @@ func TestFlatten(t *testing.T) {
 						},
 					},
 				},
-				parameters: []rdb.Parameter{
+				parameters: []rdb.Parameters{
 					{
 						ParameterName:  nifcloud.String("test_name_01"),
 						ParameterValue: nifcloud.String("test_value_01"),
@@ -93,10 +93,10 @@ func TestFlatten(t *testing.T) {
 				d: wantNotFoundRd,
 				groups: &rdb.DescribeDBParameterGroupsResponse{
 					DescribeDBParameterGroupsOutput: &rdb.DescribeDBParameterGroupsOutput{
-						DBParameterGroups: []rdb.DBParameterGroup{},
+						DBParameterGroups: []rdb.DBParameterGroupsOfDescribeDBParameterGroups{},
 					},
 				},
-				parameters: []rdb.Parameter{},
+				parameters: []rdb.Parameters{},
 			},
 			want: wantNotFoundRd,
 		},

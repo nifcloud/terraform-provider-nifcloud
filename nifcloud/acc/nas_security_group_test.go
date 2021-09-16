@@ -30,7 +30,7 @@ func init() {
 }
 
 func TestAcc_NASSecurityGroup(t *testing.T) {
-	var nasSecurityGroup nas.NASSecurityGroup
+	var nasSecurityGroup nas.NASSecurityGroupsOfDescribeNASSecurityGroups
 
 	resourceName := "nifcloud_nas_security_group.basic"
 	randName := prefix + acctest.RandString(7)
@@ -83,7 +83,7 @@ func testAccNASSecurityGroup(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecurityGroup) resource.TestCheckFunc {
+func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecurityGroupsOfDescribeNASSecurityGroups) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -118,7 +118,7 @@ func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecur
 	}
 }
 
-func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroup, groupName string) resource.TestCheckFunc {
+func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroupsOfDescribeNASSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName) != groupName {
 			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName))
@@ -174,7 +174,7 @@ func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroup, 
 	}
 }
 
-func testAccCheckNASSecurityGroupValuesUpdated(nasSecurityGroup *nas.NASSecurityGroup, groupName string) resource.TestCheckFunc {
+func testAccCheckNASSecurityGroupValuesUpdated(nasSecurityGroup *nas.NASSecurityGroupsOfDescribeNASSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName) != groupName+"upd" {
 			return fmt.Errorf("bad group_name state, expected \"%supd\", got: %#v", groupName, nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName))

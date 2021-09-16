@@ -28,7 +28,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	}
 
 	marker := ""
-	parameters := []rdb.Parameter{}
+	parameters := []rdb.Parameters{}
 	for {
 		describeDBParametersReq := svc.DescribeDBParametersRequest(expandDescribeDBParametersInput(d, marker))
 		describeDBParametersRes, err := describeDBParametersReq.Send(ctx)

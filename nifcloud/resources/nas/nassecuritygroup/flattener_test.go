@@ -37,12 +37,12 @@ func TestFlattenForCidrIP(t *testing.T) {
 				d: rd,
 				res: &nas.DescribeNASSecurityGroupsResponse{
 					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroup{
+						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{
 							{
 								NASSecurityGroupName:        nifcloud.String("test_group_name"),
 								NASSecurityGroupDescription: nifcloud.String("test_description"),
 								AvailabilityZone:            nifcloud.String("test_zone"),
-								IPRanges: []nas.IPRange{
+								IPRanges: []nas.IPRanges{
 									{
 										CIDRIP: nifcloud.String("0.0.0.0/0"),
 									},
@@ -60,7 +60,7 @@ func TestFlattenForCidrIP(t *testing.T) {
 				d: wantNotFoundRd,
 				res: &nas.DescribeNASSecurityGroupsResponse{
 					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroup{},
+						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{},
 					},
 				},
 			},
@@ -122,12 +122,12 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 				d: rd,
 				res: &nas.DescribeNASSecurityGroupsResponse{
 					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroup{
+						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{
 							{
 								NASSecurityGroupName:        nifcloud.String("test_group_name"),
 								NASSecurityGroupDescription: nifcloud.String("test_description"),
 								AvailabilityZone:            nifcloud.String("test_zone"),
-								SecurityGroups: []nas.SecurityGroup{
+								SecurityGroups: []nas.SecurityGroups{
 									{
 										SecurityGroupName: nifcloud.String("test_security_group_name"),
 									},
@@ -145,7 +145,7 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 				d: wantNotFoundRd,
 				res: &nas.DescribeNASSecurityGroupsResponse{
 					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroup{},
+						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{},
 					},
 				},
 			},
