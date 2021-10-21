@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -249,12 +250,10 @@ func testAccSecurityGroupRuleImportStateIDFunc(resourceName string) resource.Imp
 			return "", fmt.Errorf("not found: %s", resourceName)
 		}
 
-		sgName := rs.Primary.Attributes["security_group_names.0"]
 		ruleType := rs.Primary.Attributes["type"]
 		protocol := rs.Primary.Attributes["protocol"]
 
 		var parts []string
-		parts = append(parts, sgName)
 		parts = append(parts, ruleType)
 		parts = append(parts, protocol)
 
@@ -276,6 +275,16 @@ func testAccSecurityGroupRuleImportStateIDFunc(resourceName string) resource.Imp
 
 		if cidrIP, ok := rs.Primary.Attributes["cidr_ip"]; ok {
 			parts = append(parts, cidrIP)
+		}
+
+		if countStr, ok := rs.Primary.Attributes[fmt.Sprintf("%s.#", "security_group_names")]; ok && countStr != "0" {
+			count, err := strconv.Atoi(countStr)
+			if err != nil {
+				return "", err
+			}
+			for i := 0; i < count; i++ {
+				parts = append(parts, rs.Primary.Attributes[fmt.Sprintf("%s.%d", "security_group_names", i)])
+			}
 		}
 
 		id := strings.Join(parts, "_")

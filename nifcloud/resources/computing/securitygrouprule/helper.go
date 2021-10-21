@@ -81,22 +81,22 @@ func idHash(inputList []*computing.AuthorizeSecurityGroupIngressInput) string {
 }
 
 func validateSecurityGroupRuleImportString(importStr string) ([]string, error) {
-	// example: example_IN_TCP_8000_8000_10.0.3.0/24
+	// example: IN_TCP_8000_8000_10.0.3.0/24_example
 
 	importParts := strings.Split(importStr, "_")
 	errStr := "unexpected format of import string (%q), expected SECURITYGROUPNAME_TYPE_PROTOCOL_FROMPORT_TOPORT_SOURCE: %s"
-	if len(importParts) != 6 {
+	if len(importParts) < 6 {
 		return nil, fmt.Errorf(errStr, importStr, "invalid parts")
 	}
 
-	sgName := importParts[0]
-	ruleType := importParts[1]
-	protocol := importParts[2]
-	fromPort := importParts[3]
-	toPort := importParts[4]
-	source := importParts[5]
+	ruleType := importParts[0]
+	protocol := importParts[1]
+	fromPort := importParts[2]
+	toPort := importParts[3]
+	source := importParts[4]
+	sgName := importParts[5:]
 
-	if sgName == "" {
+	if len(sgName) == 0 {
 		return nil, fmt.Errorf(errStr, importStr, "security group name must be required")
 	}
 
@@ -131,12 +131,12 @@ func validateSecurityGroupRuleImportString(importStr string) ([]string, error) {
 }
 
 func populateSecurityGroupRuleFromImport(d *schema.ResourceData, importParts []string) error {
-	sgName := importParts[0]
-	ruleType := importParts[1]
-	protocol := importParts[2]
-	fromPort := importParts[3]
-	toPort := importParts[4]
-	source := importParts[5]
+	ruleType := importParts[0]
+	protocol := importParts[1]
+	fromPort := importParts[2]
+	toPort := importParts[3]
+	source := importParts[4]
+	sgName := importParts[5:]
 
 	if err := d.Set("type", ruleType); err != nil {
 		return err
@@ -178,7 +178,7 @@ func populateSecurityGroupRuleFromImport(d *schema.ResourceData, importParts []s
 		}
 	}
 
-	if err := d.Set("security_group_names", []string{sgName}); err != nil {
+	if err := d.Set("security_group_names", sgName); err != nil {
 		return err
 	}
 	return nil
