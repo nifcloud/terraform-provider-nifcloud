@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.5.1](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.5.1) (2021-10-21)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.5.0...v1.5.1)
+
+**Merged pull requests:**
+
+- resource/nifcloud\_security\_group\_rule: Change import specification [\#98](https://github.com/nifcloud/terraform-provider-nifcloud/pull/98) ([fuku2014](https://github.com/fuku2014))
+
 ## [v1.5.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.5.0) (2021-09-17)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.4.0...v1.5.0)
@@ -19,12 +27,12 @@
 
 - Feature/hatoba kube config [\#97](https://github.com/nifcloud/terraform-provider-nifcloud/pull/97) ([fuku2014](https://github.com/fuku2014))
 - Fix acceptance workflow branch name [\#96](https://github.com/nifcloud/terraform-provider-nifcloud/pull/96) ([tunakyonn](https://github.com/tunakyonn))
-- Fix/sdk version [\#94](https://github.com/nifcloud/terraform-provider-nifcloud/pull/94) ([fuku2014](https://github.com/fuku2014))
 - Fix/network mutex [\#93](https://github.com/nifcloud/terraform-provider-nifcloud/pull/93) ([fuku2014](https://github.com/fuku2014))
 - resource/nifcloud\_elastic\_ip: Fix bug of can not import private ip [\#92](https://github.com/nifcloud/terraform-provider-nifcloud/pull/92) ([fuku2014](https://github.com/fuku2014))
 - Update to go 1.17 version [\#91](https://github.com/nifcloud/terraform-provider-nifcloud/pull/91) ([fuku2014](https://github.com/fuku2014))
 - Add debug logger to dump the API request and response [\#90](https://github.com/nifcloud/terraform-provider-nifcloud/pull/90) ([aokumasan](https://github.com/aokumasan))
 - resource/nifcloud\_load\_balancer: Fix bug of flatten options [\#89](https://github.com/nifcloud/terraform-provider-nifcloud/pull/89) ([fuku2014](https://github.com/fuku2014))
+- Fix/sdk version [\#94](https://github.com/nifcloud/terraform-provider-nifcloud/pull/94) ([fuku2014](https://github.com/fuku2014))
 - Fix/import state verify ignore [\#87](https://github.com/nifcloud/terraform-provider-nifcloud/pull/87) ([fuku2014](https://github.com/fuku2014))
 - Feature/separate instance rule [\#79](https://github.com/nifcloud/terraform-provider-nifcloud/pull/79) ([matsuoka-k-git](https://github.com/matsuoka-k-git))
 
