@@ -88,7 +88,7 @@ The following arguments are supported:
 * `replicate_source_db` - (Optional) Specifies that this resource is a Replicate database, and to use this value as the source database.
 * `restore_to_point_in_time` - (Optional) A configuration block for restoring a DB instance to an arbitrary point in time See [this](#restore-to-point-in-time).
 * `skip_final_snapshot` - (Optional) Determines whether a final DB snapshot is created before the DB instance is deleted. Defaults to `true` no DBSnapshot is created
-* `slave_private_address` - (Optional) Private IP address for master DB.
+* `slave_private_address` - (Optional) Private IP address for slave DB.
 * `snapshot_identifier` - (Optional) Specifies whether or not to create this database from a snapshot.
 * `storage_type` - (Optional) One of `0` (HDD), or `1` (Flash drive). The default is `0`
 * `username` - (Optional) Username for the master DB user.

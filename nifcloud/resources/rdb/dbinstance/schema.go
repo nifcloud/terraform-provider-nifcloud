@@ -264,7 +264,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"slave_private_address": {
 			Type:        schema.TypeString,
-			Description: "Private IP address for master DB.",
+			Description: "Private IP address for slave DB.",
 			Optional:    true,
 		},
 		"read_replica_private_address": {
