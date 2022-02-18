@@ -11,6 +11,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygrouprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/separateinstancerule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/volume"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/zone"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/cluster"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/firewallgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nasinstance"
@@ -71,6 +72,7 @@ func Provider() *schema.Provider {
 			"nifcloud_db_security_group":      dbsecuritygroup.New(),
 			"nifcloud_dhcp_config":            dhcpconfig.New(),
 			"nifcloud_dhcp_option":            dhcpoption.New(),
+			"nifcloud_dns_zone":               zone.New(),
 			"nifcloud_elastic_ip":             elasticip.New(),
 			"nifcloud_elb":                    elb.New(),
 			"nifcloud_elb_listener":           elblistener.New(),
