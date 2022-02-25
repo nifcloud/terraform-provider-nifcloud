@@ -26,6 +26,11 @@ func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse)
 
 	var routes []map[string]interface{}
 	for _, r := range routeTable.RouteSet {
+		// for vpn connection of IPsec VTI
+		if nifcloud.StringValue(r.Origin) == "EnableVgwRoutePropagation" {
+			continue
+		}
+
 		route := map[string]interface{}{
 			"ip_address": r.IpAddress,
 			"cidr_block": r.DestinationCidrBlock,
