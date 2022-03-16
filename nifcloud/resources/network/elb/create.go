@@ -35,19 +35,19 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
-	req := svc.NiftyCreateElasticLoadBalancerRequest(input)
-	_, err := req.Send(ctx)
+	_, err := svc.NiftyCreateElasticLoadBalancer(ctx, input)
+
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating elb: %s", err))
 	}
 
-	res, err := svc.NiftyDescribeElasticLoadBalancersRequest(expandNiftyDescribeElasticLoadBalancersInputWithName(d)).Send(ctx)
+	res, err := svc.NiftyDescribeElasticLoadBalancers(ctx, expandNiftyDescribeElasticLoadBalancersInputWithName(d))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed describe elb: %s", err))
 	}
 
-	elbID := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0].ElasticLoadBalancerId
-	d.SetId(nifcloud.StringValue(elbID))
+	elbID := res.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0].ElasticLoadBalancerId
+	d.SetId(nifcloud.ToString(elbID))
 
 	return update(ctx, d, meta)
 }

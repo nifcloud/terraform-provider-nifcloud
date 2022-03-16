@@ -15,9 +15,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("name") {
 		input := expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(d)
 
-		req := svc.NiftyModifyCustomerGatewayAttributeRequest(input)
+		_, err := svc.NiftyModifyCustomerGatewayAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating name: %s", err))
 		}
@@ -26,9 +25,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDescription(d)
 
-		req := svc.NiftyModifyCustomerGatewayAttributeRequest(input)
+		_, err := svc.NiftyModifyCustomerGatewayAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating description: %s", err))
 		}

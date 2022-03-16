@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
@@ -14,12 +14,11 @@ import (
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandNiftyDescribeNatTablesInput(d)
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyDescribeNatTablesRequest(input)
+	res, err := svc.NiftyDescribeNatTables(ctx, input)
 
-	res, err := req.Send(ctx)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NatTableId" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.NatTableId" {
 			d.SetId("")
 			return nil
 		}

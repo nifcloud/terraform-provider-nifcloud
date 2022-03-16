@@ -13,9 +13,8 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandNiftyDeleteSeparateInstanceRuleInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyDeleteSeparateInstanceRuleRequest(input)
+	_, err := svc.NiftyDeleteSeparateInstanceRule(ctx, input)
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

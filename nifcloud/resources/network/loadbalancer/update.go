@@ -23,8 +23,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		"load_balancer_name",
 	) && !d.IsNewResource() {
 		input := expandUpdateLoadBalancer(d)
-		req := svc.UpdateLoadBalancerRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.UpdateLoadBalancer(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer %s", err))
 		}
@@ -37,8 +36,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		"sorry_page_status_code",
 	) {
 		input := expandUpdateLoadBalancerOption(d)
-		req := svc.UpdateLoadBalancerOptionRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.UpdateLoadBalancerOption(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer %s", err))
 		}
@@ -54,8 +52,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if len(addInstances) > 0 {
 			input := expandRegisterInstancesWithLoadBalancerInput(d, addInstances)
 
-			req := svc.RegisterInstancesWithLoadBalancerRequest(input)
-			_, err := req.Send(ctx)
+			_, err := svc.RegisterInstancesWithLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed registering instances with load balancer: %s", err))
 			}
@@ -64,9 +61,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if len(delInstances) > 0 {
 			input := expandDeregisterInstancesFromLoadBalancerInput(d, delInstances)
 
-			req := svc.DeregisterInstancesFromLoadBalancerRequest(input)
-
-			_, err := req.Send(ctx)
+			_, err := svc.DeregisterInstancesFromLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed deregistering instances with elb: %s", err))
 			}
@@ -79,34 +74,30 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		"health_check_timeout",
 	) {
 		input := expandConfigureHealthCheck(d)
-		req := svc.ConfigureHealthCheckRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.ConfigureHealthCheck(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer %s", err))
 		}
 	}
 	if d.HasChange("filter_type") {
 		input := expandSetFilterForLoadBalancerFilterType(d)
-		req := svc.SetFilterForLoadBalancerRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.SetFilterForLoadBalancer(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
 		}
 	}
 	if d.HasChange("filter") {
 		input := expandUnSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses) > 0 && nifcloud.StringValue(input.IPAddresses[0].IPAddress) != "*.*.*.*" {
-			req := svc.SetFilterForLoadBalancerRequest(input)
-			_, err := req.Send(ctx)
+		if len(input.IPAddresses.Member) > 0 && nifcloud.ToString(input.IPAddresses.Member[0].IPAddress) != "*.*.*.*" {
+			_, err := svc.SetFilterForLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
 			}
 		}
 
 		input = expandSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses) > 0 && nifcloud.StringValue(input.IPAddresses[0].IPAddress) != "*.*.*.*" {
-			req := svc.SetFilterForLoadBalancerRequest(input)
-			_, err := req.Send(ctx)
+		if len(input.IPAddresses.Member) > 0 && nifcloud.ToString(input.IPAddresses.Member[0].IPAddress) != "*.*.*.*" {
+			_, err := svc.SetFilterForLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
 			}
@@ -117,15 +108,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		oc := o.(string)
 		if oc != "" {
 			input := expandUnsetLoadBalancerListenerSSLCertificate(d)
-			req := svc.UnsetLoadBalancerListenerSSLCertificateRequest(input)
-			_, err := req.Send(ctx)
+			_, err := svc.UnsetLoadBalancerListenerSSLCertificate(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed un setting SSLCertificate with load balancer: %s", err))
 			}
 		}
 		input := expandSetLoadBalancerListenerSSLCertificate(d)
-		req := svc.SetLoadBalancerListenerSSLCertificateRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.SetLoadBalancerListenerSSLCertificate(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed setting SSLCertificate with load balancer: %s", err))
 		}
@@ -133,8 +122,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChanges("ssl_policy_name", "ssl_policy_id") {
 		if d.Get("ssl_policy_name") == "" && d.Get("ssl_policy_id") == "" {
 			input := expandNiftyUnsetLoadBalancerSSLPoliciesOfListener(d)
-			req := svc.NiftyUnsetLoadBalancerSSLPoliciesOfListenerRequest(input)
-			_, err := req.Send(ctx)
+			_, err := svc.NiftyUnsetLoadBalancerSSLPoliciesOfListener(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating load balancer unset %s", err))
 			}
@@ -142,16 +130,14 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 	if d.HasChange("ssl_policy_id") && d.Get("ssl_policy_id") != "" && d.Get("ssl_policy_id") != nil {
 		input := expandNiftySetLoadBalancerSSLPoliciesOfListenerForPolicyID(d)
-		req := svc.NiftySetLoadBalancerSSLPoliciesOfListenerRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.NiftySetLoadBalancerSSLPoliciesOfListener(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer set ssl_policy_id %s", err))
 		}
 	}
 	if d.HasChange("ssl_policy_name") && d.Get("ssl_policy_name") != "" && d.Get("ssl_policy_name") != nil {
 		input := expandNiftySetLoadBalancerSSLPoliciesOfListenerForPolicyName(d)
-		req := svc.NiftySetLoadBalancerSSLPoliciesOfListenerRequest(input)
-		_, err := req.Send(ctx)
+		_, err := svc.NiftySetLoadBalancerSSLPoliciesOfListener(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating load balancer set ssl_policy_name %s", err))
 		}

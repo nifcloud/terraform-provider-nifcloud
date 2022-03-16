@@ -3,6 +3,7 @@ package instance
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,9 +14,10 @@ import (
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err := computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for instance to become ready: %s", err))
 		}
@@ -24,14 +26,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("accounting_type") {
 		input := expandModifyInstanceAttributeInputForAccountingType(d)
 
-		req := svc.ModifyInstanceAttributeRequest(input)
+		_, err := svc.ModifyInstanceAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance accounting_type: %s", err))
 		}
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}
@@ -40,14 +41,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandModifyInstanceAttributeInputForDescription(d)
 
-		req := svc.ModifyInstanceAttributeRequest(input)
+		_, err := svc.ModifyInstanceAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance description: %s", err))
 		}
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}
@@ -56,14 +56,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("disable_api_termination") {
 		input := expandModifyInstanceAttributeInputForDisableAPITermination(d)
 
-		req := svc.ModifyInstanceAttributeRequest(input)
+		_, err := svc.ModifyInstanceAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance disable_api_termination: %s", err))
 		}
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}
@@ -72,16 +71,15 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("instance_id") && !d.IsNewResource() {
 		input := expandModifyInstanceAttributeInputForInstanceID(d)
 
-		req := svc.ModifyInstanceAttributeRequest(input)
+		_, err := svc.ModifyInstanceAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance instance_id %s", err))
 		}
 
 		d.SetId(d.Get("instance_id").(string))
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}
@@ -90,14 +88,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("instance_type") {
 		input := expandModifyInstanceAttributeInputForInstanceType(d)
 
-		req := svc.ModifyInstanceAttributeRequest(input)
+		_, err := svc.ModifyInstanceAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance instance_type: %s", err))
 		}
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}
@@ -113,27 +110,25 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			mutexKV.Lock(r)
 			defer mutexKV.Unlock(r)
 
-			if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}); err != nil {
+			if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}, time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 			}
 		}
 
 		input := expandNiftyUpdateInstanceNetworkInterfacesInput(d)
 
-		req := svc.NiftyUpdateInstanceNetworkInterfacesRequest(input)
-
-		_, err = req.Send(ctx)
+		_, err = svc.NiftyUpdateInstanceNetworkInterfaces(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating instance network_interface: %s", err))
 		}
 
-		err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}
 
 		for _, r := range routers {
-			if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}); err != nil {
+			if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}, time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 			}
 		}
@@ -146,20 +141,19 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		for _, n := range ors.List() {
 			if attachmentID, ok := n.(map[string]interface{})["network_interface_attachment_id"]; ok && attachmentID != "" {
 				input := expandDetachNetworkInterfaceInput(d, attachmentID.(string))
-				req := svc.DetachNetworkInterfaceRequest(input)
+				_, err := svc.DetachNetworkInterface(ctx, input)
 
-				_, err := req.Send(ctx)
 				if err != nil {
 					return diag.FromErr(fmt.Errorf("failed updating instance interface to detach network interface: %s", err))
 				}
 
-				err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+				err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 				if err != nil {
 					return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 				}
 
 				for _, r := range routers {
-					if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}); err != nil {
+					if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}, time.Until(deadline)); err != nil {
 						return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 					}
 				}
@@ -171,20 +165,19 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		for _, n := range nrs.List() {
 			if networkInterfaceID, ok := n.(map[string]interface{})["network_interface_id"]; ok && networkInterfaceID != "" {
 				input := expandAttachNetworkInterfaceInput(d, networkInterfaceID.(string))
-				req := svc.AttachNetworkInterfaceRequest(input)
+				_, err := svc.AttachNetworkInterface(ctx, input)
 
-				_, err := req.Send(ctx)
 				if err != nil {
 					return diag.FromErr(fmt.Errorf("failed updating instance to attach network interface: %s", err))
 				}
 
-				err = svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+				err = computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 				if err != nil {
 					return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 				}
 
 				for _, r := range routers {
-					if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}); err != nil {
+					if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}, time.Until(deadline)); err != nil {
 						return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 					}
 				}
@@ -196,38 +189,35 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if d.Get("security_group").(string) == "" {
 			input := expandDeregisterInstancesFromSecurityGroupInput(d)
 
-			req := svc.DeregisterInstancesFromSecurityGroupRequest(input)
+			mutexKV.Lock(nifcloud.ToString(input.GroupName))
+			defer mutexKV.Unlock(nifcloud.ToString(input.GroupName))
 
-			mutexKV.Lock(nifcloud.StringValue(input.GroupName))
-			defer mutexKV.Unlock(nifcloud.StringValue(input.GroupName))
-
-			err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.StringValue(input.GroupName)}})
+			err := computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.ToString(input.GroupName)}}, time.Until(deadline))
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 			}
-			_, err = req.Send(ctx)
+
+			_, err = svc.DeregisterInstancesFromSecurityGroup(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating instance security_group: %s", err))
 			}
 		} else {
 			input := expandModifyInstanceAttributeInputForSecurityGroup(d)
 
-			req := svc.ModifyInstanceAttributeRequest(input)
+			mutexKV.Lock(nifcloud.ToString(input.Value))
+			defer mutexKV.Unlock(nifcloud.ToString(input.Value))
 
-			mutexKV.Lock(nifcloud.StringValue(input.Value))
-			defer mutexKV.Unlock(nifcloud.StringValue(input.Value))
-
-			err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.StringValue(input.Value)}})
+			err := computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.ToString(input.Value)}}, time.Until(deadline))
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 			}
-			_, err = req.Send(ctx)
+			_, err = svc.ModifyInstanceAttribute(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating instance security_group: %s", err))
 			}
 		}
 
-		err := svc.WaitUntilInstanceRunning(ctx, expandDescribeInstancesInput(d))
+		err := computing.NewInstanceRunningWaiter(svc).Wait(ctx, expandDescribeInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until instance running: %s", err))
 		}

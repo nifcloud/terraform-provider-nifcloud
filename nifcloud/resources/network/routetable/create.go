@@ -12,15 +12,14 @@ import (
 
 func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateRouteTableRequest(nil)
 
-	res, err := req.Send(ctx)
+	res, err := svc.CreateRouteTable(ctx, nil)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating routeTable: %s", err))
 	}
 
 	routeTableID := res.RouteTable.RouteTableId
-	d.SetId(nifcloud.StringValue(routeTableID))
+	d.SetId(nifcloud.ToString(routeTableID))
 
 	return update(ctx, d, meta)
 }

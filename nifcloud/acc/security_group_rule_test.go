@@ -9,17 +9,18 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func TestAcc_SecurityGroupRule_Cidr(t *testing.T) {
-	var securityGroupRule computing.IpPermissions
+	var securityGroupRule types.IpPermissions
 
 	resourceName := "nifcloud_security_group_rule.basic_cidr"
 
@@ -66,7 +67,7 @@ func TestAcc_SecurityGroupRule_Cidr(t *testing.T) {
 }
 
 func TestAcc_SecurityGroupRule_Source(t *testing.T) {
-	var securityGroupRule computing.IpPermissions
+	var securityGroupRule types.IpPermissions
 
 	resourceName := "nifcloud_security_group_rule.basic_source"
 
@@ -131,7 +132,7 @@ func testAccSecurityGroupRule(t *testing.T, fileName, groupName string) string {
 	)
 }
 
-func testAccCheckSecurityGroupRuleExists(n string, securityGroupRule *computing.IpPermissions, groupName string) resource.TestCheckFunc {
+func testAccCheckSecurityGroupRuleExists(n string, securityGroupRule *types.IpPermissions, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -143,9 +144,9 @@ func testAccCheckSecurityGroupRuleExists(n string, securityGroupRule *computing.
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeSecurityGroupsRequest(&computing.DescribeSecurityGroupsInput{
+		res, err := svc.DescribeSecurityGroups(context.Background(), &computing.DescribeSecurityGroupsInput{
 			GroupName: []string{groupName},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -156,7 +157,7 @@ func testAccCheckSecurityGroupRuleExists(n string, securityGroupRule *computing.
 		}
 
 		foundSecurityGroup := res.SecurityGroupInfo[0]
-		if nifcloud.StringValue(foundSecurityGroup.GroupName) != groupName {
+		if nifcloud.ToString(foundSecurityGroup.GroupName) != groupName {
 			return fmt.Errorf("securityGroup does not found in cloud: %s", groupName)
 		}
 
@@ -167,50 +168,50 @@ func testAccCheckSecurityGroupRuleExists(n string, securityGroupRule *computing.
 	}
 }
 
-func testAccCheckSecurityGroupRuleValuesWithCidr(securityGroupRule *computing.IpPermissions) resource.TestCheckFunc {
+func testAccCheckSecurityGroupRuleValuesWithCidr(securityGroupRule *types.IpPermissions) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(securityGroupRule.Description) != "memo" {
+		if nifcloud.ToString(securityGroupRule.Description) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", securityGroupRule.Description)
 		}
 
-		if nifcloud.StringValue(securityGroupRule.InOut) != "OUT" {
+		if nifcloud.ToString(securityGroupRule.InOut) != "OUT" {
 			return fmt.Errorf("bad type state,  expected \"OUT\", got: %#v", securityGroupRule.InOut)
 		}
 
-		if nifcloud.StringValue(securityGroupRule.IpProtocol) != "ANY" {
+		if nifcloud.ToString(securityGroupRule.IpProtocol) != "ANY" {
 			return fmt.Errorf("bad protocol state,  expected \"ANY\", got: %#v", securityGroupRule.IpProtocol)
 		}
 
-		if nifcloud.StringValue(securityGroupRule.IpRanges[0].CidrIp) != "0.0.0.0/0" {
+		if nifcloud.ToString(securityGroupRule.IpRanges[0].CidrIp) != "0.0.0.0/0" {
 			return fmt.Errorf("bad cidr_ip state,  expected \"0.0.0.0/0\", got: %#v", securityGroupRule.IpRanges[0].CidrIp)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSecurityGroupRuleValuesWithSource(securityGroupRule *computing.IpPermissions, sourceGroupName string) resource.TestCheckFunc {
+func testAccCheckSecurityGroupRuleValuesWithSource(securityGroupRule *types.IpPermissions, sourceGroupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(securityGroupRule.Description) != "memo" {
+		if nifcloud.ToString(securityGroupRule.Description) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", securityGroupRule.Description)
 		}
 
-		if nifcloud.StringValue(securityGroupRule.InOut) != "IN" {
+		if nifcloud.ToString(securityGroupRule.InOut) != "IN" {
 			return fmt.Errorf("bad type state,  expected \"IN\", got: %#v", securityGroupRule.InOut)
 		}
 
-		if nifcloud.StringValue(securityGroupRule.IpProtocol) != "TCP" {
+		if nifcloud.ToString(securityGroupRule.IpProtocol) != "TCP" {
 			return fmt.Errorf("bad protocol state,  expected \"TCP\", got: %#v", securityGroupRule.IpProtocol)
 		}
 
-		if nifcloud.Int64Value(securityGroupRule.FromPort) != 1 {
+		if nifcloud.ToInt32(securityGroupRule.FromPort) != 1 {
 			return fmt.Errorf("bad from_port state,  expected \"1\", got: %#v", securityGroupRule.FromPort)
 		}
 
-		if nifcloud.Int64Value(securityGroupRule.ToPort) != 65535 {
+		if nifcloud.ToInt32(securityGroupRule.ToPort) != 65535 {
 			return fmt.Errorf("bad to_port state,  expected \"65535\", got: %#v", securityGroupRule.ToPort)
 		}
 
-		if nifcloud.StringValue(securityGroupRule.Groups[0].GroupName) != sourceGroupName {
+		if nifcloud.ToString(securityGroupRule.Groups[0].GroupName) != sourceGroupName {
 			return fmt.Errorf("bad source_security_group_name state,  expected \"%s\", got: %#v", sourceGroupName, securityGroupRule.Groups[0].GroupName)
 		}
 		return nil
@@ -224,13 +225,13 @@ func testAccSecurityGroupRuleResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeSecurityGroupsRequest(&computing.DescribeSecurityGroupsInput{
+		res, err := svc.DescribeSecurityGroups(context.Background(), &computing.DescribeSecurityGroupsInput{
 			GroupName: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroup" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)

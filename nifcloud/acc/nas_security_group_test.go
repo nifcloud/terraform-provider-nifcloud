@@ -9,12 +9,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
+	"github.com/nifcloud/nifcloud-sdk-go/service/nas/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -30,7 +31,7 @@ func init() {
 }
 
 func TestAcc_NASSecurityGroup(t *testing.T) {
-	var nasSecurityGroup nas.NASSecurityGroupsOfDescribeNASSecurityGroups
+	var nasSecurityGroup types.NASSecurityGroupsOfDescribeNASSecurityGroups
 
 	resourceName := "nifcloud_nas_security_group.basic"
 	randName := prefix + acctest.RandString(7)
@@ -83,7 +84,7 @@ func testAccNASSecurityGroup(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecurityGroupsOfDescribeNASSecurityGroups) resource.TestCheckFunc {
+func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *types.NASSecurityGroupsOfDescribeNASSecurityGroups) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -95,9 +96,9 @@ func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecur
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).NAS
-		res, err := svc.DescribeNASSecurityGroupsRequest(&nas.DescribeNASSecurityGroupsInput{
+		res, err := svc.DescribeNASSecurityGroups(context.Background(), &nas.DescribeNASSecurityGroupsInput{
 			NASSecurityGroupName: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -108,7 +109,7 @@ func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecur
 
 		foundNASSecurityGroup := res.NASSecurityGroups[0]
 
-		if nifcloud.StringValue(foundNASSecurityGroup.NASSecurityGroupName) != saved.Primary.ID {
+		if nifcloud.ToString(foundNASSecurityGroup.NASSecurityGroupName) != saved.Primary.ID {
 			return fmt.Errorf("nasSecurityGroup does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -118,18 +119,18 @@ func testAccCheckNASSecurityGroupExists(n string, nasSecurityGroup *nas.NASSecur
 	}
 }
 
-func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroupsOfDescribeNASSecurityGroups, groupName string) resource.TestCheckFunc {
+func testAccCheckNASSecurityGroupValues(nasSecurityGroup *types.NASSecurityGroupsOfDescribeNASSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName) != groupName {
-			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName))
+		if nifcloud.ToString(nasSecurityGroup.NASSecurityGroupName) != groupName {
+			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, nifcloud.ToString(nasSecurityGroup.NASSecurityGroupName))
 		}
 
-		if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupDescription) != "memo" {
-			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupDescription))
+		if nifcloud.ToString(nasSecurityGroup.NASSecurityGroupDescription) != "memo" {
+			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.ToString(nasSecurityGroup.NASSecurityGroupDescription))
 		}
 
-		if nifcloud.StringValue(nasSecurityGroup.AvailabilityZone) != "east-21" {
-			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.StringValue(nasSecurityGroup.AvailabilityZone))
+		if nifcloud.ToString(nasSecurityGroup.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.ToString(nasSecurityGroup.AvailabilityZone))
 		}
 
 		wantCidrIPs := []string{"192.168.0.1/32"}
@@ -139,7 +140,7 @@ func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroupsO
 
 		gotCidrIps := []string{}
 		for _, ipRange := range nasSecurityGroup.IPRanges {
-			gotCidrIps = append(gotCidrIps, nifcloud.StringValue(ipRange.CIDRIP))
+			gotCidrIps = append(gotCidrIps, nifcloud.ToString(ipRange.CIDRIP))
 		}
 
 		sort.Strings(wantCidrIPs)
@@ -158,7 +159,7 @@ func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroupsO
 
 		gotGroupNames := []string{}
 		for _, securityGroup := range nasSecurityGroup.SecurityGroups {
-			gotGroupNames = append(gotGroupNames, nifcloud.StringValue(securityGroup.SecurityGroupName))
+			gotGroupNames = append(gotGroupNames, nifcloud.ToString(securityGroup.SecurityGroupName))
 		}
 
 		sort.Strings(wantGroupNames)
@@ -174,18 +175,18 @@ func testAccCheckNASSecurityGroupValues(nasSecurityGroup *nas.NASSecurityGroupsO
 	}
 }
 
-func testAccCheckNASSecurityGroupValuesUpdated(nasSecurityGroup *nas.NASSecurityGroupsOfDescribeNASSecurityGroups, groupName string) resource.TestCheckFunc {
+func testAccCheckNASSecurityGroupValuesUpdated(nasSecurityGroup *types.NASSecurityGroupsOfDescribeNASSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName) != groupName+"upd" {
-			return fmt.Errorf("bad group_name state, expected \"%supd\", got: %#v", groupName, nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName))
+		if nifcloud.ToString(nasSecurityGroup.NASSecurityGroupName) != groupName+"upd" {
+			return fmt.Errorf("bad group_name state, expected \"%supd\", got: %#v", groupName, nifcloud.ToString(nasSecurityGroup.NASSecurityGroupName))
 		}
 
-		if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupDescription) != "memo-upd" {
-			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupDescription))
+		if nifcloud.ToString(nasSecurityGroup.NASSecurityGroupDescription) != "memo-upd" {
+			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.ToString(nasSecurityGroup.NASSecurityGroupDescription))
 		}
 
-		if nifcloud.StringValue(nasSecurityGroup.AvailabilityZone) != "east-21" {
-			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.StringValue(nasSecurityGroup.AvailabilityZone))
+		if nifcloud.ToString(nasSecurityGroup.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.ToString(nasSecurityGroup.AvailabilityZone))
 		}
 
 		wantCidrIPs := []string{"192.168.0.2/32", "192.168.0.3/32"}
@@ -195,7 +196,7 @@ func testAccCheckNASSecurityGroupValuesUpdated(nasSecurityGroup *nas.NASSecurity
 
 		gotCidrIps := []string{}
 		for _, ipRange := range nasSecurityGroup.IPRanges {
-			gotCidrIps = append(gotCidrIps, nifcloud.StringValue(ipRange.CIDRIP))
+			gotCidrIps = append(gotCidrIps, nifcloud.ToString(ipRange.CIDRIP))
 		}
 
 		sort.Strings(wantCidrIPs)
@@ -214,7 +215,7 @@ func testAccCheckNASSecurityGroupValuesUpdated(nasSecurityGroup *nas.NASSecurity
 
 		gotGroupNames := []string{}
 		for _, securityGroup := range nasSecurityGroup.SecurityGroups {
-			gotGroupNames = append(gotGroupNames, nifcloud.StringValue(securityGroup.SecurityGroupName))
+			gotGroupNames = append(gotGroupNames, nifcloud.ToString(securityGroup.SecurityGroupName))
 		}
 
 		sort.Strings(wantGroupNames)
@@ -238,13 +239,13 @@ func testAccNASSecurityGroupResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeNASSecurityGroupsRequest(&nas.DescribeNASSecurityGroupsInput{
+		res, err := svc.DescribeNASSecurityGroups(context.Background(), &nas.DescribeNASSecurityGroupsInput{
 			NASSecurityGroupName: nifcloud.String(rs.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameter.NotFound.NASSecurityGroupName" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameter.NotFound.NASSecurityGroupName" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeNASSecurityGroupsRequest: %s", err)
@@ -261,15 +262,15 @@ func testSweepNASSecurityGroup(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).NAS
 
-	res, err := svc.DescribeNASSecurityGroupsRequest(nil).Send(ctx)
+	res, err := svc.DescribeNASSecurityGroups(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepNASSecurityGroups []string
 	for _, g := range res.NASSecurityGroups {
-		if strings.HasPrefix(nifcloud.StringValue(g.NASSecurityGroupName), prefix) {
-			sweepNASSecurityGroups = append(sweepNASSecurityGroups, nifcloud.StringValue(g.NASSecurityGroupName))
+		if strings.HasPrefix(nifcloud.ToString(g.NASSecurityGroupName), prefix) {
+			sweepNASSecurityGroups = append(sweepNASSecurityGroups, nifcloud.ToString(g.NASSecurityGroupName))
 		}
 	}
 
@@ -277,9 +278,9 @@ func testSweepNASSecurityGroup(region string) error {
 	for _, n := range sweepNASSecurityGroups {
 		groupName := n
 		eg.Go(func() error {
-			_, err := svc.DeleteNASSecurityGroupRequest(&nas.DeleteNASSecurityGroupInput{
+			_, err := svc.DeleteNASSecurityGroup(ctx, &nas.DeleteNASSecurityGroupInput{
 				NASSecurityGroupName: nifcloud.String(groupName),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

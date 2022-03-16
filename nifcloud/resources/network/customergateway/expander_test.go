@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -87,7 +88,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayNa
 			args: rd,
 			want: &computing.NiftyModifyCustomerGatewayAttributeInput{
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
-				Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
+				Attribute:         types.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
 				Value:             nifcloud.String("test_name"),
 			},
 		},
@@ -117,7 +118,7 @@ func TestExpandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDe
 			args: rd,
 			want: &computing.NiftyModifyCustomerGatewayAttributeInput{
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
-				Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
+				Attribute:         types.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
 				Value:             nifcloud.String("test_description"),
 			},
 		},

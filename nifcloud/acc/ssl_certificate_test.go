@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/acc/helper"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
@@ -27,7 +28,7 @@ func init() {
 }
 
 func TestAcc_SSLCertificate(t *testing.T) {
-	var sslCertificate computing.CertsSet
+	var sslCertificate types.CertsSet
 
 	resourceName := "nifcloud_ssl_certificate.basic"
 	randName := prefix + acctest.RandString(10)
@@ -85,7 +86,7 @@ func testAccSSLCertificate(t *testing.T, fileName, certificate, key, ca string) 
 	return fmt.Sprintf(string(b), certificate, key, ca)
 }
 
-func testAccCheckSSLCertificateExists(n string, cert *computing.CertsSet) resource.TestCheckFunc {
+func testAccCheckSSLCertificateExists(n string, cert *types.CertsSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -97,9 +98,9 @@ func testAccCheckSSLCertificateExists(n string, cert *computing.CertsSet) resour
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeSslCertificatesRequest(&computing.DescribeSslCertificatesInput{
+		res, err := svc.DescribeSslCertificates(context.Background(), &computing.DescribeSslCertificatesInput{
 			FqdnId: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -111,7 +112,7 @@ func testAccCheckSSLCertificateExists(n string, cert *computing.CertsSet) resour
 
 		foundCert := res.CertsSet[0]
 
-		if nifcloud.StringValue(foundCert.FqdnId) != saved.Primary.ID {
+		if nifcloud.ToString(foundCert.FqdnId) != saved.Primary.ID {
 			return fmt.Errorf("SSLCertificate does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -122,7 +123,7 @@ func testAccCheckSSLCertificateExists(n string, cert *computing.CertsSet) resour
 }
 
 func testAccCheckSSLCertificateValues(
-	n string, certSet *computing.CertsSet, fqdn, cert, key, caCert string,
+	n string, certSet *types.CertsSet, fqdn, cert, key, caCert string,
 ) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
@@ -135,16 +136,16 @@ func testAccCheckSSLCertificateValues(
 		}
 		fqdnID := saved.Primary.ID
 
-		if nifcloud.StringValue(certSet.FqdnId) != fqdnID {
-			return fmt.Errorf("bad fqdn_id state, expected \"%s\", got: %#v", fqdnID, nifcloud.StringValue(certSet.FqdnId))
+		if nifcloud.ToString(certSet.FqdnId) != fqdnID {
+			return fmt.Errorf("bad fqdn_id state, expected \"%s\", got: %#v", fqdnID, nifcloud.ToString(certSet.FqdnId))
 		}
 
-		if nifcloud.StringValue(certSet.Fqdn) != fqdn {
-			return fmt.Errorf("bad fqdn state, expected \"%s\", got: %#v", fqdn, nifcloud.StringValue(certSet.Fqdn))
+		if nifcloud.ToString(certSet.Fqdn) != fqdn {
+			return fmt.Errorf("bad fqdn state, expected \"%s\", got: %#v", fqdn, nifcloud.ToString(certSet.Fqdn))
 		}
 
-		if nifcloud.StringValue(certSet.Description) != "memo" {
-			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.StringValue(certSet.Description))
+		if nifcloud.ToString(certSet.Description) != "memo" {
+			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.ToString(certSet.Description))
 		}
 
 		return testAccCheckSSLCertificateFileData(fqdnID, cert, key, caCert)
@@ -152,7 +153,7 @@ func testAccCheckSSLCertificateValues(
 }
 
 func testAccCheckSSLCertificateValuesUpdated(
-	n string, certsSet *computing.CertsSet, fqdn, cert, key, caCert string,
+	n string, certsSet *types.CertsSet, fqdn, cert, key, caCert string,
 ) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
@@ -165,16 +166,16 @@ func testAccCheckSSLCertificateValuesUpdated(
 		}
 		fqdnID := saved.Primary.ID
 
-		if nifcloud.StringValue(certsSet.FqdnId) != fqdnID {
-			return fmt.Errorf("bad fqdn_id state, expected \"%s\", got: %#v", fqdnID, nifcloud.StringValue(certsSet.FqdnId))
+		if nifcloud.ToString(certsSet.FqdnId) != fqdnID {
+			return fmt.Errorf("bad fqdn_id state, expected \"%s\", got: %#v", fqdnID, nifcloud.ToString(certsSet.FqdnId))
 		}
 
-		if nifcloud.StringValue(certsSet.Fqdn) != fqdn {
-			return fmt.Errorf("bad fqdn state, expected \"%s\", got: %#v", fqdn, nifcloud.StringValue(certsSet.Fqdn))
+		if nifcloud.ToString(certsSet.Fqdn) != fqdn {
+			return fmt.Errorf("bad fqdn state, expected \"%s\", got: %#v", fqdn, nifcloud.ToString(certsSet.Fqdn))
 		}
 
-		if nifcloud.StringValue(certsSet.Description) != "memo-upd" {
-			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.StringValue(certsSet.Description))
+		if nifcloud.ToString(certsSet.Description) != "memo-upd" {
+			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.ToString(certsSet.Description))
 		}
 
 		return testAccCheckSSLCertificateFileData(fqdnID, cert, key, caCert)
@@ -185,41 +186,41 @@ func testAccCheckSSLCertificateFileData(fqdnID, wantCert, wantKey, wantCACert st
 	svc := testAccProvider.Meta().(*client.Client).Computing
 
 	ctx := context.Background()
-	res, err := svc.DownloadSslCertificateRequest(&computing.DownloadSslCertificateInput{
+	res, err := svc.DownloadSslCertificate(ctx, &computing.DownloadSslCertificateInput{
 		FqdnId:   nifcloud.String(fqdnID),
-		FileType: computing.FileTypeOfDownloadSslCertificateRequest1,
-	}).Send(ctx)
+		FileType: types.FileTypeOfDownloadSslCertificateRequestPrivateKey,
+	})
 	if err != nil {
 		return err
 	}
 
-	gotKey := nifcloud.StringValue(res.DownloadSslCertificateOutput.FileData)
+	gotKey := nifcloud.ToString(res.FileData)
 	if gotKey != wantKey {
 		return fmt.Errorf("bad private key, expected \"%s\", got \"%s\"", wantKey, gotKey)
 	}
 
-	res, err = svc.DownloadSslCertificateRequest(&computing.DownloadSslCertificateInput{
+	res, err = svc.DownloadSslCertificate(ctx, &computing.DownloadSslCertificateInput{
 		FqdnId:   nifcloud.String(fqdnID),
-		FileType: computing.FileTypeOfDownloadSslCertificateRequest2,
-	}).Send(ctx)
+		FileType: types.FileTypeOfDownloadSslCertificateRequestCa,
+	})
 	if err != nil {
 		return err
 	}
 
-	gotCACert := nifcloud.StringValue(res.DownloadSslCertificateOutput.FileData)
+	gotCACert := nifcloud.ToString(res.FileData)
 	if gotCACert != wantCACert {
 		return fmt.Errorf("bad ca, expected \"%s\", got %#v", wantCACert, gotCACert)
 	}
 
-	res, err = svc.DownloadSslCertificateRequest(&computing.DownloadSslCertificateInput{
+	res, err = svc.DownloadSslCertificate(ctx, &computing.DownloadSslCertificateInput{
 		FqdnId:   nifcloud.String(fqdnID),
-		FileType: computing.FileTypeOfDownloadSslCertificateRequest3,
-	}).Send(ctx)
+		FileType: types.FileTypeOfDownloadSslCertificateRequestCertificate,
+	})
 	if err != nil {
 		return err
 	}
 
-	gotCert := nifcloud.StringValue(res.DownloadSslCertificateOutput.FileData)
+	gotCert := nifcloud.ToString(res.FileData)
 	if gotCert != wantCert {
 		return fmt.Errorf("bad cert, expected \"%s\", got \"%s\"", wantCert, gotCert)
 	}
@@ -235,13 +236,13 @@ func testAccSSLCertificateResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeSslCertificatesRequest(&computing.DescribeSslCertificatesInput{
+		res, err := svc.DescribeSslCertificates(context.Background(), &computing.DescribeSslCertificatesInput{
 			FqdnId: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SslCertificate" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SslCertificate" {
 				return nil
 			}
 			return fmt.Errorf("failed DesribeSslCertificates: %s", err)
@@ -259,15 +260,15 @@ func testSweepSSLCertificate(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeSslCertificatesRequest(nil).Send(ctx)
+	res, err := svc.DescribeSslCertificates(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepSSLCertificates []string
 	for _, k := range res.CertsSet {
-		if strings.HasPrefix(nifcloud.StringValue(k.FqdnId), prefix) {
-			sweepSSLCertificates = append(sweepSSLCertificates, nifcloud.StringValue(k.FqdnId))
+		if strings.HasPrefix(nifcloud.ToString(k.FqdnId), prefix) {
+			sweepSSLCertificates = append(sweepSSLCertificates, nifcloud.ToString(k.FqdnId))
 		}
 	}
 
@@ -275,9 +276,9 @@ func testSweepSSLCertificate(region string) error {
 	for _, id := range sweepSSLCertificates {
 		fqdnID := id
 		eg.Go(func() error {
-			_, err := svc.DeleteSslCertificateRequest(&computing.DeleteSslCertificateInput{
+			_, err := svc.DeleteSslCertificate(ctx, &computing.DeleteSslCertificateInput{
 				FqdnId: nifcloud.String(fqdnID),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

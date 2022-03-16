@@ -15,9 +15,8 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandRegisterPortWithLoadBalancerInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.RegisterPortWithLoadBalancerRequest(input)
 
-	_, err := req.Send(ctx)
+	_, err := svc.RegisterPortWithLoadBalancer(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating load_balancer: %s", err))
 	}

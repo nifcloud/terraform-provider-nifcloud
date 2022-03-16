@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +43,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeInstancesResponse
+		res *computing.DescribeInstancesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -54,44 +55,42 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeInstancesResponse{
-					DescribeInstancesOutput: &computing.DescribeInstancesOutput{
-						ReservationSet: []computing.ReservationSet{
-							{
-								InstancesSet: []computing.InstancesSet{
-									{
-										Description: nifcloud.String("test_description"),
-										Placement: &computing.Placement{
-											AvailabilityZone: nifcloud.String("test_availability_zone"),
-										},
-										NextMonthAccountingType: nifcloud.String("test_accountingT_type"),
-										ImageId:                 nifcloud.String("test_image_id"),
-										InstanceId:              nifcloud.String("test_instance_id"),
-										InstanceType:            nifcloud.String("test_instance_type"),
-										KeyName:                 nifcloud.String("test_key_name"),
-										InstanceState: &computing.InstanceState{
-											Name: nifcloud.String("test_instance_state"),
-										},
-										PrivateIpAddress: nifcloud.String("test_private_ip"),
-										IpAddress:        nifcloud.String("test_public_ip"),
-										InstanceUniqueId: nifcloud.String("test_unique_id"),
-										NetworkInterfaceSet: []computing.NetworkInterfaceSetOfDescribeInstances{
-											{
-												NiftyNetworkId:     nifcloud.String("test_network_id"),
-												NiftyNetworkName:   nifcloud.String("test_network_name"),
-												PrivateIpAddress:   nifcloud.String("test_ip_address"),
-												NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
-												Attachment: &computing.Attachment{
-													AttachmentId: nifcloud.String("test_network_interface_attachment_id"),
-												},
+				res: &computing.DescribeInstancesOutput{
+					ReservationSet: []types.ReservationSet{
+						{
+							InstancesSet: []types.InstancesSet{
+								{
+									Description: nifcloud.String("test_description"),
+									Placement: &types.Placement{
+										AvailabilityZone: nifcloud.String("test_availability_zone"),
+									},
+									NextMonthAccountingType: nifcloud.String("test_accountingT_type"),
+									ImageId:                 nifcloud.String("test_image_id"),
+									InstanceId:              nifcloud.String("test_instance_id"),
+									InstanceType:            nifcloud.String("test_instance_type"),
+									KeyName:                 nifcloud.String("test_key_name"),
+									InstanceState: &types.InstanceState{
+										Name: nifcloud.String("test_instance_state"),
+									},
+									PrivateIpAddress: nifcloud.String("test_private_ip"),
+									IpAddress:        nifcloud.String("test_public_ip"),
+									InstanceUniqueId: nifcloud.String("test_unique_id"),
+									NetworkInterfaceSet: []types.NetworkInterfaceSetOfDescribeInstances{
+										{
+											NiftyNetworkId:     nifcloud.String("test_network_id"),
+											NiftyNetworkName:   nifcloud.String("test_network_name"),
+											PrivateIpAddress:   nifcloud.String("test_ip_address"),
+											NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
+											Attachment: &types.Attachment{
+												AttachmentId: nifcloud.String("test_network_interface_attachment_id"),
 											},
 										},
 									},
 								},
-								GroupSet: []computing.GroupSet{
-									{
-										GroupId: nifcloud.String("test_group_id"),
-									},
+							},
+							GroupSet: []types.GroupSet{
+								{
+									GroupId: nifcloud.String("test_group_id"),
 								},
 							},
 						},
@@ -104,10 +103,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeInstancesResponse{
-					DescribeInstancesOutput: &computing.DescribeInstancesOutput{
-						ReservationSet: []computing.ReservationSet{},
-					},
+				res: &computing.DescribeInstancesOutput{
+					ReservationSet: []types.ReservationSet{},
 				},
 			},
 			want: wantNotFoundRd,
@@ -147,7 +144,7 @@ func TestFlattenDisableAPITermination(t *testing.T) {
 	rd.SetId("test_instance_id")
 
 	type args struct {
-		res *computing.DescribeInstanceAttributeResponse
+		res *computing.DescribeInstanceAttributeOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -159,11 +156,9 @@ func TestFlattenDisableAPITermination(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeInstanceAttributeResponse{
-					DescribeInstanceAttributeOutput: &computing.DescribeInstanceAttributeOutput{
-						DisableApiTermination: &computing.DisableApiTermination{
-							Value: nifcloud.String("false"),
-						},
+				res: &computing.DescribeInstanceAttributeOutput{
+					DisableApiTermination: &types.DisableApiTermination{
+						Value: nifcloud.Bool(false),
 					},
 				},
 			},

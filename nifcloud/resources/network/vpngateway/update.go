@@ -19,8 +19,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("accounting_type") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForAccountingType(d)
 
-		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.NiftyModifyVpnGatewayAttribute(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating vpngateway accounting_type: %s", err))
 		}
 
@@ -32,8 +32,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(d)
 
-		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.NiftyModifyVpnGatewayAttribute(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating vpngateway description: %s", err))
 		}
 
@@ -45,9 +45,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("name") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(d)
 
-		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
+		_, err := svc.NiftyModifyVpnGatewayAttribute(ctx, input)
 
-		if _, err := req.Send(ctx); err != nil {
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating vpngateway name %s", err))
 		}
 
@@ -59,9 +59,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("type") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(d)
 
-		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
+		_, err := svc.NiftyModifyVpnGatewayAttribute(ctx, input)
 
-		if _, err := req.Send(ctx); err != nil {
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating vpngateway type: %s", err))
 		}
 
@@ -73,9 +73,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("ip_address") {
 		input := expandNiftyUpdateVpnGatewayNetworkInterfacesInput(d)
 
-		req := svc.NiftyUpdateVpnGatewayNetworkInterfacesRequest(input)
+		_, err := svc.NiftyUpdateVpnGatewayNetworkInterfaces(ctx, input)
 
-		if _, err := req.Send(ctx); err != nil {
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating vpngateway ip_address: %s", err))
 		}
 
@@ -87,9 +87,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("security_group") {
 		input := expandNiftyModifyVpnGatewayAttributeInputForSecurityGroup(d)
 
-		req := svc.NiftyModifyVpnGatewayAttributeRequest(input)
+		_, err := svc.NiftyModifyVpnGatewayAttribute(ctx, input)
 
-		if _, err := req.Send(ctx); err != nil {
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating vpngateway security_group: %s", err))
 		}
 
@@ -103,22 +103,22 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if before != "" && after == "" {
 			input := expandNiftyDisassociateRouteTableFromVpnGatewayInput(d)
 
-			req := svc.NiftyDisassociateRouteTableFromVpnGatewayRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyDisassociateRouteTableFromVpnGateway(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed disassociating vpngateway table: %s", err))
 			}
 		} else if before == "" && after != "" {
 			input := expandNiftyAssociateRouteTableWithVpnGatewayInput(d)
 
-			req := svc.NiftyAssociateRouteTableWithVpnGatewayRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyAssociateRouteTableWithVpnGateway(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed associating vpngateway table: %s", err))
 			}
 		} else {
 			input := expandNiftyReplaceRouteTableAssociationWithVpnGatewayInput(d)
 
-			req := svc.NiftyReplaceRouteTableAssociationWithVpnGatewayRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyReplaceRouteTableAssociationWithVpnGateway(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating vpngateway route_table_id: %s", err))
 			}
 		}
@@ -133,8 +133,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 func waitForVpnGatewayAvailable(ctx context.Context, d *schema.ResourceData, svc *computing.Client) diag.Diagnostics {
 	// lintignore:R018
 	time.Sleep(waiterInitialDelayForUpdate * time.Second)
+	deadline, _ := ctx.Deadline()
 
-	if err := svc.WaitUntilVpnGatewayAvailable(ctx, expandDescribeVpnGatewaysInput(d)); err != nil {
+	if err := computing.NewVpnGatewayAvailableWaiter(svc).Wait(ctx, expandDescribeVpnGatewaysInput(d), time.Until(deadline)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed waiting for vpngateway available: %s", err))
 	}
 

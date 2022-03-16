@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateClusterInput(d)
 
 	svc := meta.(*client.Client).Hatoba
-	req := svc.CreateClusterRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateCluster(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating Hatoba cluster: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.Cluster.Name))
+	d.SetId(nifcloud.ToString(res.Cluster.Name))
 
 	return update(ctx, d, meta)
 }

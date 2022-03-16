@@ -13,10 +13,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	input := expandNiftyDescribeSeparateInstanceRulesInput(d)
 	svc := meta.(*client.Client).Computing
 
-	req := svc.NiftyDescribeSeparateInstanceRulesRequest(input)
-
-	res, err := req.Send(ctx)
-
+	res, err := svc.NiftyDescribeSeparateInstanceRules(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed reading: %s", err))
 	}

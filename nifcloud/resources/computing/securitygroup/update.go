@@ -3,6 +3,7 @@ package securitygroup
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -12,9 +13,10 @@ import (
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}})
+		err := computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}}, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 		}
@@ -23,9 +25,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("group_name") {
 		input := expandUpdateSecurityGroupInputForName(d)
 
-		req := svc.UpdateSecurityGroupRequest(input)
+		_, err := svc.UpdateSecurityGroup(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating securityGroup name: %s", err))
 		}
@@ -33,7 +34,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		groupName := d.Get("group_name").(string)
 		d.SetId(groupName)
 
-		err = svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}})
+		err = computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}}, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 		}
@@ -42,14 +43,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandUpdateSecurityGroupInputForDescription(d)
 
-		req := svc.UpdateSecurityGroupRequest(input)
+		_, err := svc.UpdateSecurityGroup(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating securityGroup description: %s", err))
 		}
 
-		err = svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}})
+		err = computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}}, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 		}
@@ -58,14 +58,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("log_limit") {
 		input := expandUpdateSecurityGroupInputForLogLimit(d)
 
-		req := svc.UpdateSecurityGroupRequest(input)
+		_, err := svc.UpdateSecurityGroup(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating securityGroup log_limit: %s", err))
 		}
 
-		err = svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}})
+		err = computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}}, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 		}

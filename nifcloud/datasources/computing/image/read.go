@@ -14,12 +14,10 @@ import (
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
 
-	req := svc.DescribeImagesRequest(&computing.DescribeImagesInput{
+	res, err := svc.DescribeImages(ctx, &computing.DescribeImagesInput{
 		ImageName: []string{d.Get("image_name").(string)},
 		Owner:     []string{d.Get("owner").(string)},
 	})
-
-	res, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed reading: %s", err))
 	}
@@ -36,7 +34,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	image := images[0]
 
-	d.SetId(nifcloud.StringValue(image.ImageId))
+	d.SetId(nifcloud.ToString(image.ImageId))
 
 	if err := d.Set("image_id", image.ImageId); err != nil {
 		return diag.FromErr(err)

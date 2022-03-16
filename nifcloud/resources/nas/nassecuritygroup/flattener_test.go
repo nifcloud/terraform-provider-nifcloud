@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
+	"github.com/nifcloud/nifcloud-sdk-go/service/nas/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestFlattenForCidrIP(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *nas.DescribeNASSecurityGroupsResponse
+		res *nas.DescribeNASSecurityGroupsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -35,17 +36,15 @@ func TestFlattenForCidrIP(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &nas.DescribeNASSecurityGroupsResponse{
-					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{
-							{
-								NASSecurityGroupName:        nifcloud.String("test_group_name"),
-								NASSecurityGroupDescription: nifcloud.String("test_description"),
-								AvailabilityZone:            nifcloud.String("test_zone"),
-								IPRanges: []nas.IPRanges{
-									{
-										CIDRIP: nifcloud.String("0.0.0.0/0"),
-									},
+				res: &nas.DescribeNASSecurityGroupsOutput{
+					NASSecurityGroups: []types.NASSecurityGroupsOfDescribeNASSecurityGroups{
+						{
+							NASSecurityGroupName:        nifcloud.String("test_group_name"),
+							NASSecurityGroupDescription: nifcloud.String("test_description"),
+							AvailabilityZone:            nifcloud.String("test_zone"),
+							IPRanges: []types.IPRanges{
+								{
+									CIDRIP: nifcloud.String("0.0.0.0/0"),
 								},
 							},
 						},
@@ -58,10 +57,8 @@ func TestFlattenForCidrIP(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &nas.DescribeNASSecurityGroupsResponse{
-					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{},
-					},
+				res: &nas.DescribeNASSecurityGroupsOutput{
+					NASSecurityGroups: []types.NASSecurityGroupsOfDescribeNASSecurityGroups{},
 				},
 			},
 			want: wantNotFoundRd,
@@ -108,7 +105,7 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *nas.DescribeNASSecurityGroupsResponse
+		res *nas.DescribeNASSecurityGroupsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -120,17 +117,15 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &nas.DescribeNASSecurityGroupsResponse{
-					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{
-							{
-								NASSecurityGroupName:        nifcloud.String("test_group_name"),
-								NASSecurityGroupDescription: nifcloud.String("test_description"),
-								AvailabilityZone:            nifcloud.String("test_zone"),
-								SecurityGroups: []nas.SecurityGroups{
-									{
-										SecurityGroupName: nifcloud.String("test_security_group_name"),
-									},
+				res: &nas.DescribeNASSecurityGroupsOutput{
+					NASSecurityGroups: []types.NASSecurityGroupsOfDescribeNASSecurityGroups{
+						{
+							NASSecurityGroupName:        nifcloud.String("test_group_name"),
+							NASSecurityGroupDescription: nifcloud.String("test_description"),
+							AvailabilityZone:            nifcloud.String("test_zone"),
+							SecurityGroups: []types.SecurityGroups{
+								{
+									SecurityGroupName: nifcloud.String("test_security_group_name"),
 								},
 							},
 						},
@@ -143,10 +138,8 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &nas.DescribeNASSecurityGroupsResponse{
-					DescribeNASSecurityGroupsOutput: &nas.DescribeNASSecurityGroupsOutput{
-						NASSecurityGroups: []nas.NASSecurityGroupsOfDescribeNASSecurityGroups{},
-					},
+				res: &nas.DescribeNASSecurityGroupsOutput{
+					NASSecurityGroups: []types.NASSecurityGroupsOfDescribeNASSecurityGroups{},
 				},
 			},
 			want: wantNotFoundRd,

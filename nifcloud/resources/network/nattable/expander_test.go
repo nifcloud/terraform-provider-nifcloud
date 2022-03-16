@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,18 +36,18 @@ func TestExpandNiftyCreateNatRuleInputForSnat(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyCreateNatRuleInput{
 				NatTableId:  nifcloud.String("test_nat_table_id"),
-				NatType:     computing.NatTypeOfNiftyCreateNatRuleRequestSnat,
+				NatType:     types.NatTypeOfNiftyCreateNatRuleRequestSnat,
 				RuleNumber:  nifcloud.String("1"),
 				Description: nifcloud.String("test_description"),
-				Protocol:    computing.ProtocolOfNiftyCreateNatRuleRequestTcp,
-				Source: &computing.RequestSource{
+				Protocol:    types.ProtocolOfNiftyCreateNatRuleRequestTcp,
+				Source: &types.RequestSource{
 					Address: nifcloud.String("192.0.2.1"),
-					Port:    nifcloud.Int64(80),
+					Port:    nifcloud.Int32(80),
 				},
-				Translation: &computing.RequestTranslation{
-					Port: nifcloud.Int64(81),
+				Translation: &types.RequestTranslation{
+					Port: nifcloud.Int32(81),
 				},
-				OutboundInterface: &computing.RequestOutboundInterface{
+				OutboundInterface: &types.RequestOutboundInterface{
 					NetworkId:   nifcloud.String("test_network_id"),
 					NetworkName: nifcloud.String("test_network_name"),
 				},
@@ -88,18 +89,18 @@ func TestExpandNiftyCreateNatRuleInputForDnat(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyCreateNatRuleInput{
 				NatTableId:  nifcloud.String("test_nat_table_id"),
-				NatType:     computing.NatTypeOfNiftyCreateNatRuleRequestDnat,
+				NatType:     types.NatTypeOfNiftyCreateNatRuleRequestDnat,
 				RuleNumber:  nifcloud.String("1"),
 				Description: nifcloud.String("test_description"),
-				Protocol:    computing.ProtocolOfNiftyCreateNatRuleRequestTcp,
-				Destination: &computing.RequestDestination{
-					Port: nifcloud.Int64(80),
+				Protocol:    types.ProtocolOfNiftyCreateNatRuleRequestTcp,
+				Destination: &types.RequestDestination{
+					Port: nifcloud.Int32(80),
 				},
-				Translation: &computing.RequestTranslation{
+				Translation: &types.RequestTranslation{
 					Address: nifcloud.String("192.0.2.1"),
-					Port:    nifcloud.Int64(81),
+					Port:    nifcloud.Int32(81),
 				},
-				InboundInterface: &computing.RequestInboundInterface{
+				InboundInterface: &types.RequestInboundInterface{
 					NetworkId:   nifcloud.String("test_network_id"),
 					NetworkName: nifcloud.String("test_network_name"),
 				},
@@ -160,7 +161,7 @@ func TestExpandNiftyDeleteNatRuleInputForSnat(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyDeleteNatRuleInput{
 				NatTableId: nifcloud.String("test_nat_table_id"),
-				NatType:    computing.NatTypeOfNiftyDeleteNatRuleRequestSnat,
+				NatType:    types.NatTypeOfNiftyDeleteNatRuleRequestSnat,
 				RuleNumber: nifcloud.String("1"),
 			},
 		},
@@ -193,7 +194,7 @@ func TestExpandNiftyDeleteNatRuleInputForDnat(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyDeleteNatRuleInput{
 				NatTableId: nifcloud.String("test_nat_table_id"),
-				NatType:    computing.NatTypeOfNiftyDeleteNatRuleRequestDnat,
+				NatType:    types.NatTypeOfNiftyDeleteNatRuleRequestDnat,
 				RuleNumber: nifcloud.String("1"),
 			},
 		},

@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeNetworkInterfacesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeNetworkInterfacesOutput) error {
 	if res == nil || len(res.NetworkInterfaceSet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeNetworkInterfacesRes
 
 	networkInterface := res.NetworkInterfaceSet[0]
 
-	if nifcloud.StringValue(networkInterface.NetworkInterfaceId) != d.Id() {
+	if nifcloud.ToString(networkInterface.NetworkInterfaceId) != d.Id() {
 		return fmt.Errorf(
 			"unable to find network interface within: %#v",
 			res.NetworkInterfaceSet,

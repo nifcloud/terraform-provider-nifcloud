@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateHostedZoneInput(d)
 
 	svc := meta.(*client.Client).DNS
-	req := svc.CreateHostedZoneRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateHostedZone(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating hosted zone: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.HostedZone.Name))
+	d.SetId(nifcloud.ToString(res.HostedZone.Name))
 
 	return read(ctx, d, meta)
 }

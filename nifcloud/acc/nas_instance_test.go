@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
+	"github.com/nifcloud/nifcloud-sdk-go/service/nas/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -27,7 +28,7 @@ func init() {
 }
 
 func TestAcc_NASInstance_NFS(t *testing.T) {
-	var nasInstance nas.NASInstances
+	var nasInstance types.NASInstances
 
 	resourceName := "nifcloud_nas_instance.basic"
 	randName := prefix + acctest.RandString(7)
@@ -79,7 +80,7 @@ func TestAcc_NASInstance_NFS(t *testing.T) {
 }
 
 func TestAcc_NASInstance_CIFS(t *testing.T) {
-	var nasInstance nas.NASInstances
+	var nasInstance types.NASInstances
 
 	resourceName := "nifcloud_nas_instance.basic"
 	randName := prefix + acctest.RandString(7)
@@ -178,21 +179,21 @@ func testAccNASInstanceForCIFS(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckNASInstanceForNFSExists(n string, nasInstance *nas.NASInstances) resource.TestCheckFunc {
+func testAccCheckNASInstanceForNFSExists(n string, typesInstance *types.NASInstances) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("no nasInstance resource: %s", n)
+			return fmt.Errorf("no typesInstance resource: %s", n)
 		}
 
 		if saved.Primary.ID == "" {
-			return fmt.Errorf("no nasInstance id is set")
+			return fmt.Errorf("no typesInstance id is set")
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).NAS
-		res, err := svc.DescribeNASInstancesRequest(&nas.DescribeNASInstancesInput{
+		res, err := svc.DescribeNASInstances(context.Background(), &nas.DescribeNASInstancesInput{
 			NASInstanceIdentifier: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -203,31 +204,31 @@ func testAccCheckNASInstanceForNFSExists(n string, nasInstance *nas.NASInstances
 
 		foundNASInstance := res.NASInstances[0]
 
-		if nifcloud.StringValue(foundNASInstance.NASInstanceIdentifier) != saved.Primary.ID {
+		if nifcloud.ToString(foundNASInstance.NASInstanceIdentifier) != saved.Primary.ID {
 			return fmt.Errorf("nasInstance does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		*nasInstance = foundNASInstance
+		*typesInstance = foundNASInstance
 
 		return nil
 	}
 }
 
-func testAccCheckNASInstanceForCIFSExists(n string, nasInstance *nas.NASInstances) resource.TestCheckFunc {
+func testAccCheckNASInstanceForCIFSExists(n string, typesInstance *types.NASInstances) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("no nasInstance resource: %s", n)
+			return fmt.Errorf("no typesInstance resource: %s", n)
 		}
 
 		if saved.Primary.ID == "" {
-			return fmt.Errorf("no nasInstance id is set")
+			return fmt.Errorf("no typesInstance id is set")
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).NAS
-		res, err := svc.DescribeNASInstancesRequest(&nas.DescribeNASInstancesInput{
+		res, err := svc.DescribeNASInstances(context.Background(), &nas.DescribeNASInstancesInput{
 			NASInstanceIdentifier: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -238,166 +239,166 @@ func testAccCheckNASInstanceForCIFSExists(n string, nasInstance *nas.NASInstance
 
 		foundNASInstance := res.NASInstances[0]
 
-		if nifcloud.StringValue(foundNASInstance.NASInstanceIdentifier) != saved.Primary.ID {
+		if nifcloud.ToString(foundNASInstance.NASInstanceIdentifier) != saved.Primary.ID {
 			return fmt.Errorf("nasInstance does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		*nasInstance = foundNASInstance
+		*typesInstance = foundNASInstance
 
 		return nil
 	}
 }
 
-func testAccCheckNASInstanceValuesForNFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesForNFS(nasInstance *types.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier {
-			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier, nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
+		if nifcloud.ToString(nasInstance.NASInstanceIdentifier) != identifier {
+			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier, nifcloud.ToString(nasInstance.NASInstanceIdentifier))
 		}
 
-		if nifcloud.StringValue(nasInstance.NASInstanceDescription) != "memo" {
-			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.StringValue(nasInstance.NASInstanceDescription))
+		if nifcloud.ToString(nasInstance.NASInstanceDescription) != "memo" {
+			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.ToString(nasInstance.NASInstanceDescription))
 		}
 
-		if nifcloud.StringValue(nasInstance.AvailabilityZone) != "east-21" {
-			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.StringValue(nasInstance.AvailabilityZone))
+		if nifcloud.ToString(nasInstance.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.ToString(nasInstance.AvailabilityZone))
 		}
 
-		if nifcloud.StringValue(nasInstance.Protocol) != "nfs" {
-			return fmt.Errorf("bad protocol state, expected \"nfs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
+		if nifcloud.ToString(nasInstance.Protocol) != "nfs" {
+			return fmt.Errorf("bad protocol state, expected \"nfs\", got: %#v", nifcloud.ToString(nasInstance.Protocol))
 		}
 
-		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 100 {
-			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
+		if nifcloud.ToInt32(nasInstance.AllocatedStorage) != 100 {
+			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.ToInt32(nasInstance.AllocatedStorage))
 		}
 
-		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
-			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
+		if nifcloud.ToInt32(nasInstance.NASInstanceType) != 0 {
+			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.ToInt32(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.BoolValue(nasInstance.NoRootSquash) != false {
-			return fmt.Errorf("bad no_root_squash state, expected \"false\", got: %#v", nifcloud.BoolValue(nasInstance.NoRootSquash))
-		}
-
-		return nil
-	}
-}
-
-func testAccCheckNASInstanceValuesUpdatedForNFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier+"upd" {
-			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier+"upd", nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
-		}
-
-		if nifcloud.StringValue(nasInstance.NASInstanceDescription) != "memo-upd" {
-			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.StringValue(nasInstance.NASInstanceDescription))
-		}
-
-		if nifcloud.StringValue(nasInstance.AvailabilityZone) != "east-21" {
-			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.StringValue(nasInstance.AvailabilityZone))
-		}
-
-		if nifcloud.StringValue(nasInstance.Protocol) != "nfs" {
-			return fmt.Errorf("bad protocol state, expected \"nfs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
-		}
-
-		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 200 {
-			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
-		}
-
-		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
-			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
-		}
-
-		if nifcloud.BoolValue(nasInstance.NoRootSquash) != true {
-			return fmt.Errorf("bad no_root_squash state, expected \"true\", got: %#v", nifcloud.BoolValue(nasInstance.NoRootSquash))
+		if nifcloud.ToBool(nasInstance.NoRootSquash) != false {
+			return fmt.Errorf("bad no_root_squash state, expected \"false\", got: %#v", nifcloud.ToBool(nasInstance.NoRootSquash))
 		}
 
 		return nil
 	}
 }
 
-func testAccCheckNASInstanceValuesForCIFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesUpdatedForNFS(nasInstance *types.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier {
-			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier, nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
+		if nifcloud.ToString(nasInstance.NASInstanceIdentifier) != identifier+"upd" {
+			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier+"upd", nifcloud.ToString(nasInstance.NASInstanceIdentifier))
 		}
 
-		if nifcloud.StringValue(nasInstance.NASInstanceDescription) != "memo" {
-			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.StringValue(nasInstance.NASInstanceDescription))
+		if nifcloud.ToString(nasInstance.NASInstanceDescription) != "memo-upd" {
+			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.ToString(nasInstance.NASInstanceDescription))
 		}
 
-		if nifcloud.StringValue(nasInstance.AvailabilityZone) != "east-21" {
-			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.StringValue(nasInstance.AvailabilityZone))
+		if nifcloud.ToString(nasInstance.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.ToString(nasInstance.AvailabilityZone))
 		}
 
-		if nifcloud.StringValue(nasInstance.Protocol) != "cifs" {
-			return fmt.Errorf("bad protocol state, expected \"cifs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
+		if nifcloud.ToString(nasInstance.Protocol) != "nfs" {
+			return fmt.Errorf("bad protocol state, expected \"nfs\", got: %#v", nifcloud.ToString(nasInstance.Protocol))
 		}
 
-		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 100 {
-			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
+		if nifcloud.ToInt32(nasInstance.AllocatedStorage) != 200 {
+			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.ToInt32(nasInstance.AllocatedStorage))
 		}
 
-		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
-			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
+		if nifcloud.ToInt32(nasInstance.NASInstanceType) != 0 {
+			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.ToInt32(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.StringValue(nasInstance.MasterUsername) != "tfacc" {
-			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.StringValue(nasInstance.MasterUsername))
-		}
-
-		if nifcloud.Int64Value(nasInstance.AuthenticationType) != 0 {
-			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.Int64Value(nasInstance.AuthenticationType))
+		if nifcloud.ToBool(nasInstance.NoRootSquash) != true {
+			return fmt.Errorf("bad no_root_squash state, expected \"true\", got: %#v", nifcloud.ToBool(nasInstance.NoRootSquash))
 		}
 
 		return nil
 	}
 }
 
-func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *nas.NASInstances, identifier string) resource.TestCheckFunc {
+func testAccCheckNASInstanceValuesForCIFS(nasInstance *types.NASInstances, identifier string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != identifier+"upd" {
-			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier+"upd", nifcloud.StringValue(nasInstance.NASInstanceIdentifier))
+		if nifcloud.ToString(nasInstance.NASInstanceIdentifier) != identifier {
+			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier, nifcloud.ToString(nasInstance.NASInstanceIdentifier))
 		}
 
-		if nifcloud.StringValue(nasInstance.NASInstanceDescription) != "memo-upd" {
-			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.StringValue(nasInstance.NASInstanceDescription))
+		if nifcloud.ToString(nasInstance.NASInstanceDescription) != "memo" {
+			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.ToString(nasInstance.NASInstanceDescription))
 		}
 
-		if nifcloud.StringValue(nasInstance.AvailabilityZone) != "east-21" {
-			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.StringValue(nasInstance.AvailabilityZone))
+		if nifcloud.ToString(nasInstance.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.ToString(nasInstance.AvailabilityZone))
 		}
 
-		if nifcloud.StringValue(nasInstance.Protocol) != "cifs" {
-			return fmt.Errorf("bad protocol state, expected \"cifs\", got: %#v", nifcloud.StringValue(nasInstance.Protocol))
+		if nifcloud.ToString(nasInstance.Protocol) != "cifs" {
+			return fmt.Errorf("bad protocol state, expected \"cifs\", got: %#v", nifcloud.ToString(nasInstance.Protocol))
 		}
 
-		if nifcloud.Int64Value(nasInstance.AllocatedStorage) != 200 {
-			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.Int64Value(nasInstance.AllocatedStorage))
+		if nifcloud.ToInt32(nasInstance.AllocatedStorage) != 100 {
+			return fmt.Errorf("bad allocated_storage state, expected \"100\", got: %#v", nifcloud.ToInt32(nasInstance.AllocatedStorage))
 		}
 
-		if nifcloud.Int64Value(nasInstance.NASInstanceType) != 0 {
-			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.Int64Value(nasInstance.NASInstanceType))
+		if nifcloud.ToInt32(nasInstance.NASInstanceType) != 0 {
+			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.ToInt32(nasInstance.NASInstanceType))
 		}
 
-		if nifcloud.StringValue(nasInstance.MasterUsername) != "tfacc" {
-			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.StringValue(nasInstance.MasterUsername))
+		if nifcloud.ToString(nasInstance.MasterUsername) != "tfacc" {
+			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.ToString(nasInstance.MasterUsername))
 		}
 
-		if nifcloud.Int64Value(nasInstance.AuthenticationType) != 1 {
-			return fmt.Errorf("bad authentication_type state, expected 1, got: %#v", nifcloud.Int64Value(nasInstance.AuthenticationType))
+		if nifcloud.ToInt32(nasInstance.AuthenticationType) != 0 {
+			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.ToInt32(nasInstance.AuthenticationType))
 		}
 
-		if nifcloud.StringValue(nasInstance.DirectoryServiceDomainName) != "tfacc.local" {
-			return fmt.Errorf("bad directory_service_domain_name state, expected \"tfacc.local\" got: %#v", nifcloud.StringValue(nasInstance.DirectoryServiceDomainName))
+		return nil
+	}
+}
+
+func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *types.NASInstances, identifier string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if nifcloud.ToString(nasInstance.NASInstanceIdentifier) != identifier+"upd" {
+			return fmt.Errorf("bad identifier state, expected \"%s\", got: %#v", identifier+"upd", nifcloud.ToString(nasInstance.NASInstanceIdentifier))
+		}
+
+		if nifcloud.ToString(nasInstance.NASInstanceDescription) != "memo-upd" {
+			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.ToString(nasInstance.NASInstanceDescription))
+		}
+
+		if nifcloud.ToString(nasInstance.AvailabilityZone) != "east-21" {
+			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", nifcloud.ToString(nasInstance.AvailabilityZone))
+		}
+
+		if nifcloud.ToString(nasInstance.Protocol) != "cifs" {
+			return fmt.Errorf("bad protocol state, expected \"cifs\", got: %#v", nifcloud.ToString(nasInstance.Protocol))
+		}
+
+		if nifcloud.ToInt32(nasInstance.AllocatedStorage) != 200 {
+			return fmt.Errorf("bad allocated_storage state, expected \"200\", got: %#v", nifcloud.ToInt32(nasInstance.AllocatedStorage))
+		}
+
+		if nifcloud.ToInt32(nasInstance.NASInstanceType) != 0 {
+			return fmt.Errorf("bad type state, expected \"0\", got: %#v", nifcloud.ToInt32(nasInstance.NASInstanceType))
+		}
+
+		if nifcloud.ToString(nasInstance.MasterUsername) != "tfacc" {
+			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.ToString(nasInstance.MasterUsername))
+		}
+
+		if nifcloud.ToInt32(nasInstance.AuthenticationType) != 1 {
+			return fmt.Errorf("bad authentication_type state, expected 1, got: %#v", nifcloud.ToInt32(nasInstance.AuthenticationType))
+		}
+
+		if nifcloud.ToString(nasInstance.DirectoryServiceDomainName) != "tfacc.local" {
+			return fmt.Errorf("bad directory_service_domain_name state, expected \"tfacc.local\" got: %#v", nifcloud.ToString(nasInstance.DirectoryServiceDomainName))
 		}
 
 		if len(nasInstance.DomainControllers) != 1 {
 			return fmt.Errorf("bad domain_controllers state, expected length is 1, got: %d", len(nasInstance.DomainControllers))
 		}
 
-		if nifcloud.StringValue(nasInstance.DomainControllers[0].Hostname) != "ad01" {
-			return fmt.Errorf("bad domain_controllers.0.hostname state, expected \"ad01\" got: %#v", nifcloud.StringValue(nasInstance.DomainControllers[0].Hostname))
+		if nifcloud.ToString(nasInstance.DomainControllers[0].Hostname) != "ad01" {
+			return fmt.Errorf("bad domain_controllers.0.hostname state, expected \"ad01\" got: %#v", nifcloud.ToString(nasInstance.DomainControllers[0].Hostname))
 		}
 
 		return nil
@@ -412,13 +413,13 @@ func testAccNASInstanceResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeNASInstancesRequest(&nas.DescribeNASInstancesInput{
+		res, err := svc.DescribeNASInstances(context.Background(), &nas.DescribeNASInstancesInput{
 			NASInstanceIdentifier: nifcloud.String(rs.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameter.NotFound.NASInstanceIdentifier" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameter.NotFound.NASInstanceIdentifier" {
 				return nil
 			}
 			return fmt.Errorf("failed NiftyDescribeNatTablesRequest: %s", err)
@@ -435,15 +436,15 @@ func testSweepNASInstance(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).NAS
 
-	res, err := svc.DescribeNASInstancesRequest(nil).Send(ctx)
+	res, err := svc.DescribeNASInstances(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepNASInstances []string
 	for _, g := range res.NASInstances {
-		if strings.HasPrefix(nifcloud.StringValue(g.NASInstanceIdentifier), prefix) {
-			sweepNASInstances = append(sweepNASInstances, nifcloud.StringValue(g.NASInstanceIdentifier))
+		if strings.HasPrefix(nifcloud.ToString(g.NASInstanceIdentifier), prefix) {
+			sweepNASInstances = append(sweepNASInstances, nifcloud.ToString(g.NASInstanceIdentifier))
 		}
 	}
 
@@ -451,9 +452,9 @@ func testSweepNASInstance(region string) error {
 	for _, n := range sweepNASInstances {
 		groupName := n
 		eg.Go(func() error {
-			_, err := svc.DeleteNASInstanceRequest(&nas.DeleteNASInstanceInput{
+			_, err := svc.DeleteNASInstance(ctx, &nas.DeleteNASInstanceInput{
 				NASInstanceIdentifier: nifcloud.String(groupName),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

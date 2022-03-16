@@ -4,12 +4,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandNiftyCreatePrivateLanInput(d *schema.ResourceData) *computing.NiftyCreatePrivateLanInput {
 	at := d.Get("accounting_type").(string)
 	return &computing.NiftyCreatePrivateLanInput{
-		AccountingType:   computing.AccountingTypeOfNiftyCreatePrivateLanRequest(at),
+		AccountingType:   types.AccountingTypeOfNiftyCreatePrivateLanRequest(at),
 		AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		CidrBlock:        nifcloud.String(d.Get("cidr_block").(string)),
 		Description:      nifcloud.String(d.Get("description").(string)),

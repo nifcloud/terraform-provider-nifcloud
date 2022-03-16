@@ -9,7 +9,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeVolumesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeVolumesOutput) error {
 	if res == nil || len(res.VolumeSet) == 0 {
 		d.SetId("")
 		return nil
@@ -17,14 +17,14 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVolumesResponse) err
 
 	volume := res.VolumeSet[0]
 
-	if nifcloud.StringValue(volume.VolumeId) != d.Id() {
+	if nifcloud.ToString(volume.VolumeId) != d.Id() {
 		return fmt.Errorf("unable to find volume within: %#v", res.VolumeSet)
 	}
 	if err := d.Set("volume_id", volume.VolumeId); err != nil {
 		return err
 	}
 
-	volumeSize, err := strconv.Atoi(nifcloud.StringValue(volume.Size))
+	volumeSize, err := strconv.Atoi(nifcloud.ToString(volume.Size))
 	if err != nil {
 		return fmt.Errorf("failed converting volume size")
 	}

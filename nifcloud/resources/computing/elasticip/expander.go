@@ -6,12 +6,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandAllocateAddressInput(d *schema.ResourceData) *computing.AllocateAddressInput {
 	return &computing.AllocateAddressInput{
 		NiftyPrivateIp: nifcloud.Bool(d.Get("ip_type").(bool)),
-		Placement: &computing.RequestPlacementOfAllocateAddress{
+		Placement: &types.RequestPlacementOfAllocateAddress{
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
 	}

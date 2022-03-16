@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +23,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeNetworkInterfacesResponse
+		res *computing.DescribeNetworkInterfacesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -34,16 +35,14 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeNetworkInterfacesResponse{
-					DescribeNetworkInterfacesOutput: &computing.DescribeNetworkInterfacesOutput{
-						NetworkInterfaceSet: []computing.NetworkInterfaceSetOfDescribeNetworkInterfaces{
-							{
-								NiftyNetworkId:     nifcloud.String("test_network_id"),
-								NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
-								PrivateIpAddress:   nifcloud.String("test_ip_address"),
-								Description:        nifcloud.String("test_description"),
-								AvailabilityZone:   nifcloud.String("test_availability_zone"),
-							},
+				res: &computing.DescribeNetworkInterfacesOutput{
+					NetworkInterfaceSet: []types.NetworkInterfaceSetOfDescribeNetworkInterfaces{
+						{
+							NiftyNetworkId:     nifcloud.String("test_network_id"),
+							NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
+							PrivateIpAddress:   nifcloud.String("test_ip_address"),
+							Description:        nifcloud.String("test_description"),
+							AvailabilityZone:   nifcloud.String("test_availability_zone"),
 						},
 					},
 				},
@@ -54,10 +53,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeNetworkInterfacesResponse{
-					DescribeNetworkInterfacesOutput: &computing.DescribeNetworkInterfacesOutput{
-						NetworkInterfaceSet: []computing.NetworkInterfaceSetOfDescribeNetworkInterfaces{},
-					},
+				res: &computing.DescribeNetworkInterfacesOutput{
+					NetworkInterfaceSet: []types.NetworkInterfaceSetOfDescribeNetworkInterfaces{},
 				},
 			},
 			want: wantNotFoundRd,

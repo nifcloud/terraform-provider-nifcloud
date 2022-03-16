@@ -14,16 +14,15 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandUploadSSLCertificateInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.UploadSslCertificateRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.UploadSslCertificate(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed uploading SSLCertificate: %s", err.Error()))
 	}
 
-	d.SetId(nifcloud.StringValue(res.FqdnId))
+	d.SetId(nifcloud.ToString(res.FqdnId))
 
-	_, err = svc.ModifySslCertificateAttributeRequest(expandModifySSLCertificateAttributeInput(d)).Send(ctx)
+	_, err = svc.ModifySslCertificateAttribute(ctx, expandModifySSLCertificateAttributeInput(d))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed updating SSLCertificate: %s", err.Error()))
 	}

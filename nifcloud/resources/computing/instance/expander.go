@@ -7,13 +7,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInput {
-	var networkInterface []computing.RequestNetworkInterface
+	var networkInterface []types.RequestNetworkInterface
 	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
 		if v, ok := ni.(map[string]interface{}); ok {
-			n := computing.RequestNetworkInterface{}
+			n := types.RequestNetworkInterface{}
 			if row, ok := v["network_id"]; ok {
 				n.NetworkId = nifcloud.String(row.(string))
 			}
@@ -23,7 +24,7 @@ func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInpu
 			if row, ok := v["ip_address"]; ok {
 				n.IpAddress = nifcloud.String(row.(string))
 			}
-			if nifcloud.StringValue(n.NetworkId) != "" || nifcloud.StringValue(n.NetworkName) != "" {
+			if nifcloud.ToString(n.NetworkId) != "" || nifcloud.ToString(n.NetworkName) != "" {
 				networkInterface = append(networkInterface, n)
 			}
 		}
@@ -39,17 +40,17 @@ func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInpu
 		ImageId:       nifcloud.String(d.Get("image_id").(string)),
 		KeyName:       nifcloud.String(d.Get("key_name").(string)),
 		SecurityGroup: securityGroup,
-		InstanceType:  computing.InstanceTypeOfRunInstancesRequest(d.Get("instance_type").(string)),
-		Placement: &computing.RequestPlacement{
+		InstanceType:  types.InstanceTypeOfRunInstancesRequest(d.Get("instance_type").(string)),
+		Placement: &types.RequestPlacement{
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
 		DisableApiTermination: nifcloud.Bool(d.Get("disable_api_termination").(bool)),
-		AccountingType:        computing.AccountingTypeOfRunInstancesRequest(d.Get("accounting_type").(string)),
+		AccountingType:        types.AccountingTypeOfRunInstancesRequest(d.Get("accounting_type").(string)),
 		Description:           nifcloud.String(d.Get("description").(string)),
 		Admin:                 nifcloud.String(d.Get("admin").(string)),
 		Password:              nifcloud.String(d.Get("password").(string)),
 		Agreement:             nifcloud.Bool(true),
-		UserData: &computing.RequestUserData{
+		UserData: &types.RequestUserData{
 			Content:  nifcloud.String(base64.StdEncoding.EncodeToString([]byte(d.Get("user_data").(string)))),
 			Encoding: nifcloud.String("base64"),
 		},
@@ -57,9 +58,9 @@ func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInpu
 	}
 
 	if raw, ok := d.GetOk("license_name"); ok {
-		input.License = []computing.RequestLicense{
+		input.License = []types.RequestLicense{
 			{
-				LicenseName: computing.LicenseNameOfLicenseForRunInstances(raw.(string)),
+				LicenseName: types.LicenseNameOfLicenseForRunInstances(raw.(string)),
 				LicenseNum:  nifcloud.String(strconv.Itoa(d.Get("license_num").(int))),
 			},
 		}
@@ -76,7 +77,7 @@ func expandDescribeInstancesInput(d *schema.ResourceData) *computing.DescribeIns
 func expandDescribeInstanceAttributeInputWithDisableAPITermination(d *schema.ResourceData) *computing.DescribeInstanceAttributeInput {
 	return &computing.DescribeInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  computing.AttributeOfDescribeInstanceAttributeRequestDisableApiTermination,
+		Attribute:  types.AttributeOfDescribeInstanceAttributeRequestDisableApiTermination,
 	}
 }
 
@@ -96,7 +97,7 @@ func expandTerminateInstancesInput(d *schema.ResourceData) *computing.TerminateI
 func expandModifyInstanceAttributeInputForAccountingType(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestAccountingType,
+		Attribute:  types.AttributeOfModifyInstanceAttributeRequestAccountingType,
 		Value:      nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
@@ -104,7 +105,7 @@ func expandModifyInstanceAttributeInputForAccountingType(d *schema.ResourceData)
 func expandModifyInstanceAttributeInputForDescription(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDescription,
+		Attribute:  types.AttributeOfModifyInstanceAttributeRequestDescription,
 		Value:      nifcloud.String(d.Get("description").(string)),
 	}
 }
@@ -112,7 +113,7 @@ func expandModifyInstanceAttributeInputForDescription(d *schema.ResourceData) *c
 func expandModifyInstanceAttributeInputForDisableAPITermination(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDisableApiTermination,
+		Attribute:  types.AttributeOfModifyInstanceAttributeRequestDisableApiTermination,
 		Value:      nifcloud.String(strconv.FormatBool(d.Get("disable_api_termination").(bool))),
 	}
 }
@@ -122,14 +123,14 @@ func expandModifyInstanceAttributeInputForInstanceID(d *schema.ResourceData) *co
 
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(before.(string)),
-		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceName,
+		Attribute:  types.AttributeOfModifyInstanceAttributeRequestInstanceName,
 		Value:      nifcloud.String(after.(string)),
 	}
 }
 func expandModifyInstanceAttributeInputForInstanceType(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceType,
+		Attribute:  types.AttributeOfModifyInstanceAttributeRequestInstanceType,
 		Value:      nifcloud.String(d.Get("instance_type").(string)),
 	}
 }
@@ -137,16 +138,16 @@ func expandModifyInstanceAttributeInputForInstanceType(d *schema.ResourceData) *
 func expandModifyInstanceAttributeInputForSecurityGroup(d *schema.ResourceData) *computing.ModifyInstanceAttributeInput {
 	return &computing.ModifyInstanceAttributeInput{
 		InstanceId: nifcloud.String(d.Id()),
-		Attribute:  computing.AttributeOfModifyInstanceAttributeRequestGroupId,
+		Attribute:  types.AttributeOfModifyInstanceAttributeRequestGroupId,
 		Value:      nifcloud.String(d.Get("security_group").(string)),
 	}
 }
 
 func expandNiftyUpdateInstanceNetworkInterfacesInput(d *schema.ResourceData) *computing.NiftyUpdateInstanceNetworkInterfacesInput {
-	var networkInterface []computing.RequestNetworkInterface
+	var networkInterface []types.RequestNetworkInterface
 	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
 		if v, ok := ni.(map[string]interface{}); ok {
-			n := computing.RequestNetworkInterface{}
+			n := types.RequestNetworkInterface{}
 			if row, ok := v["network_id"]; ok {
 				n.NetworkId = nifcloud.String(row.(string))
 			}
@@ -157,7 +158,7 @@ func expandNiftyUpdateInstanceNetworkInterfacesInput(d *schema.ResourceData) *co
 				n.IpAddress = nifcloud.String(row.(string))
 			}
 
-			if nifcloud.StringValue(n.NetworkId) != "" || nifcloud.StringValue(n.NetworkName) != "" {
+			if nifcloud.ToString(n.NetworkId) != "" || nifcloud.ToString(n.NetworkName) != "" {
 				networkInterface = append(networkInterface, n)
 			}
 		}
@@ -173,14 +174,14 @@ func expandAttachNetworkInterfaceInput(d *schema.ResourceData, networkInterfaceI
 	return &computing.AttachNetworkInterfaceInput{
 		InstanceId:         nifcloud.String(d.Id()),
 		NetworkInterfaceId: nifcloud.String(networkInterfaceID),
-		NiftyReboot:        computing.NiftyRebootOfAttachNetworkInterfaceRequestForce,
+		NiftyReboot:        types.NiftyRebootOfAttachNetworkInterfaceRequestForce,
 	}
 }
 
 func expandDetachNetworkInterfaceInput(d *schema.ResourceData, attachmentID string) *computing.DetachNetworkInterfaceInput {
 	return &computing.DetachNetworkInterfaceInput{
 		AttachmentId: nifcloud.String(attachmentID),
-		NiftyReboot:  computing.NiftyRebootOfDetachNetworkInterfaceRequestForce,
+		NiftyReboot:  types.NiftyRebootOfDetachNetworkInterfaceRequestForce,
 	}
 }
 

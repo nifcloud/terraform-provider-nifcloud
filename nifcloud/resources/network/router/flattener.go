@@ -9,7 +9,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersResponse) error {
+func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersOutput) error {
 	if res == nil || len(res.RouterSet) == 0 {
 		d.SetId("")
 		return nil
@@ -17,7 +17,7 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersResponse
 
 	router := res.RouterSet[0]
 
-	if nifcloud.StringValue(router.RouterId) != d.Id() {
+	if nifcloud.ToString(router.RouterId) != d.Id() {
 		return fmt.Errorf("unable to find router within: %#v", res.RouterSet)
 	}
 
@@ -69,26 +69,26 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersResponse
 
 	// sort network interfaces set because API returns unstable set.
 	sort.Slice(router.NetworkInterfaceSet, func(i, j int) bool {
-		return nifcloud.StringValue(router.NetworkInterfaceSet[i].NetworkId) < nifcloud.StringValue(router.NetworkInterfaceSet[j].NetworkId)
+		return nifcloud.ToString(router.NetworkInterfaceSet[i].NetworkId) < nifcloud.ToString(router.NetworkInterfaceSet[j].NetworkId)
 	})
 
 	var networkInterfaces []map[string]interface{}
 	for _, n := range router.NetworkInterfaceSet {
 		ni := make(map[string]interface{})
-		switch nifcloud.StringValue(n.NetworkId) {
+		switch nifcloud.ToString(n.NetworkId) {
 		case "net-COMMON_GLOBAL", "net-COMMON_PRIVATE":
-			ni["network_id"] = nifcloud.StringValue(n.NetworkId)
+			ni["network_id"] = nifcloud.ToString(n.NetworkId)
 		default:
 			var findElm map[string]interface{}
 			for _, dn := range d.Get("network_interface").(*schema.Set).List() {
 				elm := dn.(map[string]interface{})
 
-				if elm["network_id"] == nifcloud.StringValue(n.NetworkId) {
+				if elm["network_id"] == nifcloud.ToString(n.NetworkId) {
 					findElm = elm
 					break
 				}
 
-				if elm["network_name"] == nifcloud.StringValue(n.NetworkName) {
+				if elm["network_name"] == nifcloud.ToString(n.NetworkName) {
 					findElm = elm
 					break
 				}
@@ -96,34 +96,34 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersResponse
 
 			if findElm != nil {
 				if findElm["ip_address"] != nil && findElm["ip_address"] != "" {
-					ni["ip_address"] = nifcloud.StringValue(n.IpAddress)
+					ni["ip_address"] = nifcloud.ToString(n.IpAddress)
 				}
 
 				if findElm["network_id"] != nil && findElm["network_id"] != "" {
-					ni["network_id"] = nifcloud.StringValue(n.NetworkId)
+					ni["network_id"] = nifcloud.ToString(n.NetworkId)
 				}
 
 				if findElm["network_name"] != nil && findElm["network_name"] != "" {
-					ni["network_name"] = nifcloud.StringValue(n.NetworkName)
+					ni["network_name"] = nifcloud.ToString(n.NetworkName)
 				}
 
 				if findElm["dhcp"] != nil {
-					ni["dhcp"] = nifcloud.BoolValue(n.Dhcp)
+					ni["dhcp"] = nifcloud.ToBool(n.Dhcp)
 				}
 
 				if findElm["dhcp_options_id"] != nil && findElm["dhcp_options_id"] != "" {
-					ni["dhcp_options_id"] = nifcloud.StringValue(n.DhcpOptionsId)
+					ni["dhcp_options_id"] = nifcloud.ToString(n.DhcpOptionsId)
 				}
 
 				if findElm["dhcp_config_id"] != nil && findElm["dhcp_config_id"] != "" {
-					ni["dhcp_config_id"] = nifcloud.StringValue(n.DhcpConfigId)
+					ni["dhcp_config_id"] = nifcloud.ToString(n.DhcpConfigId)
 				}
 			} else {
-				ni["network_id"] = nifcloud.StringValue(n.NetworkId)
-				ni["ip_address"] = nifcloud.StringValue(n.IpAddress)
-				ni["dhcp"] = nifcloud.BoolValue(n.Dhcp)
-				ni["dhcp_options_id"] = nifcloud.StringValue(n.DhcpOptionsId)
-				ni["dhcp_config_id"] = nifcloud.StringValue(n.DhcpConfigId)
+				ni["network_id"] = nifcloud.ToString(n.NetworkId)
+				ni["ip_address"] = nifcloud.ToString(n.IpAddress)
+				ni["dhcp"] = nifcloud.ToBool(n.Dhcp)
+				ni["dhcp_options_id"] = nifcloud.ToString(n.DhcpOptionsId)
+				ni["dhcp_config_id"] = nifcloud.ToString(n.DhcpConfigId)
 			}
 		}
 		networkInterfaces = append(networkInterfaces, ni)

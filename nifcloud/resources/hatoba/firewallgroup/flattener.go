@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
 )
 
-func flatten(d *schema.ResourceData, res *hatoba.GetFirewallGroupResponse) error {
+func flatten(d *schema.ResourceData, res *hatoba.GetFirewallGroupOutput) error {
 	if res == nil {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *hatoba.GetFirewallGroupResponse) error
 
 	firewallGroup := res.FirewallGroup
 
-	if nifcloud.StringValue(firewallGroup.Name) != d.Id() {
+	if nifcloud.ToString(firewallGroup.Name) != d.Id() {
 		return fmt.Errorf("unable to find Hatoba firewall group within: %#v", firewallGroup.Name)
 	}
 
@@ -32,7 +32,7 @@ func flatten(d *schema.ResourceData, res *hatoba.GetFirewallGroupResponse) error
 
 			for _, e := range d.Get("rule").(*schema.Set).List() {
 				elm := e.(map[string]interface{})
-				if elm["id"] == nifcloud.StringValue(r.Id) {
+				if elm["id"] == nifcloud.ToString(r.Id) {
 					findElm = elm
 					break
 				}

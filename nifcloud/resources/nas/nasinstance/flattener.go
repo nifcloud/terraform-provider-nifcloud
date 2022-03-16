@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
 )
 
-func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesResponse) error {
+func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesOutput) error {
 	if res == nil || len(res.NASInstances) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesResponse) erro
 
 	nasInstance := res.NASInstances[0]
 
-	if nifcloud.StringValue(nasInstance.NASInstanceIdentifier) != d.Id() {
+	if nifcloud.ToString(nasInstance.NASInstanceIdentifier) != d.Id() {
 		return fmt.Errorf("unable to find NAS instance within: %#v", res.NASInstances)
 	}
 

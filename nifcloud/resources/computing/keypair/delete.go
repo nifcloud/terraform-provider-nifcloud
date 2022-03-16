@@ -14,11 +14,10 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
 
-	req := svc.DeleteKeyPairRequest(&computing.DeleteKeyPairInput{
+	_, err := svc.DeleteKeyPair(ctx, &computing.DeleteKeyPairInput{
 		KeyName: nifcloud.String(d.Id()),
 	})
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

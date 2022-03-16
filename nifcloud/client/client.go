@@ -21,10 +21,10 @@ type Client struct {
 // New return Client
 func New(cfg nifcloud.Config) *Client {
 	return &Client{
-		Computing: computing.New(cfg),
-		RDB:       rdb.New(cfg),
-		NAS:       nas.New(cfg),
-		Hatoba:    hatoba.New(cfg),
-		DNS:       dns.New(cfg),
+		Computing: computing.NewFromConfig(cfg),
+		RDB:       rdb.NewFromConfig(cfg),
+		NAS:       nas.NewFromConfig(cfg),
+		Hatoba:    hatoba.NewFromConfig(cfg),
+		DNS:       dns.NewFromConfig(cfg),
 	}
 }

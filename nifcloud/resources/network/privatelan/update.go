@@ -14,9 +14,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		input := expandNiftyModifyPrivateLanAttributeInputForPrivateLanName(d)
 
 		svc := meta.(*client.Client).Computing
-		req := svc.NiftyModifyPrivateLanAttributeRequest(input)
 
-		_, err := req.Send(ctx)
+		_, err := svc.NiftyModifyPrivateLanAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating private_lan private_lan_name: %s", err))
 		}
@@ -26,9 +25,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		input := expandNiftyModifyPrivateLanAttributeInputForCidrBlock(d)
 
 		svc := meta.(*client.Client).Computing
-		req := svc.NiftyModifyPrivateLanAttributeRequest(input)
 
-		_, err := req.Send(ctx)
+		_, err := svc.NiftyModifyPrivateLanAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating private_lan cidr_block: %s", err))
 		}
@@ -38,9 +36,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		input := expandNiftyModifyPrivateLanAttributeInputForAccountingType(d)
 
 		svc := meta.(*client.Client).Computing
-		req := svc.NiftyModifyPrivateLanAttributeRequest(input)
 
-		_, err := req.Send(ctx)
+		_, err := svc.NiftyModifyPrivateLanAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating private_lan accounting_type: %s", err))
 		}
@@ -50,9 +47,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		input := expandNiftyModifyPrivateLanAttributeInputForDescription(d)
 
 		svc := meta.(*client.Client).Computing
-		req := svc.NiftyModifyPrivateLanAttributeRequest(input)
 
-		_, err := req.Send(ctx)
+		_, err := svc.NiftyModifyPrivateLanAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating private_lan description: %s", err))
 		}

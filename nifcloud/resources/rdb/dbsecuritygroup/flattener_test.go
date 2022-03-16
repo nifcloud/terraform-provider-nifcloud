@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestFlattenForCidrIP(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *rdb.DescribeDBSecurityGroupsResponse
+		res *rdb.DescribeDBSecurityGroupsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -35,17 +36,15 @@ func TestFlattenForCidrIP(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &rdb.DescribeDBSecurityGroupsResponse{
-					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{
-							{
-								DBSecurityGroupName:        nifcloud.String("test_group_name"),
-								DBSecurityGroupDescription: nifcloud.String("test_description"),
-								NiftyAvailabilityZone:      nifcloud.String("test_zone"),
-								IPRanges: []rdb.IPRanges{
-									{
-										CIDRIP: nifcloud.String("0.0.0.0/0"),
-									},
+				res: &rdb.DescribeDBSecurityGroupsOutput{
+					DBSecurityGroups: []types.DBSecurityGroupsOfDescribeDBSecurityGroups{
+						{
+							DBSecurityGroupName:        nifcloud.String("test_group_name"),
+							DBSecurityGroupDescription: nifcloud.String("test_description"),
+							NiftyAvailabilityZone:      nifcloud.String("test_zone"),
+							IPRanges: []types.IPRanges{
+								{
+									CIDRIP: nifcloud.String("0.0.0.0/0"),
 								},
 							},
 						},
@@ -58,10 +57,8 @@ func TestFlattenForCidrIP(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &rdb.DescribeDBSecurityGroupsResponse{
-					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{},
-					},
+				res: &rdb.DescribeDBSecurityGroupsOutput{
+					DBSecurityGroups: []types.DBSecurityGroupsOfDescribeDBSecurityGroups{},
 				},
 			},
 			want: wantNotFoundRd,
@@ -108,7 +105,7 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *rdb.DescribeDBSecurityGroupsResponse
+		res *rdb.DescribeDBSecurityGroupsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -120,17 +117,15 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &rdb.DescribeDBSecurityGroupsResponse{
-					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{
-							{
-								DBSecurityGroupName:        nifcloud.String("test_group_name"),
-								DBSecurityGroupDescription: nifcloud.String("test_description"),
-								NiftyAvailabilityZone:      nifcloud.String("test_zone"),
-								EC2SecurityGroups: []rdb.EC2SecurityGroups{
-									{
-										EC2SecurityGroupName: nifcloud.String("test_security_group_name"),
-									},
+				res: &rdb.DescribeDBSecurityGroupsOutput{
+					DBSecurityGroups: []types.DBSecurityGroupsOfDescribeDBSecurityGroups{
+						{
+							DBSecurityGroupName:        nifcloud.String("test_group_name"),
+							DBSecurityGroupDescription: nifcloud.String("test_description"),
+							NiftyAvailabilityZone:      nifcloud.String("test_zone"),
+							EC2SecurityGroups: []types.EC2SecurityGroups{
+								{
+									EC2SecurityGroupName: nifcloud.String("test_security_group_name"),
 								},
 							},
 						},
@@ -143,10 +138,8 @@ func TestFlattenForSecurityGroupName(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &rdb.DescribeDBSecurityGroupsResponse{
-					DescribeDBSecurityGroupsOutput: &rdb.DescribeDBSecurityGroupsOutput{
-						DBSecurityGroups: []rdb.DBSecurityGroupsOfDescribeDBSecurityGroups{},
-					},
+				res: &rdb.DescribeDBSecurityGroupsOutput{
+					DBSecurityGroups: []types.DBSecurityGroupsOfDescribeDBSecurityGroups{},
 				},
 			},
 			want: wantNotFoundRd,

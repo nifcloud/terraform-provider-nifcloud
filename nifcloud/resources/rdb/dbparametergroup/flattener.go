@@ -7,9 +7,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 )
 
-func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsResponse, parameters []rdb.Parameters) error {
+func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsOutput, parameters []types.Parameters) error {
 	if groups == nil || len(groups.DBParameterGroups) == 0 {
 		d.SetId("")
 		return nil
@@ -21,7 +22,7 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 
 	group := groups.DBParameterGroups[0]
 
-	if nifcloud.StringValue(group.DBParameterGroupName) != d.Id() {
+	if nifcloud.ToString(group.DBParameterGroupName) != d.Id() {
 		return fmt.Errorf("unable to find DB parameter group within: %#v", groups.DBParameterGroups)
 	}
 
@@ -38,7 +39,7 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 	}
 
 	configParams := d.Get("parameter").(*schema.Set)
-	var userParams []rdb.Parameters
+	var userParams []types.Parameters
 	confParams := expandParameters(configParams.List())
 	for _, param := range parameters {
 		if param.ParameterName == nil {
@@ -52,7 +53,7 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 					continue
 				}
 
-				if nifcloud.StringValue(cp.ParameterName) == nifcloud.StringValue(param.ParameterName) {
+				if nifcloud.ToString(cp.ParameterName) == nifcloud.ToString(param.ParameterName) {
 					// override ApplyMethod with config value because RDB API does not return this field.
 					param.ApplyMethod = cp.ApplyMethod
 					break
@@ -69,7 +70,7 @@ func flatten(d *schema.ResourceData, groups *rdb.DescribeDBParameterGroupsRespon
 	return nil
 }
 
-func flattenParameters(list []rdb.Parameters) []map[string]interface{} {
+func flattenParameters(list []types.Parameters) []map[string]interface{} {
 	result := make([]map[string]interface{}, 0, len(list))
 	for _, i := range list {
 		if i.ParameterName != nil {

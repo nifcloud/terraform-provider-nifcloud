@@ -12,9 +12,8 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDeleteCustomerGatewayInput(d)
 	svc := meta.(*client.Client).Computing
-	req := svc.DeleteCustomerGatewayRequest(input)
+	_, err := svc.DeleteCustomerGateway(ctx, input)
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

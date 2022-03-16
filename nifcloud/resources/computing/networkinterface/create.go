@@ -24,18 +24,16 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		defer mutexkv.UnlockPrivateLan(key)
 	}
 
-	req := svc.CreateNetworkInterfaceRequest(input)
-
 	if err := waitForRouterOfNetworkInterfaceAvailable(ctx, d, svc); err != nil {
 		return err
 	}
 
-	res, err := req.Send(ctx)
+	res, err := svc.CreateNetworkInterface(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating network interface: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.NetworkInterface.NetworkInterfaceId))
+	d.SetId(nifcloud.ToString(res.NetworkInterface.NetworkInterfaceId))
 
 	return read(ctx, d, meta)
 }

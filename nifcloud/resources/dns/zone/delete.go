@@ -13,9 +13,9 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandDeleteHostedZoneInput(d)
 
 	svc := meta.(*client.Client).DNS
-	req := svc.DeleteHostedZoneRequest(input)
+	_, err := svc.DeleteHostedZone(ctx, input)
 
-	if _, err := req.Send(ctx); err != nil {
+	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting hosted zone error: %s", err))
 	}
 

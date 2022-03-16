@@ -13,9 +13,8 @@ import (
 
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyDeletePrivateLanRequest(&computing.NiftyDeletePrivateLanInput{NetworkId: nifcloud.String(d.Id())})
 
-	_, err := req.Send(ctx)
+	_, err := svc.NiftyDeletePrivateLan(ctx, &computing.NiftyDeletePrivateLanInput{NetworkId: nifcloud.String(d.Id())})
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting private_lan: %s", err))
 	}

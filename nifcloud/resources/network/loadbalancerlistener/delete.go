@@ -15,12 +15,12 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	svc := meta.(*client.Client).Computing
 	ip := d.Get("instance_port").(int)
 	lbp := d.Get("load_balancer_port").(int)
-	req := svc.DeleteLoadBalancerRequest(&computing.DeleteLoadBalancerInput{
-		InstancePort:     nifcloud.Int64(int64(ip)),
+
+	_, err := svc.DeleteLoadBalancer(ctx, &computing.DeleteLoadBalancerInput{
+		InstancePort:     nifcloud.Int32(int32(ip)),
 		LoadBalancerName: nifcloud.String(getLBID(d)),
-		LoadBalancerPort: nifcloud.Int64(int64(lbp)),
+		LoadBalancerPort: nifcloud.Int32(int32(lbp)),
 	})
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting load_balancer: %s", err))
 	}

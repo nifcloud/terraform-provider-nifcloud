@@ -16,9 +16,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandModifyNetworkInterfaceAttributeInputForDescription(d)
 
-		req := svc.ModifyNetworkInterfaceAttributeRequest(input)
-
-		_, err := req.Send(ctx)
+		_, err := svc.ModifyNetworkInterfaceAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating network interface description: %s", err))
 		}
@@ -38,9 +36,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 
 		input := expandModifyNetworkInterfaceAttributeInputForIPAddress(d)
-		req := svc.ModifyNetworkInterfaceAttributeRequest(input)
 
-		_, err := req.Send(ctx)
+		_, err := svc.ModifyNetworkInterfaceAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating network interface ip address: %s", err))
 		}

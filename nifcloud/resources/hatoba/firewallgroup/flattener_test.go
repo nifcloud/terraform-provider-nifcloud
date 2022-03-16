@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *hatoba.GetFirewallGroupResponse
+		res *hatoba.GetFirewallGroupOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -36,17 +37,15 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &hatoba.GetFirewallGroupResponse{
-					GetFirewallGroupOutput: &hatoba.GetFirewallGroupOutput{
-						FirewallGroup: &hatoba.FirewallGroup{
-							Name:        nifcloud.String("test_name"),
-							Description: nifcloud.String("test_description"),
-							Rules: []hatoba.Rules{
-								{
-									Protocol: nifcloud.String("ANY"),
-									CidrIp:   nifcloud.String("0.0.0.0/0"),
-									Id:       nifcloud.String("test_rule_id_01"),
-								},
+				res: &hatoba.GetFirewallGroupOutput{
+					FirewallGroup: &types.FirewallGroup{
+						Name:        nifcloud.String("test_name"),
+						Description: nifcloud.String("test_description"),
+						Rules: []types.Rules{
+							{
+								Protocol: nifcloud.String("ANY"),
+								CidrIp:   nifcloud.String("0.0.0.0/0"),
+								Id:       nifcloud.String("test_rule_id_01"),
 							},
 						},
 					},
@@ -58,10 +57,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &hatoba.GetFirewallGroupResponse{
-					GetFirewallGroupOutput: &hatoba.GetFirewallGroupOutput{
-						FirewallGroup: &hatoba.FirewallGroup{},
-					},
+				res: &hatoba.GetFirewallGroupOutput{
+					FirewallGroup: &types.FirewallGroup{},
 				},
 			},
 			want: wantNotFoundRd,

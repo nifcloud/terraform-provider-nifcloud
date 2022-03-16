@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
 )
 
-func flatten(d *schema.ResourceData, res *nas.DescribeNASSecurityGroupsResponse) error {
+func flatten(d *schema.ResourceData, res *nas.DescribeNASSecurityGroupsOutput) error {
 	if res == nil || len(res.NASSecurityGroups) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASSecurityGroupsResponse)
 
 	nasSecurityGroup := res.NASSecurityGroups[0]
 
-	if nifcloud.StringValue(nasSecurityGroup.NASSecurityGroupName) != d.Id() {
+	if nifcloud.ToString(nasSecurityGroup.NASSecurityGroupName) != d.Id() {
 		return fmt.Errorf("unable to find NAS security group within: %#v", res.NASSecurityGroups)
 	}
 

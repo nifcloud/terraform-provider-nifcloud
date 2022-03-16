@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +29,7 @@ func TestExpandCreateSecurityGroupInput(t *testing.T) {
 			want: &computing.CreateSecurityGroupInput{
 				GroupName:        nifcloud.String("test_group_name"),
 				GroupDescription: nifcloud.String("test_description"),
-				Placement: &computing.RequestPlacementOfCreateSecurityGroup{
+				Placement: &types.RequestPlacementOfCreateSecurityGroup{
 					AvailabilityZone: nifcloud.String("test_availability_zone"),
 				},
 			},
@@ -121,7 +122,7 @@ func TestExpandUpdateSecurityGroupInputForLogLimit(t *testing.T) {
 			args: rd,
 			want: &computing.UpdateSecurityGroupInput{
 				GroupName:           nifcloud.String("test_group_name"),
-				GroupLogLimitUpdate: nifcloud.Int64(1000),
+				GroupLogLimitUpdate: nifcloud.Int32(1000),
 			},
 		},
 	}
@@ -196,7 +197,7 @@ func TestExpandRevokeSecurityGroupIngressInput(t *testing.T) {
 	})
 	rd.SetId("test_group_name")
 
-	ipPermissions := []computing.RequestIpPermissionsOfRevokeSecurityGroupIngress{}
+	ipPermissions := []types.RequestIpPermissionsOfRevokeSecurityGroupIngress{}
 
 	tests := []struct {
 		name string

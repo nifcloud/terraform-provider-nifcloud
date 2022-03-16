@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,11 +19,11 @@ func TestExpandRegisterPortWithLoadBalancerInput(t *testing.T) {
 	})
 	rd.SetId("name")
 
-	var lis []computing.RequestListenersOfRegisterPortWithLoadBalancer
-	n := computing.RequestListenersOfRegisterPortWithLoadBalancer{
-		BalancingType:    nifcloud.Int64(int64(1)),
-		InstancePort:     nifcloud.Int64(80),
-		LoadBalancerPort: nifcloud.Int64(80),
+	var lis []types.RequestListenersOfRegisterPortWithLoadBalancer
+	n := types.RequestListenersOfRegisterPortWithLoadBalancer{
+		BalancingType:    nifcloud.Int32(int32(1)),
+		InstancePort:     nifcloud.Int32(80),
+		LoadBalancerPort: nifcloud.Int32(80),
 	}
 	lis = append(lis, n)
 
@@ -36,7 +37,7 @@ func TestExpandRegisterPortWithLoadBalancerInput(t *testing.T) {
 			args: rd,
 			want: &computing.RegisterPortWithLoadBalancerInput{
 				LoadBalancerName: nifcloud.String("name"),
-				Listeners:        lis,
+				Listeners:        &types.ListOfRequestListenersOfRegisterPortWithLoadBalancer{Member: lis},
 			},
 		},
 	}
@@ -66,11 +67,13 @@ func TestExpandDescribeLoadBalancersInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.DescribeLoadBalancersInput{
-				LoadBalancerNames: []computing.RequestLoadBalancerNames{
-					{
-						InstancePort:     nifcloud.Int64(int64(80)),
-						LoadBalancerName: nifcloud.String("name"),
-						LoadBalancerPort: nifcloud.Int64(int64(80)),
+				LoadBalancerNames: &types.ListOfRequestLoadBalancerNames{
+					Member: []types.RequestLoadBalancerNames{
+						{
+							InstancePort:     nifcloud.Int32(int32(80)),
+							LoadBalancerName: nifcloud.String("name"),
+							LoadBalancerPort: nifcloud.Int32(int32(80)),
+						},
 					},
 				},
 			},
@@ -102,11 +105,13 @@ func TestExpandUpdateLoadBalancer(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.DescribeLoadBalancersInput{
-				LoadBalancerNames: []computing.RequestLoadBalancerNames{
-					{
-						InstancePort:     nifcloud.Int64(int64(80)),
-						LoadBalancerName: nifcloud.String("name"),
-						LoadBalancerPort: nifcloud.Int64(int64(80)),
+				LoadBalancerNames: &types.ListOfRequestLoadBalancerNames{
+					Member: []types.RequestLoadBalancerNames{
+						{
+							InstancePort:     nifcloud.Int32(int32(80)),
+							LoadBalancerName: nifcloud.String("name"),
+							LoadBalancerPort: nifcloud.Int32(int32(80)),
+						},
 					},
 				},
 			},

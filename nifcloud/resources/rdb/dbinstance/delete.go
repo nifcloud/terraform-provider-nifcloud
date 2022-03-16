@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -17,10 +18,12 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	svc := meta.(*client.Client).RDB
 
 	describeDBInstancesInput := expandDescribeDBInstancesInput(d)
-	res, err := svc.DescribeDBInstancesRequest(describeDBInstancesInput).Send(ctx)
+	res, err := svc.DescribeDBInstances(ctx, describeDBInstancesInput)
+
+	deadline, _ := ctx.Deadline()
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBInstance" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DBInstance" {
 			d.SetId("")
 			return nil
 		}
@@ -38,16 +41,16 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			SkipFinalSnapshot:    nifcloud.Bool(true),
 		}
 
-		_, err := svc.DeleteDBInstanceRequest(input).Send(ctx)
+		_, err := svc.DeleteDBInstance(ctx, input)
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBInstance" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DBInstance" {
 				continue
 			}
 			return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 		}
 
-		err = svc.WaitUntilDBInstanceAvailable(ctx, describeDBInstancesInput)
+		err = rdb.NewDBInstanceAvailableWaiter(svc).Wait(ctx, describeDBInstancesInput, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed deleting for wait until available after read replica deleted error: %s", err))
 		}
@@ -55,17 +58,17 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	// Delete DB Instance
 	input := expandDeleteDBInstanceInput(d)
-	_, err = svc.DeleteDBInstanceRequest(input).Send(ctx)
+	_, err = svc.DeleteDBInstance(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBInstance" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DBInstance" {
 			d.SetId("")
 			return nil
 		}
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}
 
-	err = svc.WaitUntilDBInstanceDeleted(ctx, describeDBInstancesInput)
+	err = rdb.NewDBInstanceDeletedWaiter(svc).Wait(ctx, describeDBInstancesInput, time.Until(deadline))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting for wait until deleted db instance error: %s", err))
 	}

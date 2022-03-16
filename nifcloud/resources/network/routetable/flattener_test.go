@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeRouteTablesResponse
+		res *computing.DescribeRouteTablesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -36,18 +37,16 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeRouteTablesResponse{
-					DescribeRouteTablesOutput: &computing.DescribeRouteTablesOutput{
-						RouteTableSet: []computing.RouteTableSet{
-							{
-								RouteTableId: nifcloud.String("test_route_table_id"),
-								RouteSet: []computing.RouteSet{
-									{
-										NetworkId:            nifcloud.String("test_network_id"),
-										NetworkName:          nifcloud.String("test_network_name"),
-										IpAddress:            nifcloud.String("test_ip_address"),
-										DestinationCidrBlock: nifcloud.String("test_cidr_block"),
-									},
+				res: &computing.DescribeRouteTablesOutput{
+					RouteTableSet: []types.RouteTableSet{
+						{
+							RouteTableId: nifcloud.String("test_route_table_id"),
+							RouteSet: []types.RouteSet{
+								{
+									NetworkId:            nifcloud.String("test_network_id"),
+									NetworkName:          nifcloud.String("test_network_name"),
+									IpAddress:            nifcloud.String("test_ip_address"),
+									DestinationCidrBlock: nifcloud.String("test_cidr_block"),
 								},
 							},
 						},
@@ -59,10 +58,8 @@ func TestFlatten(t *testing.T) {
 		{
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
-				d: wantNotFoundRd,
-				res: &computing.DescribeRouteTablesResponse{
-					DescribeRouteTablesOutput: &computing.DescribeRouteTablesOutput{},
-				},
+				d:   wantNotFoundRd,
+				res: &computing.DescribeRouteTablesOutput{},
 			},
 			want: wantNotFoundRd,
 		},

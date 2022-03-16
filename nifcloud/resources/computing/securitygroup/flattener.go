@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsOutput) error {
 	if res == nil || len(res.SecurityGroupInfo) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsRespon
 
 	securityGroup := res.SecurityGroupInfo[0]
 
-	if nifcloud.StringValue(securityGroup.GroupName) != d.Id() {
+	if nifcloud.ToString(securityGroup.GroupName) != d.Id() {
 		return fmt.Errorf("unable to find key pair within: %#v", res.SecurityGroupInfo)
 	}
 

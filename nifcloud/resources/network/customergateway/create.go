@@ -13,15 +13,14 @@ import (
 func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandCreateCustomerGatewayInput(d)
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateCustomerGatewayRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.CreateCustomerGateway(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating customerGateway: %s", err))
 	}
 
 	customerGatewayID := res.CustomerGateway.CustomerGatewayId
-	d.SetId(nifcloud.StringValue(customerGatewayID))
+	d.SetId(nifcloud.ToString(customerGatewayID))
 
 	return update(ctx, d, meta)
 }

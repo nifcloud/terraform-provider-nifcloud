@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -26,7 +27,7 @@ func init() {
 }
 
 func TestAcc_SeparateInstanceRule(t *testing.T) {
-	var separateInstanceRules computing.SeparateInstanceRulesInfo
+	var separateInstanceRules types.SeparateInstanceRulesInfo
 
 	resourceName := "nifcloud_separate_instance_rule.basic"
 	randName := prefix + acctest.RandString(7)
@@ -70,7 +71,7 @@ func TestAcc_SeparateInstanceRule(t *testing.T) {
 }
 
 func TestAcc_SeparateInstanceRule_Unique_Id(t *testing.T) {
-	var separateInstanceRules computing.SeparateInstanceRulesInfo
+	var separateInstanceRules types.SeparateInstanceRulesInfo
 
 	resourceName := "nifcloud_separate_instance_rule.basic"
 	randName := prefix + acctest.RandString(7)
@@ -119,7 +120,7 @@ func testAccSeparateInstanceRule(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *computing.SeparateInstanceRulesInfo) resource.TestCheckFunc {
+func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *types.SeparateInstanceRulesInfo) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -131,9 +132,9 @@ func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *com
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.NiftyDescribeSeparateInstanceRulesRequest(&computing.NiftyDescribeSeparateInstanceRulesInput{
+		res, err := svc.NiftyDescribeSeparateInstanceRules(context.Background(), &computing.NiftyDescribeSeparateInstanceRulesInput{
 			SeparateInstanceRuleName: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -145,7 +146,7 @@ func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *com
 
 		foundSeparateInstanceRule := res.SeparateInstanceRulesInfo[0]
 
-		if nifcloud.StringValue(foundSeparateInstanceRule.SeparateInstanceRuleName) != saved.Primary.ID {
+		if nifcloud.ToString(foundSeparateInstanceRule.SeparateInstanceRuleName) != saved.Primary.ID {
 			return fmt.Errorf("SeparateInstanceRule does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -154,75 +155,75 @@ func testAccCheckSeparateInstanceRuleExists(n string, separateInstanceRules *com
 	}
 }
 
-func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
+func testAccCheckSeparateInstanceRuleValues(separateInstanceRules *types.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName {
+		if nifcloud.ToString(separateInstanceRules.SeparateInstanceRuleName) != rName {
 			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, separateInstanceRules.SeparateInstanceRuleName)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo" {
+		if nifcloud.ToString(separateInstanceRules.SeparateInstanceRuleDescription) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(separateInstanceRules.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) == "" {
+		if nifcloud.ToString(separateInstanceRules.InstancesSet[0].InstanceId) == "" {
 			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) == "" {
+		if nifcloud.ToString(separateInstanceRules.InstancesSet[1].InstanceId) == "" {
 			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
 		}
 		return nil
 	}
 }
 
-func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
+func testAccCheckSeparateInstanceRuleValuesUpdated(separateInstanceRules *types.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName+"upd" {
+		if nifcloud.ToString(separateInstanceRules.SeparateInstanceRuleName) != rName+"upd" {
 			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName+"upd", separateInstanceRules.SeparateInstanceRuleName)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo-upd" {
+		if nifcloud.ToString(separateInstanceRules.SeparateInstanceRuleDescription) != "memo-upd" {
 			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(separateInstanceRules.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceId) == "" {
+		if nifcloud.ToString(separateInstanceRules.InstancesSet[0].InstanceId) == "" {
 			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceId) == "" {
+		if nifcloud.ToString(separateInstanceRules.InstancesSet[1].InstanceId) == "" {
 			return fmt.Errorf("bad instance_id state, expected not nil, got: nil")
 		}
 		return nil
 	}
 }
 
-func testAccCheckSeparateInstanceRuleUniqueIDValues(separateInstanceRules *computing.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
+func testAccCheckSeparateInstanceRuleUniqueIDValues(separateInstanceRules *types.SeparateInstanceRulesInfo, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleName) != rName {
+		if nifcloud.ToString(separateInstanceRules.SeparateInstanceRuleName) != rName {
 			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, separateInstanceRules.SeparateInstanceRuleName)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.SeparateInstanceRuleDescription) != "memo" {
+		if nifcloud.ToString(separateInstanceRules.SeparateInstanceRuleDescription) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", separateInstanceRules.SeparateInstanceRuleDescription)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(separateInstanceRules.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state, expected \"east-21\", got: %#v", separateInstanceRules.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[0].InstanceUniqueId) == "" {
+		if nifcloud.ToString(separateInstanceRules.InstancesSet[0].InstanceUniqueId) == "" {
 			return fmt.Errorf("bad instance_unique_id state, expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(separateInstanceRules.InstancesSet[1].InstanceUniqueId) == "" {
+		if nifcloud.ToString(separateInstanceRules.InstancesSet[1].InstanceUniqueId) == "" {
 			return fmt.Errorf("bad instance_unique_id state, expected not nil, got: nil")
 		}
 		return nil
@@ -237,13 +238,13 @@ func testAccSeparateInstanceRuleResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.NiftyDescribeSeparateInstanceRulesRequest(&computing.NiftyDescribeSeparateInstanceRulesInput{
+		res, err := svc.NiftyDescribeSeparateInstanceRules(context.Background(), &computing.NiftyDescribeSeparateInstanceRulesInput{
 			SeparateInstanceRuleName: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.SeparateInstanceRule" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() != "Client.InvalidParameterNotFound.SeparateInstanceRule" {
 				return fmt.Errorf("failed NiftyDescribeSeparateInstanceRulesRequest: %s", err)
 			}
 		}
@@ -259,15 +260,15 @@ func testSweepSeparateInstanceRule(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.NiftyDescribeSeparateInstanceRulesRequest(nil).Send(ctx)
+	res, err := svc.NiftyDescribeSeparateInstanceRules(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepSeparateInstanceRules []string
 	for _, k := range res.SeparateInstanceRulesInfo {
-		if strings.HasPrefix(nifcloud.StringValue(k.SeparateInstanceRuleName), prefix) {
-			sweepSeparateInstanceRules = append(sweepSeparateInstanceRules, nifcloud.StringValue(k.SeparateInstanceRuleName))
+		if strings.HasPrefix(nifcloud.ToString(k.SeparateInstanceRuleName), prefix) {
+			sweepSeparateInstanceRules = append(sweepSeparateInstanceRules, nifcloud.ToString(k.SeparateInstanceRuleName))
 		}
 	}
 
@@ -275,9 +276,9 @@ func testSweepSeparateInstanceRule(region string) error {
 	for _, n := range sweepSeparateInstanceRules {
 		separateInstanceRuleName := n
 		eg.Go(func() error {
-			_, err := svc.NiftyDeleteSeparateInstanceRuleRequest(&computing.NiftyDeleteSeparateInstanceRuleInput{
+			_, err := svc.NiftyDeleteSeparateInstanceRule(ctx, &computing.NiftyDeleteSeparateInstanceRuleInput{
 				SeparateInstanceRuleName: nifcloud.String(separateInstanceRuleName),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

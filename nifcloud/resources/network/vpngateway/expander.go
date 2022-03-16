@@ -4,19 +4,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandCreateVpnGatewayInput(d *schema.ResourceData) *computing.CreateVpnGatewayInput {
 
-	var niftyNetwork *computing.RequestNiftyNetwork
+	var niftyNetwork *types.RequestNiftyNetwork
 	if row, ok := d.GetOk("network_name"); ok {
-		niftyNetwork = &computing.RequestNiftyNetwork{
+		niftyNetwork = &types.RequestNiftyNetwork{
 			NetworkName: nifcloud.String(row.(string)),
 			IpAddress:   nifcloud.String(d.Get("ip_address").(string)),
 		}
 	}
 	if row, ok := d.GetOk("network_id"); ok {
-		niftyNetwork = &computing.RequestNiftyNetwork{
+		niftyNetwork = &types.RequestNiftyNetwork{
 			NetworkId: nifcloud.String(row.(string)),
 			IpAddress: nifcloud.String(d.Get("ip_address").(string)),
 		}
@@ -27,15 +28,15 @@ func expandCreateVpnGatewayInput(d *schema.ResourceData) *computing.CreateVpnGat
 		securityGroup = append(securityGroup, row.(string))
 	}
 
-	placement := &computing.RequestPlacementOfCreateVpnGateway{
+	placement := &types.RequestPlacementOfCreateVpnGateway{
 		AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 	}
 
 	input := &computing.CreateVpnGatewayInput{
-		AccountingType:             computing.AccountingTypeOfCreateVpnGatewayRequest(d.Get("accounting_type").(string)),
+		AccountingType:             types.AccountingTypeOfCreateVpnGatewayRequest(d.Get("accounting_type").(string)),
 		NiftyVpnGatewayDescription: nifcloud.String(d.Get("description").(string)),
 		NiftyVpnGatewayName:        nifcloud.String(d.Get("name").(string)),
-		NiftyVpnGatewayType:        computing.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest(d.Get("type").(string)),
+		NiftyVpnGatewayType:        types.NiftyVpnGatewayTypeOfCreateVpnGatewayRequest(d.Get("type").(string)),
 		Placement:                  placement,
 		NiftyNetwork:               niftyNetwork,
 		SecurityGroup:              securityGroup,
@@ -58,7 +59,7 @@ func expandDeleteVpnGatewayInput(d *schema.ResourceData) *computing.DeleteVpnGat
 func expandNiftyModifyVpnGatewayAttributeInputForAccountingType(d *schema.ResourceData) *computing.NiftyModifyVpnGatewayAttributeInput {
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayAccountingType,
+		Attribute:    types.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayAccountingType,
 		Value:        nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
@@ -66,7 +67,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForAccountingType(d *schema.Resour
 func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(d *schema.ResourceData) *computing.NiftyModifyVpnGatewayAttributeInput {
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayDescription,
+		Attribute:    types.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayDescription,
 		Value:        nifcloud.String(d.Get("description").(string)),
 	}
 }
@@ -74,7 +75,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayDescription(d *schema
 func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(d *schema.ResourceData) *computing.NiftyModifyVpnGatewayAttributeInput {
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayName,
+		Attribute:    types.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayName,
 		Value:        nifcloud.String(d.Get("name").(string)),
 	}
 }
@@ -82,7 +83,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayName(d *schema.Resour
 func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(d *schema.ResourceData) *computing.NiftyModifyVpnGatewayAttributeInput {
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayType,
+		Attribute:    types.AttributeOfNiftyModifyVpnGatewayAttributeRequestNiftyVpnGatewayType,
 		Value:        nifcloud.String(d.Get("type").(string)),
 	}
 }
@@ -90,7 +91,7 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(d *schema.Resour
 func expandNiftyUpdateVpnGatewayNetworkInterfacesInput(d *schema.ResourceData) *computing.NiftyUpdateVpnGatewayNetworkInterfacesInput {
 	return &computing.NiftyUpdateVpnGatewayNetworkInterfacesInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		NetworkInterface: &computing.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
+		NetworkInterface: &types.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
 			IpAddress: nifcloud.String(d.Get("ip_address").(string)),
 		},
 	}
@@ -99,7 +100,7 @@ func expandNiftyUpdateVpnGatewayNetworkInterfacesInput(d *schema.ResourceData) *
 func expandNiftyModifyVpnGatewayAttributeInputForSecurityGroup(d *schema.ResourceData) *computing.NiftyModifyVpnGatewayAttributeInput {
 	return &computing.NiftyModifyVpnGatewayAttributeInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		Attribute:    computing.AttributeOfNiftyModifyVpnGatewayAttributeRequestGroupId,
+		Attribute:    types.AttributeOfNiftyModifyVpnGatewayAttributeRequestGroupId,
 		Value:        nifcloud.String(d.Get("security_group").(string)),
 	}
 }

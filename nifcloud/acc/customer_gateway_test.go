@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,7 +30,7 @@ func init() {
 }
 
 func TestAcc_CustomerGateway(t *testing.T) {
-	var customerGateway computing.CustomerGatewaySet
+	var customerGateway types.CustomerGatewaySet
 
 	resourceName := "nifcloud_customer_gateway.basic"
 	randName := prefix + acctest.RandString(7)
@@ -82,7 +83,7 @@ func testAccCustomerGateway(t *testing.T, fileName string, rName string) string 
 	return fmt.Sprintf(string(b), rName)
 }
 
-func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.CustomerGatewaySet) resource.TestCheckFunc {
+func testAccCheckCustomerGatewayExists(n string, customerGateway *types.CustomerGatewaySet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -94,9 +95,9 @@ func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.Cust
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeCustomerGatewaysRequest(&computing.DescribeCustomerGatewaysInput{
+		res, err := svc.DescribeCustomerGateways(context.Background(), &computing.DescribeCustomerGatewaysInput{
 			CustomerGatewayId: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -108,7 +109,7 @@ func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.Cust
 
 		foundCustomerGateway := res.CustomerGatewaySet[0]
 
-		if nifcloud.StringValue(foundCustomerGateway.CustomerGatewayId) != saved.Primary.ID {
+		if nifcloud.ToString(foundCustomerGateway.CustomerGatewayId) != saved.Primary.ID {
 			return fmt.Errorf("customerGateway does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -117,50 +118,50 @@ func testAccCheckCustomerGatewayExists(n string, customerGateway *computing.Cust
 	}
 }
 
-func testAccCheckCustomerGatewayValues(customerGateway *computing.CustomerGatewaySet, rName string) resource.TestCheckFunc {
+func testAccCheckCustomerGatewayValues(customerGateway *types.CustomerGatewaySet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != rName {
+		if nifcloud.ToString(customerGateway.NiftyCustomerGatewayName) != rName {
 			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
 		}
 
-		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memo" {
+		if nifcloud.ToString(customerGateway.NiftyCustomerGatewayDescription) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
 		}
 
-		if nifcloud.StringValue(customerGateway.IpAddress) != "192.168.0.1" {
+		if nifcloud.ToString(customerGateway.IpAddress) != "192.168.0.1" {
 			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.IpAddress)
 		}
 
-		if nifcloud.StringValue(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
+		if nifcloud.ToString(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
 			return fmt.Errorf("bad lan_side_ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
 		}
 
-		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
+		if nifcloud.ToString(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
 			return fmt.Errorf("bad lan_side_cidr_block state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
 		}
 		return nil
 	}
 }
 
-func testAccCheckCustomerGatewayValuesUpdated(customerGateway *computing.CustomerGatewaySet, rName string) resource.TestCheckFunc {
+func testAccCheckCustomerGatewayValuesUpdated(customerGateway *types.CustomerGatewaySet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayName) != rName+"upd" {
+		if nifcloud.ToString(customerGateway.NiftyCustomerGatewayName) != rName+"upd" {
 			return fmt.Errorf("bad name state, expected \"%supd\", got: %#v", rName, customerGateway.NiftyCustomerGatewayName)
 		}
 
-		if nifcloud.StringValue(customerGateway.NiftyCustomerGatewayDescription) != "memoupdated" {
+		if nifcloud.ToString(customerGateway.NiftyCustomerGatewayDescription) != "memoupdated" {
 			return fmt.Errorf("bad description state, expected \"memoupdated\", got: %#v", customerGateway.NiftyCustomerGatewayDescription)
 		}
 
-		if nifcloud.StringValue(customerGateway.IpAddress) != "192.168.0.1" {
+		if nifcloud.ToString(customerGateway.IpAddress) != "192.168.0.1" {
 			return fmt.Errorf("bad ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.IpAddress)
 		}
 
-		if nifcloud.StringValue(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
+		if nifcloud.ToString(customerGateway.NiftyLanSideIpAddress) != "192.168.0.1" {
 			return fmt.Errorf("bad lan_side_ip_address state, expected \"192.168.0.1\", got: %#v", customerGateway.NiftyLanSideIpAddress)
 		}
 
-		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
+		if nifcloud.ToString(customerGateway.NiftyLanSideCidrBlock) != "192.168.0.0/28" {
 			return fmt.Errorf("bad lan_side_cidr_block state, expected \"192.168.0.0/28\", got: %#v", customerGateway.NiftyLanSideCidrBlock)
 		}
 		return nil
@@ -176,13 +177,13 @@ func testAccCustomerGatewayResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeCustomerGatewaysRequest(&computing.DescribeCustomerGatewaysInput{
+		res, err := svc.DescribeCustomerGateways(context.Background(), &computing.DescribeCustomerGatewaysInput{
 			CustomerGatewayId: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.CustomerGatewayId" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.CustomerGatewayId" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeCustomerGatewaysRequest: %s", err)
@@ -199,15 +200,15 @@ func testSweepCustomerGateway(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeCustomerGatewaysRequest(nil).Send(ctx)
+	res, err := svc.DescribeCustomerGateways(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepCustomerGateways []string
 	for _, k := range res.CustomerGatewaySet {
-		if strings.HasPrefix(nifcloud.StringValue(k.NiftyCustomerGatewayName), prefix) {
-			sweepCustomerGateways = append(sweepCustomerGateways, nifcloud.StringValue(k.CustomerGatewayId))
+		if strings.HasPrefix(nifcloud.ToString(k.NiftyCustomerGatewayName), prefix) {
+			sweepCustomerGateways = append(sweepCustomerGateways, nifcloud.ToString(k.CustomerGatewayId))
 		}
 	}
 
@@ -215,9 +216,9 @@ func testSweepCustomerGateway(region string) error {
 	for _, n := range sweepCustomerGateways {
 		customerGatewayID := n
 		eg.Go(func() error {
-			_, err := svc.DeleteCustomerGatewayRequest(&computing.DeleteCustomerGatewayInput{
+			_, err := svc.DeleteCustomerGateway(ctx, &computing.DeleteCustomerGatewayInput{
 				CustomerGatewayId: nifcloud.String(customerGatewayID),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

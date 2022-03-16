@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateFirewallGroupInput(d)
 
 	svc := meta.(*client.Client).Hatoba
-	req := svc.CreateFirewallGroupRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateFirewallGroup(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating Hatoba firewall group: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.FirewallGroup.Name))
+	d.SetId(nifcloud.ToString(res.FirewallGroup.Name))
 
 	return update(ctx, d, meta)
 }

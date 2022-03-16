@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeAddressesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeAddressesOutput) error {
 	if res == nil || len(res.AddressesSet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,14 +16,14 @@ func flatten(d *schema.ResourceData, res *computing.DescribeAddressesResponse) e
 
 	elasticIP := res.AddressesSet[0]
 
-	if nifcloud.StringValue(elasticIP.PrivateIpAddress) == d.Id() {
+	if nifcloud.ToString(elasticIP.PrivateIpAddress) == d.Id() {
 		if err := d.Set("ip_type", true); err != nil {
 			return err
 		}
 		if err := d.Set("private_ip", elasticIP.PrivateIpAddress); err != nil {
 			return err
 		}
-	} else if nifcloud.StringValue(elasticIP.PublicIp) == d.Id() {
+	} else if nifcloud.ToString(elasticIP.PublicIp) == d.Id() {
 		if err := d.Set("ip_type", false); err != nil {
 			return err
 		}

@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -26,7 +27,7 @@ func init() {
 }
 
 func TestAcc_HatobaCluster(t *testing.T) {
-	var cluster hatoba.Cluster
+	var cluster types.Cluster
 
 	resourceName := "nifcloud_hatoba_cluster.basic"
 	randName := prefix + acctest.RandString(7)
@@ -87,12 +88,12 @@ func TestAcc_HatobaCluster(t *testing.T) {
 
 func fetchDefaultKubernetesVersion(region string) (string, error) {
 	svc := sharedClientForRegion(region).Hatoba
-	res, err := svc.GetServerConfigRequest(nil).Send(context.Background())
+	res, err := svc.GetServerConfig(context.Background(), nil)
 	if err != nil {
 		return "", err
 	}
 
-	return nifcloud.StringValue(res.ServerConfig.DefaultKubernetesVersion), nil
+	return nifcloud.ToString(res.ServerConfig.DefaultKubernetesVersion), nil
 }
 
 func testAccHatobaCluster(t *testing.T, fileName, rName string) string {
@@ -106,28 +107,28 @@ func testAccHatobaCluster(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckHatobaClusterExists(n string, cluster *hatoba.Cluster) resource.TestCheckFunc {
+func testAccCheckHatobaClusterExists(n string, cluster *types.Cluster) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("no Hatoba cluster resource: %s", n)
+			return fmt.Errorf("no types cluster resource: %s", n)
 		}
 
 		if saved.Primary.ID == "" {
-			return fmt.Errorf("no Hatoba cluster id is set")
+			return fmt.Errorf("no types cluster id is set")
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Hatoba
-		res, err := svc.GetClusterRequest(&hatoba.GetClusterInput{
+		res, err := svc.GetCluster(context.Background(), &hatoba.GetClusterInput{
 			ClusterName: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
 
 		foundCluster := res.Cluster
 
-		if nifcloud.StringValue(foundCluster.Name) != saved.Primary.ID {
+		if nifcloud.ToString(foundCluster.Name) != saved.Primary.ID {
 			return fmt.Errorf("Hatoba cluster does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -137,23 +138,23 @@ func testAccCheckHatobaClusterExists(n string, cluster *hatoba.Cluster) resource
 	}
 }
 
-func testAccCheckHatobaClusterValues(cluster *hatoba.Cluster, name string) resource.TestCheckFunc {
+func testAccCheckHatobaClusterValues(cluster *types.Cluster, name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		defaultKubernetesVersion, err := fetchDefaultKubernetesVersion("jp-east-2")
 		if err != nil {
 			return err
 		}
 
-		if nifcloud.StringValue(cluster.Name) != name {
-			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", name, nifcloud.StringValue(cluster.Name))
+		if nifcloud.ToString(cluster.Name) != name {
+			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", name, nifcloud.ToString(cluster.Name))
 		}
 
-		if nifcloud.StringValue(cluster.Description) != "memo" {
-			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.StringValue(cluster.Description))
+		if nifcloud.ToString(cluster.Description) != "memo" {
+			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", nifcloud.ToString(cluster.Description))
 		}
 
-		if nifcloud.StringValue(cluster.KubernetesVersion) != defaultKubernetesVersion {
-			return fmt.Errorf("bad kubernetes_version state, expected %q, got: %#v", defaultKubernetesVersion, nifcloud.StringValue(cluster.KubernetesVersion))
+		if nifcloud.ToString(cluster.KubernetesVersion) != defaultKubernetesVersion {
+			return fmt.Errorf("bad kubernetes_version state, expected %q, got: %#v", defaultKubernetesVersion, nifcloud.ToString(cluster.KubernetesVersion))
 		}
 
 		if len(cluster.Locations) != 1 {
@@ -168,7 +169,7 @@ func testAccCheckHatobaClusterValues(cluster *hatoba.Cluster, name string) resou
 			return fmt.Errorf("bad addons_config state, response is nil")
 		}
 
-		if nifcloud.BoolValue(cluster.AddonsConfig.HttpLoadBalancing.Disabled) != true {
+		if nifcloud.ToBool(cluster.AddonsConfig.HttpLoadBalancing.Disabled) != true {
 			return fmt.Errorf("bad http_load_balancing state, expected true, got: false")
 		}
 
@@ -176,20 +177,20 @@ func testAccCheckHatobaClusterValues(cluster *hatoba.Cluster, name string) resou
 			return fmt.Errorf("bad network_config state, response is nil")
 		}
 
-		if nifcloud.StringValue(cluster.NetworkConfig.NetworkId) != "net-COMMON_PRIVATE" {
-			return fmt.Errorf("bad network_id state, expected \"net-COMMON_PRIVATE\", got: %#v", nifcloud.StringValue(cluster.NetworkConfig.NetworkId))
+		if nifcloud.ToString(cluster.NetworkConfig.NetworkId) != "net-COMMON_PRIVATE" {
+			return fmt.Errorf("bad network_id state, expected \"net-COMMON_PRIVATE\", got: %#v", nifcloud.ToString(cluster.NetworkConfig.NetworkId))
 		}
 
-		wantNodePools := []hatoba.NodePool{
+		wantNodePools := []types.NodePool{
 			{
 				Name:         nifcloud.String("default"),
 				InstanceType: nifcloud.String("medium"),
-				NodeCount:    nifcloud.Int64(1),
+				NodeCount:    nifcloud.Int32(1),
 			},
 			{
 				Name:         nifcloud.String("lowspec"),
 				InstanceType: nifcloud.String("e-medium"),
-				NodeCount:    nifcloud.Int64(1),
+				NodeCount:    nifcloud.Int32(1),
 			},
 		}
 
@@ -201,10 +202,10 @@ func testAccCheckHatobaClusterValues(cluster *hatoba.Cluster, name string) resou
 
 		for _, g := range cluster.NodePools {
 			for _, w := range wantNodePools {
-				if nifcloud.StringValue(g.Name) == nifcloud.StringValue(w.Name) &&
-					nifcloud.StringValue(g.InstanceType) == nifcloud.StringValue(w.InstanceType) &&
-					nifcloud.Int64Value(g.NodeCount) == nifcloud.Int64Value(w.NodeCount) {
-					foundNodePoolNames = append(foundNodePoolNames, nifcloud.StringValue(g.Name))
+				if nifcloud.ToString(g.Name) == nifcloud.ToString(w.Name) &&
+					nifcloud.ToString(g.InstanceType) == nifcloud.ToString(w.InstanceType) &&
+					nifcloud.ToInt32(g.NodeCount) == nifcloud.ToInt32(w.NodeCount) {
+					foundNodePoolNames = append(foundNodePoolNames, nifcloud.ToString(g.Name))
 					break
 				}
 			}
@@ -218,23 +219,23 @@ func testAccCheckHatobaClusterValues(cluster *hatoba.Cluster, name string) resou
 	}
 }
 
-func testAccCheckHatobaClusterValuesUpdated(cluster *hatoba.Cluster, name string) resource.TestCheckFunc {
+func testAccCheckHatobaClusterValuesUpdated(cluster *types.Cluster, name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		defaultKubernetesVersion, err := fetchDefaultKubernetesVersion("jp-east-2")
 		if err != nil {
 			return err
 		}
 
-		if nifcloud.StringValue(cluster.Name) != name+"upd" {
-			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", name+"upd", nifcloud.StringValue(cluster.Name))
+		if nifcloud.ToString(cluster.Name) != name+"upd" {
+			return fmt.Errorf("bad name state, expected \"%s\", got: %#v", name+"upd", nifcloud.ToString(cluster.Name))
 		}
 
-		if nifcloud.StringValue(cluster.Description) != "memo-upd" {
-			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.StringValue(cluster.Description))
+		if nifcloud.ToString(cluster.Description) != "memo-upd" {
+			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", nifcloud.ToString(cluster.Description))
 		}
 
-		if nifcloud.StringValue(cluster.KubernetesVersion) != defaultKubernetesVersion {
-			return fmt.Errorf("bad kubernetes_version state, expected %q, got: %#v", defaultKubernetesVersion, nifcloud.StringValue(cluster.KubernetesVersion))
+		if nifcloud.ToString(cluster.KubernetesVersion) != defaultKubernetesVersion {
+			return fmt.Errorf("bad kubernetes_version state, expected %q, got: %#v", defaultKubernetesVersion, nifcloud.ToString(cluster.KubernetesVersion))
 		}
 
 		if len(cluster.Locations) != 1 {
@@ -249,7 +250,7 @@ func testAccCheckHatobaClusterValuesUpdated(cluster *hatoba.Cluster, name string
 			return fmt.Errorf("bad addons_config state, response is nil")
 		}
 
-		if nifcloud.BoolValue(cluster.AddonsConfig.HttpLoadBalancing.Disabled) != false {
+		if nifcloud.ToBool(cluster.AddonsConfig.HttpLoadBalancing.Disabled) != false {
 			return fmt.Errorf("bad http_load_balancing state, expected false, got: true")
 		}
 
@@ -257,20 +258,20 @@ func testAccCheckHatobaClusterValuesUpdated(cluster *hatoba.Cluster, name string
 			return fmt.Errorf("bad network_config state, response is nil")
 		}
 
-		if nifcloud.StringValue(cluster.NetworkConfig.NetworkId) != "net-COMMON_PRIVATE" {
-			return fmt.Errorf("bad network_id state, expected \"net-COMMON_PRIVATE\", got: %#v", nifcloud.StringValue(cluster.NetworkConfig.NetworkId))
+		if nifcloud.ToString(cluster.NetworkConfig.NetworkId) != "net-COMMON_PRIVATE" {
+			return fmt.Errorf("bad network_id state, expected \"net-COMMON_PRIVATE\", got: %#v", nifcloud.ToString(cluster.NetworkConfig.NetworkId))
 		}
 
-		wantNodePools := []hatoba.NodePool{
+		wantNodePools := []types.NodePool{
 			{
 				Name:         nifcloud.String("default"),
 				InstanceType: nifcloud.String("medium"),
-				NodeCount:    nifcloud.Int64(3),
+				NodeCount:    nifcloud.Int32(3),
 			},
 			{
 				Name:         nifcloud.String("highspec"),
 				InstanceType: nifcloud.String("large"),
-				NodeCount:    nifcloud.Int64(1),
+				NodeCount:    nifcloud.Int32(1),
 			},
 		}
 
@@ -282,10 +283,10 @@ func testAccCheckHatobaClusterValuesUpdated(cluster *hatoba.Cluster, name string
 
 		for _, g := range cluster.NodePools {
 			for _, w := range wantNodePools {
-				if nifcloud.StringValue(g.Name) == nifcloud.StringValue(w.Name) &&
-					nifcloud.StringValue(g.InstanceType) == nifcloud.StringValue(w.InstanceType) &&
-					nifcloud.Int64Value(g.NodeCount) == nifcloud.Int64Value(w.NodeCount) {
-					foundNodePoolNames = append(foundNodePoolNames, nifcloud.StringValue(g.Name))
+				if nifcloud.ToString(g.Name) == nifcloud.ToString(w.Name) &&
+					nifcloud.ToString(g.InstanceType) == nifcloud.ToString(w.InstanceType) &&
+					nifcloud.ToInt32(g.NodeCount) == nifcloud.ToInt32(w.NodeCount) {
+					foundNodePoolNames = append(foundNodePoolNames, nifcloud.ToString(g.Name))
 					break
 				}
 			}
@@ -307,13 +308,13 @@ func testAccHatobaClusterResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		_, err := svc.GetClusterRequest(&hatoba.GetClusterInput{
+		_, err := svc.GetCluster(context.Background(), &hatoba.GetClusterInput{
 			ClusterName: nifcloud.String(rs.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() != "Client.InvalidParameterNotFound.Cluster" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() != "Client.InvalidParameterNotFound.Cluster" {
 				return fmt.Errorf("failed GetClusterRequest: %s", err)
 			}
 		}
@@ -325,22 +326,22 @@ func testSweepHatobaCluster(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Hatoba
 
-	res, err := svc.ListClustersRequest(nil).Send(ctx)
+	res, err := svc.ListClusters(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepHatobaClusters []string
 	for _, k := range res.Clusters {
-		if strings.HasPrefix(nifcloud.StringValue(k.Name), prefix) {
-			sweepHatobaClusters = append(sweepHatobaClusters, nifcloud.StringValue(k.Name))
+		if strings.HasPrefix(nifcloud.ToString(k.Name), prefix) {
+			sweepHatobaClusters = append(sweepHatobaClusters, nifcloud.ToString(k.Name))
 		}
 	}
 
 	if len(sweepHatobaClusters) > 0 {
-		if _, err := svc.DeleteClustersRequest(&hatoba.DeleteClustersInput{
+		if _, err := svc.DeleteClusters(ctx, &hatoba.DeleteClustersInput{
 			Names: nifcloud.String(strings.Join(sweepHatobaClusters, ",")),
-		}).Send(ctx); err != nil {
+		}); err != nil {
 			return err
 		}
 	}

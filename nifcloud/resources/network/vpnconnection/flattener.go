@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeVpnConnectionsResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeVpnConnectionsOutput) error {
 	if res == nil || len(res.VpnConnectionSet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnConnectionsRespon
 
 	vpnConnection := res.VpnConnectionSet[0]
 
-	if nifcloud.StringValue(vpnConnection.VpnConnectionId) != d.Id() {
+	if nifcloud.ToString(vpnConnection.VpnConnectionId) != d.Id() {
 		return fmt.Errorf("unable to find vpn connection within: %#v", res.VpnConnectionSet)
 	}
 

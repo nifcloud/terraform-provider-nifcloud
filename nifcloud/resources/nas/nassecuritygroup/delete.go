@@ -12,9 +12,9 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDeleteNASSecurityGroupInput(d)
 	svc := meta.(*client.Client).NAS
-	req := svc.DeleteNASSecurityGroupRequest(input)
+	_, err := svc.DeleteNASSecurityGroup(ctx, input)
 
-	if _, err := req.Send(ctx); err != nil {
+	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting NAS security group: %s", err))
 	}
 

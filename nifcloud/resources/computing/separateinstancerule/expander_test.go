@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +29,7 @@ func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceId(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyCreateSeparateInstanceRuleInput{
 				SeparateInstanceRuleName: nifcloud.String("test_separate_name"),
-				Placement: &computing.RequestPlacementOfNiftyCreateSeparateInstanceRule{
+				Placement: &types.RequestPlacementOfNiftyCreateSeparateInstanceRule{
 					AvailabilityZone: nifcloud.String(("test_availability_zone")),
 				},
 				SeparateInstanceRuleDescription: nifcloud.String("test_description"),
@@ -64,7 +65,7 @@ func TestExpandNiftyCreateSeparateInstanceRuleInputForInstanceUniqueId(t *testin
 			args: rd,
 			want: &computing.NiftyCreateSeparateInstanceRuleInput{
 				SeparateInstanceRuleName: nifcloud.String("test_separate_name"),
-				Placement: &computing.RequestPlacementOfNiftyCreateSeparateInstanceRule{
+				Placement: &types.RequestPlacementOfNiftyCreateSeparateInstanceRule{
 					AvailabilityZone: nifcloud.String(("test_availability_zone")),
 				},
 				SeparateInstanceRuleDescription: nifcloud.String("test_description"),

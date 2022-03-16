@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -15,12 +16,13 @@ import (
 
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	describeInstancesInput := expandDescribeInstancesInput(d)
-	describeInstancesRes, err := svc.DescribeInstancesRequest(describeInstancesInput).Send(ctx)
+	describeInstancesRes, err := svc.DescribeInstances(ctx, describeInstancesInput)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Instance" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.Instance" {
 			d.SetId("")
 			return nil
 		}
@@ -29,14 +31,14 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	instance := describeInstancesRes.ReservationSet[0].InstancesSet[0]
 
-	if nifcloud.StringValue(instance.InstanceState.Name) != "stopped" {
+	if nifcloud.ToString(instance.InstanceState.Name) != "stopped" {
 		stopInstancesInput := expandStopInstancesInput(d)
-		_, err := svc.StopInstancesRequest(stopInstancesInput).Send(ctx)
+		_, err := svc.StopInstances(ctx, stopInstancesInput)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed deleting for stop instances error: %s", err))
 		}
 
-		err = svc.WaitUntilInstanceStopped(ctx, describeInstancesInput)
+		err = computing.NewInstanceStoppedWaiter(svc).Wait(ctx, describeInstancesInput, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed deleting for wait until stopped instances error: %s", err))
 		}
@@ -51,18 +53,18 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		mutexKV.Lock(r)
 		defer mutexKV.Unlock(r)
 
-		if err := svc.WaitUntilRouterAvailable(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}); err != nil {
+		if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}, time.Until(deadline)); err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 		}
 	}
 
 	terminateInstancesInput := expandTerminateInstancesInput(d)
-	_, err = svc.TerminateInstancesRequest(terminateInstancesInput).Send(ctx)
+	_, err = svc.TerminateInstances(ctx, terminateInstancesInput)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting for terminate instances error: %s", err))
 	}
 
-	err = svc.WaitUntilInstanceDeleted(ctx, describeInstancesInput)
+	err = computing.NewInstanceDeletedWaiter(svc).Wait(ctx, describeInstancesInput, time.Until(deadline))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting for wait until deleted instances error: %s", err))
 	}

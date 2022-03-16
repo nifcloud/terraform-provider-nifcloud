@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
+	"github.com/nifcloud/nifcloud-sdk-go/service/nas/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,7 +37,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *nas.DescribeNASInstancesResponse
+		res *nas.DescribeNASInstancesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -48,37 +49,35 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &nas.DescribeNASInstancesResponse{
-					DescribeNASInstancesOutput: &nas.DescribeNASInstancesOutput{
-						NASInstances: []nas.NASInstances{
-							{
-								NASInstanceIdentifier:  nifcloud.String("test_identifier"),
-								AllocatedStorage:       nifcloud.Int64(100),
-								AvailabilityZone:       nifcloud.String("test_availability_zone"),
-								NASInstanceDescription: nifcloud.String("test_description"),
-								NASSecurityGroups: []nas.NASSecurityGroups{
-									{
-										NASSecurityGroupName: nifcloud.String("test_nas_security_group_name"),
-									},
+				res: &nas.DescribeNASInstancesOutput{
+					NASInstances: []types.NASInstances{
+						{
+							NASInstanceIdentifier:  nifcloud.String("test_identifier"),
+							AllocatedStorage:       nifcloud.Int32(100),
+							AvailabilityZone:       nifcloud.String("test_availability_zone"),
+							NASInstanceDescription: nifcloud.String("test_description"),
+							NASSecurityGroups: []types.NASSecurityGroups{
+								{
+									NASSecurityGroupName: nifcloud.String("test_nas_security_group_name"),
 								},
-								Endpoint: &nas.Endpoint{
-									Address:        nifcloud.String("test_public_ip_address"),
-									PrivateAddress: nifcloud.String("test_private_ip_address"),
-								},
-								Protocol:                   nifcloud.String("test_protocol"),
-								MasterUsername:             nifcloud.String("test_master_username"),
-								NetworkId:                  nifcloud.String("test_network_id"),
-								AuthenticationType:         nifcloud.Int64(1),
-								DirectoryServiceDomainName: nifcloud.String("test_directory_service_domain_name"),
-								DomainControllers: []nas.DomainControllers{
-									{
-										Hostname:  nifcloud.String("test_hostname"),
-										IPAddress: nifcloud.String("test_ip_address"),
-									},
-								},
-								NASInstanceType: nifcloud.Int64(0),
-								NoRootSquash:    nifcloud.Bool(false),
 							},
+							Endpoint: &types.Endpoint{
+								Address:        nifcloud.String("test_public_ip_address"),
+								PrivateAddress: nifcloud.String("test_private_ip_address"),
+							},
+							Protocol:                   nifcloud.String("test_protocol"),
+							MasterUsername:             nifcloud.String("test_master_username"),
+							NetworkId:                  nifcloud.String("test_network_id"),
+							AuthenticationType:         nifcloud.Int32(1),
+							DirectoryServiceDomainName: nifcloud.String("test_directory_service_domain_name"),
+							DomainControllers: []types.DomainControllers{
+								{
+									Hostname:  nifcloud.String("test_hostname"),
+									IPAddress: nifcloud.String("test_ip_address"),
+								},
+							},
+							NASInstanceType: nifcloud.Int32(0),
+							NoRootSquash:    nifcloud.Bool(false),
 						},
 					},
 				},
@@ -88,10 +87,8 @@ func TestFlatten(t *testing.T) {
 		{
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
-				d: wantNotFoundRd,
-				res: &nas.DescribeNASInstancesResponse{
-					DescribeNASInstancesOutput: &nas.DescribeNASInstancesOutput{},
-				},
+				d:   wantNotFoundRd,
+				res: &nas.DescribeNASInstancesOutput{},
 			},
 			want: wantNotFoundRd,
 		},

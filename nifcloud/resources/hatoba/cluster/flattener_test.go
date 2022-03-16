@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -54,7 +55,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *hatoba.GetClusterResponse
+		res *hatoba.GetClusterOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -66,45 +67,43 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &hatoba.GetClusterResponse{
-					GetClusterOutput: &hatoba.GetClusterOutput{
-						Cluster: &hatoba.Cluster{
-							Name:              nifcloud.String("test_name"),
-							Description:       nifcloud.String("test_description"),
-							KubernetesVersion: nifcloud.String("test_kubernetes_version"),
-							Locations:         []string{"test_location"},
-							AddonsConfig: &hatoba.AddonsConfig{
-								HttpLoadBalancing: &hatoba.HttpLoadBalancing{
-									Disabled: nifcloud.Bool(true),
-								},
+				res: &hatoba.GetClusterOutput{
+					Cluster: &types.Cluster{
+						Name:              nifcloud.String("test_name"),
+						Description:       nifcloud.String("test_description"),
+						KubernetesVersion: nifcloud.String("test_kubernetes_version"),
+						Locations:         []string{"test_location"},
+						AddonsConfig: &types.AddonsConfig{
+							HttpLoadBalancing: &types.HttpLoadBalancing{
+								Disabled: nifcloud.Bool(true),
 							},
-							NetworkConfig: &hatoba.NetworkConfig{
-								NetworkId: nifcloud.String("test_network_id"),
-							},
-							NodePools: []hatoba.NodePools{
-								{
-									Name:         nifcloud.String("test_node_pool_name"),
-									InstanceType: nifcloud.String("test_instance_type"),
-									NodeCount:    nifcloud.Int64(3),
-									Nodes: []hatoba.Nodes{
-										{
-											Name:             nifcloud.String("test_node01"),
-											AvailabilityZone: nifcloud.String("test_availability_zone"),
-											PublicIpAddress:  nifcloud.String("203.0.113.1"),
-											PrivateIpAddress: nifcloud.String("192.168.0.1"),
-										},
-										{
-											Name:             nifcloud.String("test_node02"),
-											AvailabilityZone: nifcloud.String("test_availability_zone"),
-											PublicIpAddress:  nifcloud.String("203.0.113.2"),
-											PrivateIpAddress: nifcloud.String("192.168.0.2"),
-										},
-										{
-											Name:             nifcloud.String("test_node03"),
-											AvailabilityZone: nifcloud.String("test_availability_zone"),
-											PublicIpAddress:  nifcloud.String("203.0.113.3"),
-											PrivateIpAddress: nifcloud.String("192.168.0.3"),
-										},
+						},
+						NetworkConfig: &types.NetworkConfig{
+							NetworkId: nifcloud.String("test_network_id"),
+						},
+						NodePools: []types.NodePools{
+							{
+								Name:         nifcloud.String("test_node_pool_name"),
+								InstanceType: nifcloud.String("test_instance_type"),
+								NodeCount:    nifcloud.Int32(3),
+								Nodes: []types.Nodes{
+									{
+										Name:             nifcloud.String("test_node01"),
+										AvailabilityZone: nifcloud.String("test_availability_zone"),
+										PublicIpAddress:  nifcloud.String("203.0.113.1"),
+										PrivateIpAddress: nifcloud.String("192.168.0.1"),
+									},
+									{
+										Name:             nifcloud.String("test_node02"),
+										AvailabilityZone: nifcloud.String("test_availability_zone"),
+										PublicIpAddress:  nifcloud.String("203.0.113.2"),
+										PrivateIpAddress: nifcloud.String("192.168.0.2"),
+									},
+									{
+										Name:             nifcloud.String("test_node03"),
+										AvailabilityZone: nifcloud.String("test_availability_zone"),
+										PublicIpAddress:  nifcloud.String("203.0.113.3"),
+										PrivateIpAddress: nifcloud.String("192.168.0.3"),
 									},
 								},
 							},
@@ -118,10 +117,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &hatoba.GetClusterResponse{
-					GetClusterOutput: &hatoba.GetClusterOutput{
-						Cluster: &hatoba.Cluster{},
-					},
+				res: &hatoba.GetClusterOutput{
+					Cluster: &types.Cluster{},
 				},
 			},
 			want: wantNotFoundRd,
@@ -161,7 +158,7 @@ func TestFlattenCredentials(t *testing.T) {
 	rd.SetId("test_name")
 
 	type args struct {
-		res *hatoba.GetClusterCredentialsResponse
+		res *hatoba.GetClusterCredentialsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -173,10 +170,8 @@ func TestFlattenCredentials(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &hatoba.GetClusterCredentialsResponse{
-					GetClusterCredentialsOutput: &hatoba.GetClusterCredentialsOutput{
-						Credentials: nifcloud.String("kube_config_raw"),
-					},
+				res: &hatoba.GetClusterCredentialsOutput{
+					Credentials: nifcloud.String("kube_config_raw"),
 				},
 			},
 			want: rd,

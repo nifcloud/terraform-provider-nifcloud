@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +23,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribeSeparateInstanceRulesResponse
+		res *computing.NiftyDescribeSeparateInstanceRulesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -34,26 +35,24 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribeSeparateInstanceRulesResponse{
-					NiftyDescribeSeparateInstanceRulesOutput: &computing.NiftyDescribeSeparateInstanceRulesOutput{
-						SeparateInstanceRulesInfo: []computing.SeparateInstanceRulesInfo{
-							{
-								SeparateInstanceRuleName:        nifcloud.String("test_separate_name"),
-								AvailabilityZone:                nifcloud.String("test_availability_zone"),
-								SeparateInstanceRuleDescription: nifcloud.String("test_description"),
-								InstancesSet: []computing.InstancesSetOfNiftyDescribeSeparateInstanceRules{
-									{
-										InstanceId: nifcloud.String("test_instance_id1"),
-									},
-									{
-										InstanceId: nifcloud.String("test_instance_id2"),
-									},
-									{
-										InstanceUniqueId: nifcloud.String("test_instance_unique_id1"),
-									},
-									{
-										InstanceUniqueId: nifcloud.String("test_instance_unique_id2"),
-									},
+				res: &computing.NiftyDescribeSeparateInstanceRulesOutput{
+					SeparateInstanceRulesInfo: []types.SeparateInstanceRulesInfo{
+						{
+							SeparateInstanceRuleName:        nifcloud.String("test_separate_name"),
+							AvailabilityZone:                nifcloud.String("test_availability_zone"),
+							SeparateInstanceRuleDescription: nifcloud.String("test_description"),
+							InstancesSet: []types.InstancesSetOfNiftyDescribeSeparateInstanceRules{
+								{
+									InstanceId: nifcloud.String("test_instance_id1"),
+								},
+								{
+									InstanceId: nifcloud.String("test_instance_id2"),
+								},
+								{
+									InstanceUniqueId: nifcloud.String("test_instance_unique_id1"),
+								},
+								{
+									InstanceUniqueId: nifcloud.String("test_instance_unique_id2"),
 								},
 							},
 						},
@@ -66,10 +65,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribeSeparateInstanceRulesResponse{
-					NiftyDescribeSeparateInstanceRulesOutput: &computing.NiftyDescribeSeparateInstanceRulesOutput{
-						SeparateInstanceRulesInfo: []computing.SeparateInstanceRulesInfo{},
-					},
+				res: &computing.NiftyDescribeSeparateInstanceRulesOutput{
+					SeparateInstanceRulesInfo: []types.SeparateInstanceRulesInfo{},
 				},
 			},
 			want: wantNotFoundRd,

@@ -15,9 +15,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandModifySSLCertificateAttributeInput(d)
 
-		req := svc.ModifySslCertificateAttributeRequest(input)
-
-		_, err := req.Send(ctx)
+		_, err := svc.ModifySslCertificateAttribute(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating SSLCertificate description: %s", err.Error()))
 		}

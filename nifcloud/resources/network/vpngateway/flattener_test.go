@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +32,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeVpnGatewaysResponse
+		res *computing.DescribeVpnGatewaysOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -43,35 +44,33 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeVpnGatewaysResponse{
-					DescribeVpnGatewaysOutput: &computing.DescribeVpnGatewaysOutput{
-						VpnGatewaySet: []computing.VpnGatewaySetOfDescribeVpnGateways{
-							{
-								VpnGatewayId:               nifcloud.String("test_vpngateway_id"),
-								NiftyVpnGatewayName:        nifcloud.String("test_name"),
-								NiftyVpnGatewayType:        nifcloud.String("test_type"),
-								AvailabilityZone:           nifcloud.String("test_availability_zone"),
-								NextMonthAccountingType:    nifcloud.String("test_accounting_type"),
-								NiftyVpnGatewayDescription: nifcloud.String("test_description"),
-								NetworkInterfaceSet: []computing.NetworkInterfaceSetOfDescribeVpnGateways{
-									{
-										NetworkId:   nifcloud.String("test_network_id"),
-										NetworkName: nifcloud.String("test_network_name"),
-										IpAddress:   nifcloud.String("test_ip_address"),
-									},
-									{
-										NetworkId: nifcloud.String("net-COMMON_GLOBAL"),
-										IpAddress: nifcloud.String("test_public_ip_address"),
-									},
+				res: &computing.DescribeVpnGatewaysOutput{
+					VpnGatewaySet: []types.VpnGatewaySetOfDescribeVpnGateways{
+						{
+							VpnGatewayId:               nifcloud.String("test_vpngateway_id"),
+							NiftyVpnGatewayName:        nifcloud.String("test_name"),
+							NiftyVpnGatewayType:        nifcloud.String("test_type"),
+							AvailabilityZone:           nifcloud.String("test_availability_zone"),
+							NextMonthAccountingType:    nifcloud.String("test_accounting_type"),
+							NiftyVpnGatewayDescription: nifcloud.String("test_description"),
+							NetworkInterfaceSet: []types.NetworkInterfaceSetOfDescribeVpnGateways{
+								{
+									NetworkId:   nifcloud.String("test_network_id"),
+									NetworkName: nifcloud.String("test_network_name"),
+									IpAddress:   nifcloud.String("test_ip_address"),
 								},
-								GroupSet: []computing.GroupSet{
-									{
-										GroupId: nifcloud.String("test_security_group"),
-									},
+								{
+									NetworkId: nifcloud.String("net-COMMON_GLOBAL"),
+									IpAddress: nifcloud.String("test_public_ip_address"),
 								},
-								RouteTableId:            nifcloud.String("test_route_table_id"),
-								RouteTableAssociationId: nifcloud.String("test_route_table_association_id"),
 							},
+							GroupSet: []types.GroupSet{
+								{
+									GroupId: nifcloud.String("test_security_group"),
+								},
+							},
+							RouteTableId:            nifcloud.String("test_route_table_id"),
+							RouteTableAssociationId: nifcloud.String("test_route_table_association_id"),
 						},
 					},
 				},
@@ -82,10 +81,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeVpnGatewaysResponse{
-					DescribeVpnGatewaysOutput: &computing.DescribeVpnGatewaysOutput{
-						VpnGatewaySet: []computing.VpnGatewaySetOfDescribeVpnGateways{},
-					},
+				res: &computing.DescribeVpnGatewaysOutput{
+					VpnGatewaySet: []types.VpnGatewaySetOfDescribeVpnGateways{},
 				},
 			},
 			want: wantNotFoundRd,

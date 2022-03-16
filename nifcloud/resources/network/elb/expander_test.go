@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,36 +57,38 @@ func TestExpandNiftyCreateElasticLoadBalancerInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyCreateElasticLoadBalancerInput{
 				ElasticLoadBalancerName: nifcloud.String("test_elb_name"),
-				Listeners: []computing.RequestListenersOfNiftyCreateElasticLoadBalancer{
-					{
-						Protocol:                computing.ProtocolOfListenersForNiftyCreateElasticLoadBalancer("test_protocol"),
-						ElasticLoadBalancerPort: nifcloud.Int64(1),
-						InstancePort:            nifcloud.Int64(1),
-						BalancingType:           nifcloud.Int64(1),
-						Description:             nifcloud.String("test_description"),
-						RequestHealthCheck: &computing.RequestHealthCheckOfNiftyCreateElasticLoadBalancer{
-							Target:             nifcloud.String("test_health_check_target"),
-							Interval:           nifcloud.Int64(1),
-							UnhealthyThreshold: nifcloud.Int64(1),
-						},
-						SSLCertificateId: nifcloud.String("test_ssl_certificate_id"),
-						RequestSession: &computing.RequestSession{
-							RequestStickinessPolicy: &computing.RequestStickinessPolicy{
-								Enable:           nifcloud.Bool(true),
-								Method:           computing.MethodOfListenersForNiftyCreateElasticLoadBalancer("1"),
-								ExpirationPeriod: nifcloud.Int64(1),
+				Listeners: &types.ListOfRequestListenersOfNiftyCreateElasticLoadBalancer{
+					Member: []types.RequestListenersOfNiftyCreateElasticLoadBalancer{
+						{
+							Protocol:                types.ProtocolOfListenersForNiftyCreateElasticLoadBalancer("test_protocol"),
+							ElasticLoadBalancerPort: nifcloud.Int32(1),
+							InstancePort:            nifcloud.Int32(1),
+							BalancingType:           nifcloud.Int32(1),
+							Description:             nifcloud.String("test_description"),
+							RequestHealthCheck: &types.RequestHealthCheckOfNiftyCreateElasticLoadBalancer{
+								Target:             nifcloud.String("test_health_check_target"),
+								Interval:           nifcloud.Int32(1),
+								UnhealthyThreshold: nifcloud.Int32(1),
 							},
-						},
-						RequestSorryPage: &computing.RequestSorryPage{
-							Enable:      nifcloud.Bool(true),
-							RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
+							SSLCertificateId: nifcloud.String("test_ssl_certificate_id"),
+							RequestSession: &types.RequestSession{
+								RequestStickinessPolicy: &types.RequestStickinessPolicy{
+									Enable:           nifcloud.Bool(true),
+									Method:           types.MethodOfListenersForNiftyCreateElasticLoadBalancer("1"),
+									ExpirationPeriod: nifcloud.Int32(1),
+								},
+							},
+							RequestSorryPage: &types.RequestSorryPage{
+								Enable:      nifcloud.Bool(true),
+								RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
+							},
 						},
 					},
 				},
-				AvailabilityZones: []string{"test_availability_zone"},
-				NetworkVolume:     nifcloud.Int64(1),
-				AccountingType:    computing.AccountingTypeOfNiftyCreateElasticLoadBalancerRequest("test_accounting_type"),
-				NetworkInterface: []computing.RequestNetworkInterfaceOfNiftyCreateElasticLoadBalancer{
+				AvailabilityZones: &types.ListOfRequestAvailabilityZones{Member: []string{"test_availability_zone"}},
+				NetworkVolume:     nifcloud.Int32(1),
+				AccountingType:    types.AccountingTypeOfNiftyCreateElasticLoadBalancerRequest("test_accounting_type"),
+				NetworkInterface: []types.RequestNetworkInterfaceOfNiftyCreateElasticLoadBalancer{
 					{
 						NetworkId:    nifcloud.String("test_network_id"),
 						NetworkName:  nifcloud.String("test_network_name"),
@@ -122,10 +125,10 @@ func TestExpandNiftyDescribeElasticLoadBalancersInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.NiftyDescribeElasticLoadBalancersInput{
-				ElasticLoadBalancers: &computing.RequestElasticLoadBalancers{
+				ElasticLoadBalancers: &types.RequestElasticLoadBalancers{
 					ListOfRequestElasticLoadBalancerId:   []string{"test_elb_id"},
-					ListOfRequestElasticLoadBalancerPort: []int64{1},
-					ListOfRequestInstancePort:            []int64{1},
+					ListOfRequestElasticLoadBalancerPort: []int32{1},
+					ListOfRequestInstancePort:            []int32{1},
 					ListOfRequestProtocol:                []string{"test_protocol"},
 				},
 			},
@@ -158,10 +161,10 @@ func TestExpandNiftyDescribeElasticLoadBalancersInputWithName(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.NiftyDescribeElasticLoadBalancersInput{
-				ElasticLoadBalancers: &computing.RequestElasticLoadBalancers{
+				ElasticLoadBalancers: &types.RequestElasticLoadBalancers{
 					ListOfRequestElasticLoadBalancerName: []string{"test_elb_name"},
-					ListOfRequestElasticLoadBalancerPort: []int64{1},
-					ListOfRequestInstancePort:            []int64{1},
+					ListOfRequestElasticLoadBalancerPort: []int32{1},
+					ListOfRequestInstancePort:            []int32{1},
 					ListOfRequestProtocol:                []string{"test_protocol"},
 				},
 			},
@@ -211,13 +214,13 @@ func TestExpandNiftyConfigureElasticLoadBalancerHealthCheckInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyConfigureElasticLoadBalancerHealthCheckInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyConfigureElasticLoadBalancerHealthCheckRequest("test_protocol"),
-				HealthCheck: &computing.RequestHealthCheckOfNiftyConfigureElasticLoadBalancerHealthCheck{
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyConfigureElasticLoadBalancerHealthCheckRequest("test_protocol"),
+				HealthCheck: &types.RequestHealthCheckOfNiftyConfigureElasticLoadBalancerHealthCheck{
 					Target:             nifcloud.String("test_health_check_target"),
-					Interval:           nifcloud.Int64(1),
-					UnhealthyThreshold: nifcloud.Int64(1),
+					Interval:           nifcloud.Int32(1),
+					UnhealthyThreshold: nifcloud.Int32(1),
 				},
 			},
 		},
@@ -226,17 +229,19 @@ func TestExpandNiftyConfigureElasticLoadBalancerHealthCheckInput(t *testing.T) {
 			args: rdWithHTTP,
 			want: &computing.NiftyConfigureElasticLoadBalancerHealthCheckInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyConfigureElasticLoadBalancerHealthCheckRequest("HTTP"),
-				HealthCheck: &computing.RequestHealthCheckOfNiftyConfigureElasticLoadBalancerHealthCheck{
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyConfigureElasticLoadBalancerHealthCheckRequest("HTTP"),
+				HealthCheck: &types.RequestHealthCheckOfNiftyConfigureElasticLoadBalancerHealthCheck{
 					Target:             nifcloud.String("HTTPS:443"),
-					Interval:           nifcloud.Int64(1),
-					UnhealthyThreshold: nifcloud.Int64(1),
+					Interval:           nifcloud.Int32(1),
+					UnhealthyThreshold: nifcloud.Int32(1),
 					Path:               nifcloud.String("test_health_check_path"),
-					ListOfRequestExpectation: []computing.RequestExpectation{
-						{
-							HttpCode: nifcloud.Int64(1),
+					ListOfRequestExpectation: &types.ListOfRequestExpectation{
+						Member: []types.RequestExpectation{
+							{
+								HttpCode: nifcloud.Int32(1),
+							},
 						},
 					},
 				},
@@ -325,43 +330,45 @@ func TestExpandNiftyModifyElasticLoadBalancerAttributesInput(t *testing.T) {
 			args: dn,
 			want: &computing.NiftyModifyElasticLoadBalancerAttributesInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyModifyElasticLoadBalancerAttributesRequest("test_protocol"),
-				LoadBalancerAttributes: &computing.RequestLoadBalancerAttributes{
-					RequestSession: &computing.RequestSessionOfNiftyModifyElasticLoadBalancerAttributes{
-						RequestStickinessPolicy: &computing.RequestStickinessPolicyOfNiftyModifyElasticLoadBalancerAttributes{
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyModifyElasticLoadBalancerAttributesRequest("test_protocol"),
+				LoadBalancerAttributes: &types.RequestLoadBalancerAttributes{
+					RequestSession: &types.RequestSessionOfNiftyModifyElasticLoadBalancerAttributes{
+						RequestStickinessPolicy: &types.RequestStickinessPolicyOfNiftyModifyElasticLoadBalancerAttributes{
 							Enable: nifcloud.Bool(true),
-							Method: computing.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
+							Method: types.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
 								"1",
 							),
-							ExpirationPeriod: nifcloud.Int64(1),
+							ExpirationPeriod: nifcloud.Int32(1),
 						},
 					},
-					RequestSorryPage: &computing.RequestSorryPage{
+					RequestSorryPage: &types.RequestSorryPage{
 						Enable:      nifcloud.Bool(true),
 						RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
 					},
-					ListOfRequestAdditionalAttributes: []computing.RequestAdditionalAttributes{
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesProtocol,
-							Value: nifcloud.String("test_protocol"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesDescription,
-							Value: nifcloud.String("test_description"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesElasticLoadBalancerPort,
-							Value: nifcloud.String("1"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesInstancePort,
-							Value: nifcloud.String("1"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesBalancingType,
-							Value: nifcloud.String("1"),
+					ListOfRequestAdditionalAttributes: &types.ListOfRequestAdditionalAttributes{
+						Member: []types.RequestAdditionalAttributes{
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesProtocol,
+								Value: nifcloud.String("test_protocol"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesDescription,
+								Value: nifcloud.String("test_description"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesElasticLoadBalancerPort,
+								Value: nifcloud.String("1"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesInstancePort,
+								Value: nifcloud.String("1"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesBalancingType,
+								Value: nifcloud.String("1"),
+							},
 						},
 					},
 				},
@@ -372,47 +379,49 @@ func TestExpandNiftyModifyElasticLoadBalancerAttributesInput(t *testing.T) {
 			args: dnWithHTTPS,
 			want: &computing.NiftyModifyElasticLoadBalancerAttributesInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyModifyElasticLoadBalancerAttributesRequest("HTTPS"),
-				LoadBalancerAttributes: &computing.RequestLoadBalancerAttributes{
-					RequestSession: &computing.RequestSessionOfNiftyModifyElasticLoadBalancerAttributes{
-						RequestStickinessPolicy: &computing.RequestStickinessPolicyOfNiftyModifyElasticLoadBalancerAttributes{
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyModifyElasticLoadBalancerAttributesRequest("HTTPS"),
+				LoadBalancerAttributes: &types.RequestLoadBalancerAttributes{
+					RequestSession: &types.RequestSessionOfNiftyModifyElasticLoadBalancerAttributes{
+						RequestStickinessPolicy: &types.RequestStickinessPolicyOfNiftyModifyElasticLoadBalancerAttributes{
 							Enable: nifcloud.Bool(true),
-							Method: computing.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
+							Method: types.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
 								"1",
 							),
-							ExpirationPeriod: nifcloud.Int64(1),
+							ExpirationPeriod: nifcloud.Int32(1),
 						},
 					},
-					RequestSorryPage: &computing.RequestSorryPage{
+					RequestSorryPage: &types.RequestSorryPage{
 						Enable:      nifcloud.Bool(true),
 						RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
 					},
-					ListOfRequestAdditionalAttributes: []computing.RequestAdditionalAttributes{
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesProtocol,
-							Value: nifcloud.String("HTTPS"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesDescription,
-							Value: nifcloud.String("test_description"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesElasticLoadBalancerPort,
-							Value: nifcloud.String("1"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesInstancePort,
-							Value: nifcloud.String("1"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesBalancingType,
-							Value: nifcloud.String("1"),
-						},
-						{
-							Key:   computing.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesSslCertificateId,
-							Value: nifcloud.String("test_ssl_certificate_id"),
+					ListOfRequestAdditionalAttributes: &types.ListOfRequestAdditionalAttributes{
+						Member: []types.RequestAdditionalAttributes{
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesProtocol,
+								Value: nifcloud.String("HTTPS"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesDescription,
+								Value: nifcloud.String("test_description"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesElasticLoadBalancerPort,
+								Value: nifcloud.String("1"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesInstancePort,
+								Value: nifcloud.String("1"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesBalancingType,
+								Value: nifcloud.String("1"),
+							},
+							{
+								Key:   types.KeyOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributesSslCertificateId,
+								Value: nifcloud.String("test_ssl_certificate_id"),
+							},
 						},
 					},
 				},
@@ -449,8 +458,8 @@ func TestExpandNiftyUpdateElasticLoadBalancerInput(t *testing.T) {
 			args: dn,
 			want: &computing.NiftyUpdateElasticLoadBalancerInput{
 				ElasticLoadBalancerId: nifcloud.String("test_elb_id"),
-				AccountingTypeUpdate:  nifcloud.Int64(1),
-				NetworkVolumeUpdate:   nifcloud.Int64(1),
+				AccountingTypeUpdate:  nifcloud.Int32(1),
+				NetworkVolumeUpdate:   nifcloud.Int32(1),
 			},
 		},
 	}
@@ -483,12 +492,14 @@ func TestExpandNiftyDeregisterInstancesFromElasticLoadBalancerInput(t *testing.T
 			args: rd,
 			want: &computing.NiftyDeregisterInstancesFromElasticLoadBalancerInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyDeregisterInstancesFromElasticLoadBalancerRequest("test_protocol"),
-				Instances: []computing.RequestInstancesOfNiftyDeregisterInstancesFromElasticLoadBalancer{
-					{
-						InstanceId: nifcloud.String("test_instances"),
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyDeregisterInstancesFromElasticLoadBalancerRequest("test_protocol"),
+				Instances: &types.ListOfRequestInstancesOfNiftyDeregisterInstancesFromElasticLoadBalancer{
+					Member: []types.RequestInstancesOfNiftyDeregisterInstancesFromElasticLoadBalancer{
+						{
+							InstanceId: nifcloud.String("test_instances"),
+						},
 					},
 				},
 			},
@@ -523,12 +534,14 @@ func TestExpandNiftyRegisterInstancesWithElasticLoadBalancerInput(t *testing.T) 
 			args: rd,
 			want: &computing.NiftyRegisterInstancesWithElasticLoadBalancerInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyRegisterInstancesWithElasticLoadBalancerRequest("test_protocol"),
-				Instances: []computing.RequestInstancesOfNiftyRegisterInstancesWithElasticLoadBalancer{
-					{
-						InstanceId: nifcloud.String("test_instances"),
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyRegisterInstancesWithElasticLoadBalancerRequest("test_protocol"),
+				Instances: &types.ListOfRequestInstancesOfNiftyRegisterInstancesWithElasticLoadBalancer{
+					Member: []types.RequestInstancesOfNiftyRegisterInstancesWithElasticLoadBalancer{
+						{
+							InstanceId: nifcloud.String("test_instances"),
+						},
 					},
 				},
 			},
@@ -653,9 +666,9 @@ func TestExpandNiftyDeleteNiftyElasticLoadBalancerInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyDeleteElasticLoadBalancerInput{
 				ElasticLoadBalancerId:   nifcloud.String("test_elb_id"),
-				ElasticLoadBalancerPort: nifcloud.Int64(1),
-				InstancePort:            nifcloud.Int64(1),
-				Protocol:                computing.ProtocolOfNiftyDeleteElasticLoadBalancerRequest("test_protocol"),
+				ElasticLoadBalancerPort: nifcloud.Int32(1),
+				InstancePort:            nifcloud.Int32(1),
+				Protocol:                types.ProtocolOfNiftyDeleteElasticLoadBalancerRequest("test_protocol"),
 			},
 		},
 	}

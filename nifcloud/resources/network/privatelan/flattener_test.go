@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribePrivateLansResponse
+		res *computing.NiftyDescribePrivateLansOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -36,18 +37,16 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribePrivateLansResponse{
-					NiftyDescribePrivateLansOutput: &computing.NiftyDescribePrivateLansOutput{
-						PrivateLanSet: []computing.PrivateLanSet{
-							{
-								AvailabilityZone:        nifcloud.String("test_availability_zone"),
-								CidrBlock:               nifcloud.String("test_cidr_block"),
-								Description:             nifcloud.String("test_description"),
-								PrivateLanName:          nifcloud.String("test_network_id"),
-								State:                   nifcloud.String("test_state"),
-								NetworkId:               nifcloud.String("test_network_id"),
-								NextMonthAccountingType: nifcloud.String("test_accounting_type"),
-							},
+				res: &computing.NiftyDescribePrivateLansOutput{
+					PrivateLanSet: []types.PrivateLanSet{
+						{
+							AvailabilityZone:        nifcloud.String("test_availability_zone"),
+							CidrBlock:               nifcloud.String("test_cidr_block"),
+							Description:             nifcloud.String("test_description"),
+							PrivateLanName:          nifcloud.String("test_network_id"),
+							State:                   nifcloud.String("test_state"),
+							NetworkId:               nifcloud.String("test_network_id"),
+							NextMonthAccountingType: nifcloud.String("test_accounting_type"),
 						},
 					},
 				},
@@ -58,10 +57,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribePrivateLansResponse{
-					NiftyDescribePrivateLansOutput: &computing.NiftyDescribePrivateLansOutput{
-						PrivateLanSet: []computing.PrivateLanSet{},
-					},
+				res: &computing.NiftyDescribePrivateLansOutput{
+					PrivateLanSet: []types.PrivateLanSet{},
 				},
 			},
 			want: wantNotFoundRd,

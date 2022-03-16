@@ -13,9 +13,8 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandReleaseAddressInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.ReleaseAddressRequest(input)
+	_, err := svc.ReleaseAddress(ctx, input)
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

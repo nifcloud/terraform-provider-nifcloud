@@ -8,18 +8,19 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/acc/helper"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func TestAcc_ELBListener(t *testing.T) {
-	var listener computing.ListenerOfNiftyDescribeElasticLoadBalancers
+	var listener types.ListenerOfNiftyDescribeElasticLoadBalancers
 
 	resourceName := "nifcloud_elb_listener.basic"
 	randName := prefix + acctest.RandString(7)
@@ -110,7 +111,7 @@ func testAccELBListener(t *testing.T, fileName, rName, certificate, key, ca stri
 	)
 }
 
-func testAccCheckELBListenerExists(n, elbName, protocol string, InstancePort, LBPort int64, listener *computing.ListenerOfNiftyDescribeElasticLoadBalancers) resource.TestCheckFunc {
+func testAccCheckELBListenerExists(n, elbName, protocol string, InstancePort, LBPort int32, listener *types.ListenerOfNiftyDescribeElasticLoadBalancers) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -122,27 +123,27 @@ func testAccCheckELBListenerExists(n, elbName, protocol string, InstancePort, LB
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.NiftyDescribeElasticLoadBalancersRequest(&computing.NiftyDescribeElasticLoadBalancersInput{
-			ElasticLoadBalancers: &computing.RequestElasticLoadBalancers{
+		res, err := svc.NiftyDescribeElasticLoadBalancers(context.Background(), &computing.NiftyDescribeElasticLoadBalancersInput{
+			ElasticLoadBalancers: &types.RequestElasticLoadBalancers{
 				ListOfRequestElasticLoadBalancerName: []string{elbName},
 				ListOfRequestProtocol:                []string{protocol},
-				ListOfRequestElasticLoadBalancerPort: []int64{LBPort},
-				ListOfRequestInstancePort:            []int64{InstancePort},
+				ListOfRequestElasticLoadBalancerPort: []int32{LBPort},
+				ListOfRequestInstancePort:            []int32{InstancePort},
 			},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
 		}
 
-		if res == nil || len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
 		}
 
-		foundELB := res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions[0]
+		foundELB := res.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions[0]
 		foundListener := foundELB.ElasticLoadBalancerListenerDescriptions[0].Listener
 
-		if nifcloud.StringValue(foundELB.ElasticLoadBalancerId) != strings.Split(saved.Primary.ID, "_")[0] {
+		if nifcloud.ToString(foundELB.ElasticLoadBalancerId) != strings.Split(saved.Primary.ID, "_")[0] {
 			return fmt.Errorf("elb does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -151,147 +152,147 @@ func testAccCheckELBListenerExists(n, elbName, protocol string, InstancePort, LB
 	}
 }
 
-func testAccCheckELBListenerValues(listener *computing.ListenerOfNiftyDescribeElasticLoadBalancers, rName string) resource.TestCheckFunc {
+func testAccCheckELBListenerValues(listener *types.ListenerOfNiftyDescribeElasticLoadBalancers, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
-		if nifcloud.StringValue(listener.Description) != "memo" {
+		if nifcloud.ToString(listener.Description) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", listener.Description)
 		}
 
-		if nifcloud.Int64Value(listener.BalancingType) != 2 {
+		if nifcloud.ToInt32(listener.BalancingType) != 2 {
 			return fmt.Errorf("bad balancing_type state, expected \"2\", got: %#v", listener.BalancingType)
 		}
 
-		if nifcloud.Int64Value(listener.InstancePort) != 3000 {
+		if nifcloud.ToInt32(listener.InstancePort) != 3000 {
 			return fmt.Errorf("bad instance_port state, expected \"3000\", got: %#v", listener.InstancePort)
 		}
 
-		if nifcloud.StringValue(listener.Protocol) != "HTTPS" {
+		if nifcloud.ToString(listener.Protocol) != "HTTPS" {
 			return fmt.Errorf("bad protocol state, expected \"HTTPS\", got: %#v", listener.Protocol)
 		}
 
-		if nifcloud.Int64Value(listener.ElasticLoadBalancerPort) != 443 {
+		if nifcloud.ToInt32(listener.ElasticLoadBalancerPort) != 443 {
 			return fmt.Errorf("bad lb_port state, expected \"443\", got: %#v", listener.ElasticLoadBalancerPort)
 		}
 
-		if nifcloud.StringValue(listener.SSLCertificateId) == "" {
+		if nifcloud.ToString(listener.SSLCertificateId) == "" {
 			return fmt.Errorf("bad ssl_certificate_id state, expected \"not null\", got: %#v", listener.SSLCertificateId)
 		}
 
-		if nifcloud.Int64Value(listener.HealthCheck.UnhealthyThreshold) != 2 {
+		if nifcloud.ToInt32(listener.HealthCheck.UnhealthyThreshold) != 2 {
 			return fmt.Errorf("bad unhealthy_threshold state, expected \"2\", got: %#v", listener.HealthCheck.UnhealthyThreshold)
 		}
 
-		if nifcloud.StringValue(listener.HealthCheck.Target) != "HTTP:3000" {
+		if nifcloud.ToString(listener.HealthCheck.Target) != "HTTP:3000" {
 			return fmt.Errorf("bad health_check_target state, expected \"HTTP:3000\", got: %#v", listener.HealthCheck.Target)
 		}
 
-		if nifcloud.Int64Value(listener.HealthCheck.Interval) != 10 {
+		if nifcloud.ToInt32(listener.HealthCheck.Interval) != 10 {
 			return fmt.Errorf("bad health_check_interval state, expected \"10\", got: %#v", listener.HealthCheck.Interval)
 		}
 
-		if nifcloud.StringValue(listener.HealthCheck.Path) != "/health" {
+		if nifcloud.ToString(listener.HealthCheck.Path) != "/health" {
 			return fmt.Errorf("bad health_check_path state, expected \"/health\", got: %#v", listener.HealthCheck.Path)
 		}
 
-		if nifcloud.Int64Value(listener.HealthCheck.Expectation[0].HttpCode) != 200 {
+		if nifcloud.ToInt32(listener.HealthCheck.Expectation[0].HttpCode) != 200 {
 			return fmt.Errorf("bad health_check_expectation_http_code state, expected \"/200\", got: %#v", listener.HealthCheck.Expectation[0].HttpCode)
 		}
 
-		if nifcloud.StringValue(listener.Instances[0].InstanceId) != rName {
+		if nifcloud.ToString(listener.Instances[0].InstanceId) != rName {
 			return fmt.Errorf("bad instances state, expected \"%s\", got: %#v", rName, listener.Instances[0].InstanceId)
 		}
 
-		if nifcloud.BoolValue(listener.SessionStickinessPolicy.Enabled) != true {
+		if nifcloud.ToBool(listener.SessionStickinessPolicy.Enabled) != true {
 			return fmt.Errorf("bad session_stickiness_policy_enable state, expected \"true\", got: %#v", listener.SessionStickinessPolicy.Enabled)
 		}
 
-		if nifcloud.Int64Value(listener.SessionStickinessPolicy.Method) != 1 {
+		if nifcloud.ToInt32(listener.SessionStickinessPolicy.Method) != 1 {
 			return fmt.Errorf("bad session_stickiness_policy_method state, expected \"1\", got: %#v", listener.SessionStickinessPolicy.Method)
 		}
 
-		if nifcloud.Int64Value(listener.SessionStickinessPolicy.ExpirationPeriod) != 4 {
+		if nifcloud.ToInt32(listener.SessionStickinessPolicy.ExpirationPeriod) != 4 {
 			return fmt.Errorf("bad session_stickiness_policy_expiration_period state, expected \"4\", got: %#v", listener.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.BoolValue(listener.SorryPage.Enabled) != true {
+		if nifcloud.ToBool(listener.SorryPage.Enabled) != true {
 			return fmt.Errorf("bad sorry_page_enable state, expected \"true\", got: %#v", listener.SorryPage.Enabled)
 		}
 
-		if nifcloud.StringValue(listener.SorryPage.RedirectUrl) != "https://example.com" {
+		if nifcloud.ToString(listener.SorryPage.RedirectUrl) != "https://example.com" {
 			return fmt.Errorf("bad session_stickiness_policy_expiration_period state, expected \"https://example.com\", got: %#v", listener.SorryPage.RedirectUrl)
 		}
 		return nil
 	}
 }
 
-func testAccCheckELBListenerValuesUpdated(listener *computing.ListenerOfNiftyDescribeElasticLoadBalancers, rName string) resource.TestCheckFunc {
+func testAccCheckELBListenerValuesUpdated(listener *types.ListenerOfNiftyDescribeElasticLoadBalancers, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(listener.Description) != "memo-upd" {
+		if nifcloud.ToString(listener.Description) != "memo-upd" {
 			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", listener.Description)
 		}
 
-		if nifcloud.Int64Value(listener.BalancingType) != 1 {
+		if nifcloud.ToInt32(listener.BalancingType) != 1 {
 			return fmt.Errorf("bad balancing_type state, expected \"1\", got: %#v", listener.BalancingType)
 		}
 
-		if nifcloud.Int64Value(listener.InstancePort) != 3001 {
+		if nifcloud.ToInt32(listener.InstancePort) != 3001 {
 			return fmt.Errorf("bad instance_port state, expected \"3001\", got: %#v", listener.InstancePort)
 		}
 
-		if nifcloud.StringValue(listener.Protocol) != "HTTP" {
+		if nifcloud.ToString(listener.Protocol) != "HTTP" {
 			return fmt.Errorf("bad protocol state, expected \"HTTP\", got: %#v", listener.Protocol)
 		}
 
-		if nifcloud.Int64Value(listener.ElasticLoadBalancerPort) != 8080 {
+		if nifcloud.ToInt32(listener.ElasticLoadBalancerPort) != 8080 {
 			return fmt.Errorf("bad lb_port state, expected \"8080\", got: %#v", listener.ElasticLoadBalancerPort)
 		}
 
-		if nifcloud.StringValue(listener.SSLCertificateId) != "" {
+		if nifcloud.ToString(listener.SSLCertificateId) != "" {
 			return fmt.Errorf("bad ssl_certificate_id state, expected \"null\", got: %#v", listener.SSLCertificateId)
 		}
 
-		if nifcloud.Int64Value(listener.HealthCheck.UnhealthyThreshold) != 3 {
+		if nifcloud.ToInt32(listener.HealthCheck.UnhealthyThreshold) != 3 {
 			return fmt.Errorf("bad unhealthy_threshold state, expected \"3\", got: %#v", listener.HealthCheck.UnhealthyThreshold)
 		}
 
-		if nifcloud.StringValue(listener.HealthCheck.Target) != "HTTP:3001" {
+		if nifcloud.ToString(listener.HealthCheck.Target) != "HTTP:3001" {
 			return fmt.Errorf("bad health_check_target state, expected \"HTTP:3001\", got: %#v", listener.HealthCheck.Target)
 		}
 
-		if nifcloud.Int64Value(listener.HealthCheck.Interval) != 11 {
+		if nifcloud.ToInt32(listener.HealthCheck.Interval) != 11 {
 			return fmt.Errorf("bad health_check_interval state, expected \"11\", got: %#v", listener.HealthCheck.Interval)
 		}
 
-		if nifcloud.StringValue(listener.HealthCheck.Path) != "/health-upd" {
+		if nifcloud.ToString(listener.HealthCheck.Path) != "/health-upd" {
 			return fmt.Errorf("bad health_check_path state, expected \"/health\", got: %#v", listener.HealthCheck.Path)
 		}
 
-		if nifcloud.Int64Value(listener.HealthCheck.Expectation[0].HttpCode) != 302 {
+		if nifcloud.ToInt32(listener.HealthCheck.Expectation[0].HttpCode) != 302 {
 			return fmt.Errorf("bad health_check_expectation_http_code state, expected \"/302\", got: %#v", listener.HealthCheck.Expectation[0].HttpCode)
 		}
 
-		if nifcloud.StringValue(listener.Instances[0].InstanceId) != rName+"upd" {
+		if nifcloud.ToString(listener.Instances[0].InstanceId) != rName+"upd" {
 			return fmt.Errorf("bad instances state, expected \"%s\", got: %#v", rName+"upd", listener.Instances[0].InstanceId)
 		}
 
-		if nifcloud.BoolValue(listener.SessionStickinessPolicy.Enabled) != true {
+		if nifcloud.ToBool(listener.SessionStickinessPolicy.Enabled) != true {
 			return fmt.Errorf("bad session_stickiness_policy_enable state, expected \"true\", got: %#v", listener.SessionStickinessPolicy.Enabled)
 		}
 
-		if nifcloud.Int64Value(listener.SessionStickinessPolicy.Method) != 2 {
+		if nifcloud.ToInt32(listener.SessionStickinessPolicy.Method) != 2 {
 			return fmt.Errorf("bad session_stickiness_policy_method state, expected \"2\", got: %#v", listener.SessionStickinessPolicy.Method)
 		}
 
-		if nifcloud.Int64Value(listener.SessionStickinessPolicy.ExpirationPeriod) != 5 {
+		if nifcloud.ToInt32(listener.SessionStickinessPolicy.ExpirationPeriod) != 5 {
 			return fmt.Errorf("bad session_stickiness_policy_expiration_period state, expected \"5\", got: %#v", listener.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.BoolValue(listener.SorryPage.Enabled) != true {
+		if nifcloud.ToBool(listener.SorryPage.Enabled) != true {
 			return fmt.Errorf("bad sorry_page_enable state, expected \"true\", got: %#v", listener.SorryPage.Enabled)
 		}
 
-		if nifcloud.StringValue(listener.SorryPage.RedirectUrl) != "http://example.com" {
+		if nifcloud.ToString(listener.SorryPage.RedirectUrl) != "http://example.com" {
 			return fmt.Errorf("bad session_stickiness_policy_expiration_period state, expected \"http://example.com\", got: %#v", listener.SorryPage.RedirectUrl)
 		}
 
@@ -307,21 +308,21 @@ func testAccELBListenerResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.NiftyDescribeElasticLoadBalancersRequest(&computing.NiftyDescribeElasticLoadBalancersInput{
-			ElasticLoadBalancers: &computing.RequestElasticLoadBalancers{
+		res, err := svc.NiftyDescribeElasticLoadBalancers(context.Background(), &computing.NiftyDescribeElasticLoadBalancersInput{
+			ElasticLoadBalancers: &types.RequestElasticLoadBalancers{
 				ListOfRequestElasticLoadBalancerId: []string{strings.Split(rs.Primary.ID, "_")[0]},
 			},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.ElasticLoadBalancer" {
 				return nil
 			}
 			return fmt.Errorf("failed NiftyDescribeElasticLoadBalancersRequest: %s", err)
 		}
 
-		if len(res.NiftyDescribeElasticLoadBalancersOutput.ElasticLoadBalancerDescriptions) > 0 {
+		if len(res.NiftyDescribeElasticLoadBalancersResult.ElasticLoadBalancerDescriptions) > 0 {
 			return fmt.Errorf("elb listener (%s) still exists", rs.Primary.ID)
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +39,7 @@ func TestFlattenProtocolTcp(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribeNatTablesResponse
+		res *computing.NiftyDescribeNatTablesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -50,45 +51,43 @@ func TestFlattenProtocolTcp(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribeNatTablesResponse{
-					NiftyDescribeNatTablesOutput: &computing.NiftyDescribeNatTablesOutput{
-						NatTableSet: []computing.NatTableSet{
-							{
-								NatTableId: nifcloud.String("test_nat_table_id"),
-								NatRuleSet: []computing.NatRuleSet{
-									{
-										NatType:     nifcloud.String("snat"),
-										RuleNumber:  nifcloud.String("1"),
-										Description: nifcloud.String("test_description"),
-										Protocol:    nifcloud.String("TCP"),
-										Source: &computing.Source{
-											Address: nifcloud.String("192.0.2.1"),
-											Port:    nifcloud.Int64(80),
-										},
-										Translation: &computing.Translation{
-											Port: nifcloud.Int64(81),
-										},
-										OutboundInterface: &computing.OutboundInterface{
-											NetworkId:   nifcloud.String("test_network_id"),
-											NetworkName: nifcloud.String("test_network_bame"),
-										},
+				res: &computing.NiftyDescribeNatTablesOutput{
+					NatTableSet: []types.NatTableSet{
+						{
+							NatTableId: nifcloud.String("test_nat_table_id"),
+							NatRuleSet: []types.NatRuleSet{
+								{
+									NatType:     nifcloud.String("snat"),
+									RuleNumber:  nifcloud.String("1"),
+									Description: nifcloud.String("test_description"),
+									Protocol:    nifcloud.String("TCP"),
+									Source: &types.Source{
+										Address: nifcloud.String("192.0.2.1"),
+										Port:    nifcloud.Int32(80),
 									},
-									{
-										NatType:     nifcloud.String("dnat"),
-										RuleNumber:  nifcloud.String("1"),
-										Description: nifcloud.String("test_description"),
-										Protocol:    nifcloud.String("TCP"),
-										Destination: &computing.Destination{
-											Port: nifcloud.Int64(80),
-										},
-										Translation: &computing.Translation{
-											Address: nifcloud.String("192.0.2.1"),
-											Port:    nifcloud.Int64(81),
-										},
-										InboundInterface: &computing.InboundInterface{
-											NetworkId:   nifcloud.String("test_network_id"),
-											NetworkName: nifcloud.String("test_network_bame"),
-										},
+									Translation: &types.Translation{
+										Port: nifcloud.Int32(81),
+									},
+									OutboundInterface: &types.OutboundInterface{
+										NetworkId:   nifcloud.String("test_network_id"),
+										NetworkName: nifcloud.String("test_network_bame"),
+									},
+								},
+								{
+									NatType:     nifcloud.String("dnat"),
+									RuleNumber:  nifcloud.String("1"),
+									Description: nifcloud.String("test_description"),
+									Protocol:    nifcloud.String("TCP"),
+									Destination: &types.Destination{
+										Port: nifcloud.Int32(80),
+									},
+									Translation: &types.Translation{
+										Address: nifcloud.String("192.0.2.1"),
+										Port:    nifcloud.Int32(81),
+									},
+									InboundInterface: &types.InboundInterface{
+										NetworkId:   nifcloud.String("test_network_id"),
+										NetworkName: nifcloud.String("test_network_bame"),
 									},
 								},
 							},
@@ -102,10 +101,8 @@ func TestFlattenProtocolTcp(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribeNatTablesResponse{
-					NiftyDescribeNatTablesOutput: &computing.NiftyDescribeNatTablesOutput{
-						NatTableSet: []computing.NatTableSet{},
-					},
+				res: &computing.NiftyDescribeNatTablesOutput{
+					NatTableSet: []types.NatTableSet{},
 				},
 			},
 			want: wantNotFoundRd,
@@ -163,7 +160,7 @@ func TestFlattenProtocolAll(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribeNatTablesResponse
+		res *computing.NiftyDescribeNatTablesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -175,37 +172,35 @@ func TestFlattenProtocolAll(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribeNatTablesResponse{
-					NiftyDescribeNatTablesOutput: &computing.NiftyDescribeNatTablesOutput{
-						NatTableSet: []computing.NatTableSet{
-							{
-								NatTableId: nifcloud.String("test_nat_table_id"),
-								NatRuleSet: []computing.NatRuleSet{
-									{
-										NatType:     nifcloud.String("snat"),
-										RuleNumber:  nifcloud.String("1"),
-										Description: nifcloud.String("test_description"),
-										Protocol:    nifcloud.String("ALL"),
-										Source: &computing.Source{
-											Address: nifcloud.String("192.0.2.1"),
-										},
-										OutboundInterface: &computing.OutboundInterface{
-											NetworkId:   nifcloud.String("test_network_id"),
-											NetworkName: nifcloud.String("test_network_bame"),
-										},
+				res: &computing.NiftyDescribeNatTablesOutput{
+					NatTableSet: []types.NatTableSet{
+						{
+							NatTableId: nifcloud.String("test_nat_table_id"),
+							NatRuleSet: []types.NatRuleSet{
+								{
+									NatType:     nifcloud.String("snat"),
+									RuleNumber:  nifcloud.String("1"),
+									Description: nifcloud.String("test_description"),
+									Protocol:    nifcloud.String("ALL"),
+									Source: &types.Source{
+										Address: nifcloud.String("192.0.2.1"),
 									},
-									{
-										NatType:     nifcloud.String("dnat"),
-										RuleNumber:  nifcloud.String("1"),
-										Description: nifcloud.String("test_description"),
-										Protocol:    nifcloud.String("ALL"),
-										Translation: &computing.Translation{
-											Address: nifcloud.String("192.0.2.1"),
-										},
-										InboundInterface: &computing.InboundInterface{
-											NetworkId:   nifcloud.String("test_network_id"),
-											NetworkName: nifcloud.String("test_network_bame"),
-										},
+									OutboundInterface: &types.OutboundInterface{
+										NetworkId:   nifcloud.String("test_network_id"),
+										NetworkName: nifcloud.String("test_network_bame"),
+									},
+								},
+								{
+									NatType:     nifcloud.String("dnat"),
+									RuleNumber:  nifcloud.String("1"),
+									Description: nifcloud.String("test_description"),
+									Protocol:    nifcloud.String("ALL"),
+									Translation: &types.Translation{
+										Address: nifcloud.String("192.0.2.1"),
+									},
+									InboundInterface: &types.InboundInterface{
+										NetworkId:   nifcloud.String("test_network_id"),
+										NetworkName: nifcloud.String("test_network_bame"),
 									},
 								},
 							},
@@ -219,10 +214,8 @@ func TestFlattenProtocolAll(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribeNatTablesResponse{
-					NiftyDescribeNatTablesOutput: &computing.NiftyDescribeNatTablesOutput{
-						NatTableSet: []computing.NatTableSet{},
-					},
+				res: &computing.NiftyDescribeNatTablesOutput{
+					NatTableSet: []types.NatTableSet{},
 				},
 			},
 			want: wantNotFoundRd,

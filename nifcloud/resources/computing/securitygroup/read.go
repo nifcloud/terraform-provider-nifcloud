@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
@@ -14,22 +15,21 @@ import (
 
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDescribeSecurityGroupsInput(d)
+	deadline, _ := ctx.Deadline()
 
 	svc := meta.(*client.Client).Computing
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}})
+		err := computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{d.Id()}}, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 		}
 	}
 
-	req := svc.DescribeSecurityGroupsRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.DescribeSecurityGroups(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroup" {
 			d.SetId("")
 			return nil
 		}

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,8 +38,8 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		groups     *rdb.DescribeDBParameterGroupsResponse
-		parameters []rdb.Parameters
+		groups     *rdb.DescribeDBParameterGroupsOutput
+		parameters []types.Parameters
 		d          *schema.ResourceData
 	}
 	tests := []struct {
@@ -50,18 +51,16 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				groups: &rdb.DescribeDBParameterGroupsResponse{
-					DescribeDBParameterGroupsOutput: &rdb.DescribeDBParameterGroupsOutput{
-						DBParameterGroups: []rdb.DBParameterGroupsOfDescribeDBParameterGroups{
-							{
-								DBParameterGroupName:   nifcloud.String("test_name"),
-								DBParameterGroupFamily: nifcloud.String("test_family"),
-								Description:            nifcloud.String("test_description"),
-							},
+				groups: &rdb.DescribeDBParameterGroupsOutput{
+					DBParameterGroups: []types.DBParameterGroupsOfDescribeDBParameterGroups{
+						{
+							DBParameterGroupName:   nifcloud.String("test_name"),
+							DBParameterGroupFamily: nifcloud.String("test_family"),
+							Description:            nifcloud.String("test_description"),
 						},
 					},
 				},
-				parameters: []rdb.Parameters{
+				parameters: []types.Parameters{
 					{
 						ParameterName:  nifcloud.String("test_name_01"),
 						ParameterValue: nifcloud.String("test_value_01"),
@@ -91,12 +90,10 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				groups: &rdb.DescribeDBParameterGroupsResponse{
-					DescribeDBParameterGroupsOutput: &rdb.DescribeDBParameterGroupsOutput{
-						DBParameterGroups: []rdb.DBParameterGroupsOfDescribeDBParameterGroups{},
-					},
+				groups: &rdb.DescribeDBParameterGroupsOutput{
+					DBParameterGroups: []types.DBParameterGroupsOfDescribeDBParameterGroups{},
 				},
-				parameters: []rdb.Parameters{},
+				parameters: []types.Parameters{},
 			},
 			want: wantNotFoundRd,
 		},

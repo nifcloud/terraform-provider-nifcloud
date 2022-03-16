@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,7 +53,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *rdb.DescribeDBInstancesResponse
+		res *rdb.DescribeDBInstancesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -64,41 +65,39 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &rdb.DescribeDBInstancesResponse{
-					DescribeDBInstancesOutput: &rdb.DescribeDBInstancesOutput{
-						DBInstances: []rdb.DBInstances{
-							{
-								AccountingType:          nifcloud.String("1"),
-								AllocatedStorage:        nifcloud.Int64(1),
-								AvailabilityZone:        nifcloud.String("test_availability_zone"),
-								BackupRetentionPeriod:   nifcloud.Int64(1),
-								BinlogRetentionPeriod:   nifcloud.Int64(1),
-								CACertificateIdentifier: nifcloud.String("test_ca_cert_identifier"),
-								DBInstanceClass:         nifcloud.String("test_instance_class"),
-								DBInstanceIdentifier:    nifcloud.String("test_identifier"),
-								DBName:                  nifcloud.String("test_db_name"),
-								DBParameterGroups: []rdb.DBParameterGroups{{
-									DBParameterGroupName: nifcloud.String("test_parameter_group_name")},
-								},
-								DBSecurityGroups: []rdb.DBSecurityGroups{{
-									DBSecurityGroupName: nifcloud.String("test_db_security_group_name")},
-								},
-								Endpoint:                              &rdb.Endpoint{Address: nifcloud.String("address")},
-								Engine:                                nifcloud.String("test_engine"),
-								EngineVersion:                         nifcloud.String("test_engine_version"),
-								MasterUsername:                        nifcloud.String("test_username"),
-								MultiAZ:                               nifcloud.Bool(true),
-								NextMonthAccountingType:               nifcloud.String("1"),
-								NiftyMasterPrivateAddress:             nifcloud.String("test_master_private_address"),
-								NiftyMultiAZType:                      nifcloud.String("1"),
-								NiftyNetworkId:                        nifcloud.String("test_network_id"),
-								NiftySlavePrivateAddress:              nifcloud.String("test_slave_private_address"),
-								NiftyStorageType:                      nifcloud.Int64(1),
-								PreferredBackupWindow:                 nifcloud.String("test_backup_window"),
-								PreferredMaintenanceWindow:            nifcloud.String("test_maintenance_window"),
-								PubliclyAccessible:                    nifcloud.Bool(true),
-								ReadReplicaSourceDBInstanceIdentifier: nifcloud.String("test_replicate_source_db"),
+				res: &rdb.DescribeDBInstancesOutput{
+					DBInstances: []types.DBInstances{
+						{
+							AccountingType:          nifcloud.String("1"),
+							AllocatedStorage:        nifcloud.Int32(1),
+							AvailabilityZone:        nifcloud.String("test_availability_zone"),
+							BackupRetentionPeriod:   nifcloud.Int32(1),
+							BinlogRetentionPeriod:   nifcloud.Int32(1),
+							CACertificateIdentifier: nifcloud.String("test_ca_cert_identifier"),
+							DBInstanceClass:         nifcloud.String("test_instance_class"),
+							DBInstanceIdentifier:    nifcloud.String("test_identifier"),
+							DBName:                  nifcloud.String("test_db_name"),
+							DBParameterGroups: []types.DBParameterGroups{{
+								DBParameterGroupName: nifcloud.String("test_parameter_group_name")},
 							},
+							DBSecurityGroups: []types.DBSecurityGroups{{
+								DBSecurityGroupName: nifcloud.String("test_db_security_group_name")},
+							},
+							Endpoint:                              &types.Endpoint{Address: nifcloud.String("address")},
+							Engine:                                nifcloud.String("test_engine"),
+							EngineVersion:                         nifcloud.String("test_engine_version"),
+							MasterUsername:                        nifcloud.String("test_username"),
+							MultiAZ:                               nifcloud.Bool(true),
+							NextMonthAccountingType:               nifcloud.String("1"),
+							NiftyMasterPrivateAddress:             nifcloud.String("test_master_private_address"),
+							NiftyMultiAZType:                      nifcloud.String("1"),
+							NiftyNetworkId:                        nifcloud.String("test_network_id"),
+							NiftySlavePrivateAddress:              nifcloud.String("test_slave_private_address"),
+							NiftyStorageType:                      nifcloud.Int32(1),
+							PreferredBackupWindow:                 nifcloud.String("test_backup_window"),
+							PreferredMaintenanceWindow:            nifcloud.String("test_maintenance_window"),
+							PubliclyAccessible:                    nifcloud.Bool(true),
+							ReadReplicaSourceDBInstanceIdentifier: nifcloud.String("test_replicate_source_db"),
 						},
 					},
 				},
@@ -108,10 +107,8 @@ func TestFlatten(t *testing.T) {
 		{
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
-				d: wantNotFoundRd,
-				res: &rdb.DescribeDBInstancesResponse{
-					DescribeDBInstancesOutput: &rdb.DescribeDBInstancesOutput{},
-				},
+				d:   wantNotFoundRd,
+				res: &rdb.DescribeDBInstancesOutput{},
 			},
 			want: wantNotFoundRd,
 		},

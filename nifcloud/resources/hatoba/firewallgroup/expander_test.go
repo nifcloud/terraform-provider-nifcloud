@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestExpandCreateFirewallGroupInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &hatoba.CreateFirewallGroupInput{
-				FirewallGroup: &hatoba.RequestFirewallGroup{
+				FirewallGroup: &types.RequestFirewallGroup{
 					Name:        nifcloud.String("test_name"),
 					Description: nifcloud.String("test_description"),
 				},
@@ -65,12 +66,12 @@ func TestExpandAuthorizeFirewallGroupInput(t *testing.T) {
 			args: rd,
 			want: &hatoba.AuthorizeFirewallGroupInput{
 				FirewallGroupName: nifcloud.String("test_name"),
-				Rules: []hatoba.RequestRules{
+				Rules: []types.RequestRules{
 					{
-						Protocol:    nifcloud.String("TCP"),
-						Direction:   nifcloud.String("IN"),
-						FromPort:    nifcloud.Int64(80),
-						ToPort:      nifcloud.Int64(80),
+						Protocol:    types.ProtocolOfrulesForAuthorizeFirewallGroup("TCP"),
+						Direction:   types.DirectionOfrulesForAuthorizeFirewallGroup("IN"),
+						FromPort:    nifcloud.Int32(80),
+						ToPort:      nifcloud.Int32(80),
 						CidrIp:      nifcloud.String("0.0.0.0/0"),
 						Description: nifcloud.String("test_description"),
 					},
@@ -163,7 +164,7 @@ func TestExpandUpdateFirewallGroupInput(t *testing.T) {
 			args: rd,
 			want: &hatoba.UpdateFirewallGroupInput{
 				FirewallGroupName: nifcloud.String("test_name"),
-				FirewallGroup: &hatoba.RequestFirewallGroupOfUpdateFirewallGroup{
+				FirewallGroup: &types.RequestFirewallGroupOfUpdateFirewallGroup{
 					Name:        nifcloud.String("test_updated_name"),
 					Description: nifcloud.String("test_description"),
 				},

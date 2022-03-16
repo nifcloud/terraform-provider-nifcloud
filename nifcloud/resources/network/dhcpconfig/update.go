@@ -20,9 +20,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// Now first loop through all the old static mapping ipaddresses and delete any obsolete ones
 		for _, sm := range ors.List() {
 			input := expandNiftyDeleteDhcpConfigStaticMappingInput(d, sm.(map[string]interface{}))
-			req := svc.NiftyDeleteDhcpStaticMappingRequest(input)
+			_, err := svc.NiftyDeleteDhcpStaticMapping(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating dhcp config to delete static mapping : %s", err))
 			}
@@ -37,9 +36,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// Then loop through all the newly configured static mapping and create them
 		for _, sm := range nrs.List() {
 			input := expandNiftyCreateDhcpConfigStaticMappingInput(d, sm.(map[string]interface{}))
-			req := svc.NiftyCreateDhcpStaticMappingRequest(input)
+			_, err := svc.NiftyCreateDhcpStaticMapping(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating dhcp config to create static mapping: %s", err))
 			}
@@ -59,9 +57,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// Now first loop through all the old ipaddress pool and delete any obsolete ones
 		for _, ip := range ors.List() {
 			input := expandNiftyDeleteDhcpConfigIPAddressPoolInput(d, ip.(map[string]interface{}))
-			req := svc.NiftyDeleteDhcpIpAddressPoolRequest(input)
+			_, err := svc.NiftyDeleteDhcpIpAddressPool(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating dhcp config to delete ipaddress pool: %s", err))
 			}
@@ -76,9 +73,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// Then loop through all the newly configured ipaddress pool and create them
 		for _, ip := range nrs.List() {
 			input := expandNiftyCreateDhcpConfigIPAddressPoolInput(d, ip.(map[string]interface{}))
-			req := svc.NiftyCreateDhcpIpAddressPoolRequest(input)
+			_, err := svc.NiftyCreateDhcpIpAddressPool(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating dhcp config to create ipaddress pool: %s", err))
 			}

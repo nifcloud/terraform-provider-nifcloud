@@ -3,20 +3,23 @@ package firewallgroup
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Hatoba
+	deadline, _ := ctx.Deadline()
 
 	if d.HasChanges("name", "description") {
 		input := expandUpdateFirewallGroupInput(d)
-		req := svc.UpdateFirewallGroupRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.UpdateFirewallGroup(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating Hatoba firewall group: %s", err))
 		}
 
@@ -32,12 +35,12 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		for _, r := range ors.List() {
 			rule := r.(map[string]interface{})
 			input := expandRevokeFirewallGroupInput(d, rule)
-			req := svc.RevokeFirewallGroupRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.RevokeFirewallGroup(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating Hatoba firewall group to delete rule: %s", err))
 			}
 
-			if err := svc.WaitUntilFirewallRuleAuthorized(ctx, expandGetFirewallGroupInput(d)); err != nil {
+			if err := hatoba.NewFirewallRuleAuthorizedWaiter(svc).Wait(ctx, expandGetFirewallGroupInput(d), time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba firewall group available: %s", err))
 			}
 		}
@@ -52,18 +55,17 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		for _, r := range nrs.List() {
 			rule := r.(map[string]interface{})
 			input := expandAuthorizeFirewallGroupInput(d, rule)
-			req := svc.AuthorizeFirewallGroupRequest(input)
-			res, err := req.Send(ctx)
+			res, err := svc.AuthorizeFirewallGroup(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating Hatoba firewall group to create rule: %s", err))
 			}
 
-			if err := svc.WaitUntilFirewallRuleAuthorized(ctx, expandGetFirewallGroupInput(d)); err != nil {
+			if err := hatoba.NewFirewallRuleAuthorizedWaiter(svc).Wait(ctx, expandGetFirewallGroupInput(d), time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba firewall group available: %s", err))
 			}
 
 			for _, resRule := range res.FirewallGroup.Rules {
-				if nifcloud.StringValue(resRule.Status) == "AUTHORIZING" {
+				if nifcloud.ToString(resRule.Status) == "AUTHORIZING" {
 					rule["id"] = resRule.Id
 				}
 			}

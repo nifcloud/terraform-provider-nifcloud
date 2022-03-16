@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandCreateNetworkInterfaceInput(d *schema.ResourceData) *computing.CreateNetworkInterfaceInput {
@@ -11,7 +12,7 @@ func expandCreateNetworkInterfaceInput(d *schema.ResourceData) *computing.Create
 		NiftyNetworkId: nifcloud.String(d.Get("network_id").(string)),
 		IpAddress:      nifcloud.String(d.Get("ip_address").(string)),
 		Description:    nifcloud.String(d.Get("description").(string)),
-		Placement: &computing.RequestPlacementOfCreateNetworkInterface{
+		Placement: &types.RequestPlacementOfCreateNetworkInterface{
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
 	}

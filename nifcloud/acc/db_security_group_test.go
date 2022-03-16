@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,7 +30,7 @@ func init() {
 }
 
 func TestAcc_DbSecurityGroup(t *testing.T) {
-	var dbSecurityGroup rdb.DBSecurityGroupsOfDescribeDBSecurityGroups
+	var dbSecurityGroup types.DBSecurityGroupsOfDescribeDBSecurityGroups
 
 	resourceName := "nifcloud_db_security_group.basic"
 	randName := prefix + acctest.RandString(7)
@@ -83,7 +84,7 @@ func testAccDbSecurityGroup(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurityGroupsOfDescribeDBSecurityGroups) resource.TestCheckFunc {
+func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *types.DBSecurityGroupsOfDescribeDBSecurityGroups) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -95,9 +96,9 @@ func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurity
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBSecurityGroupsRequest(&rdb.DescribeDBSecurityGroupsInput{
+		res, err := svc.DescribeDBSecurityGroups(context.Background(), &rdb.DescribeDBSecurityGroupsInput{
 			DBSecurityGroupName: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -109,7 +110,7 @@ func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurity
 
 		foundDbSecurityGroup := res.DBSecurityGroups[0]
 
-		if nifcloud.StringValue(foundDbSecurityGroup.DBSecurityGroupName) != saved.Primary.ID {
+		if nifcloud.ToString(foundDbSecurityGroup.DBSecurityGroupName) != saved.Primary.ID {
 			return fmt.Errorf("dbSecurityGroup does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -118,7 +119,7 @@ func testAccCheckDbSecurityGroupExists(n string, dbSecurityGroup *rdb.DBSecurity
 	}
 }
 
-func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroupsOfDescribeDBSecurityGroups, groupName string) resource.TestCheckFunc {
+func testAccCheckDbSecurityGroupValues(dbSecurityGroup *types.DBSecurityGroupsOfDescribeDBSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if len(dbSecurityGroup.IPRanges) != 1 {
 			return fmt.Errorf("bad cidr_ip rules: %#v", dbSecurityGroup.IPRanges)
@@ -128,20 +129,20 @@ func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroupsOfDe
 			return fmt.Errorf("bad security_group_name rules: %#v", dbSecurityGroup.EC2SecurityGroups)
 		}
 
-		if nifcloud.StringValue(dbSecurityGroup.DBSecurityGroupName) != groupName {
+		if nifcloud.ToString(dbSecurityGroup.DBSecurityGroupName) != groupName {
 			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, dbSecurityGroup.DBSecurityGroupName)
 		}
 
-		if nifcloud.StringValue(dbSecurityGroup.DBSecurityGroupDescription) != "memo" {
+		if nifcloud.ToString(dbSecurityGroup.DBSecurityGroupDescription) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", dbSecurityGroup.DBSecurityGroupDescription)
 		}
 
-		if nifcloud.StringValue(dbSecurityGroup.NiftyAvailabilityZone) != "east-21" {
+		if nifcloud.ToString(dbSecurityGroup.NiftyAvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", dbSecurityGroup.NiftyAvailabilityZone)
 		}
 
-		cidrIPRule := make(map[int]rdb.IPRanges)
-		securityGroupNameRule := make(map[int]rdb.EC2SecurityGroups)
+		cidrIPRule := make(map[int]types.IPRanges)
+		securityGroupNameRule := make(map[int]types.EC2SecurityGroups)
 
 		for _, c := range dbSecurityGroup.IPRanges {
 			cidrIPRule[0] = c
@@ -158,19 +159,19 @@ func testAccCheckDbSecurityGroupValues(dbSecurityGroup *rdb.DBSecurityGroupsOfDe
 			return fmt.Errorf("bad security_group_name rule: %#v", dbSecurityGroup.EC2SecurityGroups)
 		}
 
-		if nifcloud.StringValue(cidrIPRule[0].CIDRIP) != "0.0.0.0/0" {
-			return fmt.Errorf("bad cide_ip rule, expected \"0.0.0.0/0\", got: %#v", nifcloud.StringValue(cidrIPRule[0].CIDRIP))
+		if nifcloud.ToString(cidrIPRule[0].CIDRIP) != "0.0.0.0/0" {
+			return fmt.Errorf("bad cide_ip rule, expected \"0.0.0.0/0\", got: %#v", nifcloud.ToString(cidrIPRule[0].CIDRIP))
 		}
 
-		if nifcloud.StringValue(securityGroupNameRule[0].EC2SecurityGroupName) != groupName {
-			return fmt.Errorf("bad security_group_name rule, expected \"%s\", got: %#v", groupName, nifcloud.StringValue(securityGroupNameRule[0].EC2SecurityGroupName))
+		if nifcloud.ToString(securityGroupNameRule[0].EC2SecurityGroupName) != groupName {
+			return fmt.Errorf("bad security_group_name rule, expected \"%s\", got: %#v", groupName, nifcloud.ToString(securityGroupNameRule[0].EC2SecurityGroupName))
 		}
 
 		return nil
 	}
 }
 
-func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *rdb.DBSecurityGroupsOfDescribeDBSecurityGroups, groupName string) resource.TestCheckFunc {
+func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *types.DBSecurityGroupsOfDescribeDBSecurityGroups, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if len(dbSecurityGroup.IPRanges) != 1 {
 			return fmt.Errorf("bad cidr_ip rules: %#v", dbSecurityGroup.IPRanges)
@@ -180,20 +181,20 @@ func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *rdb.DBSecurityGro
 			return fmt.Errorf("bad security_group_name rules: %#v", dbSecurityGroup.EC2SecurityGroups)
 		}
 
-		if nifcloud.StringValue(dbSecurityGroup.DBSecurityGroupName) != groupName {
+		if nifcloud.ToString(dbSecurityGroup.DBSecurityGroupName) != groupName {
 			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, dbSecurityGroup.DBSecurityGroupName)
 		}
 
-		if nifcloud.StringValue(dbSecurityGroup.DBSecurityGroupDescription) != "memo-upd" {
+		if nifcloud.ToString(dbSecurityGroup.DBSecurityGroupDescription) != "memo-upd" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", dbSecurityGroup.DBSecurityGroupDescription)
 		}
 
-		if nifcloud.StringValue(dbSecurityGroup.NiftyAvailabilityZone) != "east-21" {
+		if nifcloud.ToString(dbSecurityGroup.NiftyAvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", dbSecurityGroup.NiftyAvailabilityZone)
 		}
 
-		cidrIPRule := make(map[int]rdb.IPRanges)
-		securityGroupNameRule := make(map[int]rdb.EC2SecurityGroups)
+		cidrIPRule := make(map[int]types.IPRanges)
+		securityGroupNameRule := make(map[int]types.EC2SecurityGroups)
 
 		for _, c := range dbSecurityGroup.IPRanges {
 			cidrIPRule[0] = c
@@ -210,12 +211,12 @@ func testAccCheckDbSecurityGroupValuesUpdated(dbSecurityGroup *rdb.DBSecurityGro
 			return fmt.Errorf("bad security_group_name rule: %#v", dbSecurityGroup.EC2SecurityGroups)
 		}
 
-		if nifcloud.StringValue(cidrIPRule[0].CIDRIP) != "192.168.0.1/32" {
-			return fmt.Errorf("bad cide_ip rule, expected \"192.168.0.1/32\", got: %#v", nifcloud.StringValue(cidrIPRule[0].CIDRIP))
+		if nifcloud.ToString(cidrIPRule[0].CIDRIP) != "192.168.0.1/32" {
+			return fmt.Errorf("bad cide_ip rule, expected \"192.168.0.1/32\", got: %#v", nifcloud.ToString(cidrIPRule[0].CIDRIP))
 		}
 
-		if nifcloud.StringValue(securityGroupNameRule[0].EC2SecurityGroupName) != groupName {
-			return fmt.Errorf("bad security_group_name rule, expected \"%s\", got: %#v", groupName, nifcloud.StringValue(securityGroupNameRule[0].EC2SecurityGroupName))
+		if nifcloud.ToString(securityGroupNameRule[0].EC2SecurityGroupName) != groupName {
+			return fmt.Errorf("bad security_group_name rule, expected \"%s\", got: %#v", groupName, nifcloud.ToString(securityGroupNameRule[0].EC2SecurityGroupName))
 		}
 
 		return nil
@@ -230,13 +231,13 @@ func testAccDbSecurityGroupResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeDBSecurityGroupsRequest(&rdb.DescribeDBSecurityGroupsInput{
+		res, err := svc.DescribeDBSecurityGroups(context.Background(), &rdb.DescribeDBSecurityGroupsInput{
 			DBSecurityGroupName: nifcloud.String(rs.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBSecurityGroup" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DBSecurityGroup" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeDBSecurityGroupsRequest: %s", err)
@@ -253,15 +254,15 @@ func testSweepDbSecurityGroup(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).RDB
 
-	res, err := svc.DescribeDBSecurityGroupsRequest(nil).Send(ctx)
+	res, err := svc.DescribeDBSecurityGroups(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepDbSecurityGroups []string
 	for _, k := range res.DBSecurityGroups {
-		if strings.HasPrefix(nifcloud.StringValue(k.DBSecurityGroupName), prefix) {
-			sweepDbSecurityGroups = append(sweepDbSecurityGroups, nifcloud.StringValue(k.DBSecurityGroupName))
+		if strings.HasPrefix(nifcloud.ToString(k.DBSecurityGroupName), prefix) {
+			sweepDbSecurityGroups = append(sweepDbSecurityGroups, nifcloud.ToString(k.DBSecurityGroupName))
 		}
 	}
 
@@ -269,9 +270,9 @@ func testSweepDbSecurityGroup(region string) error {
 	for _, n := range sweepDbSecurityGroups {
 		groupName := n
 		eg.Go(func() error {
-			_, err := svc.DeleteDBSecurityGroupRequest(&rdb.DeleteDBSecurityGroupInput{
+			_, err := svc.DeleteDBSecurityGroup(ctx, &rdb.DeleteDBSecurityGroupInput{
 				DBSecurityGroupName: nifcloud.String(groupName),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

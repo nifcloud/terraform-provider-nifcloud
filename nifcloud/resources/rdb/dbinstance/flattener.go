@@ -9,7 +9,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 )
 
-func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error {
+func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesOutput) error {
 	if res == nil || len(res.DBInstances) == 0 {
 		d.SetId("")
 		return nil
@@ -17,7 +17,7 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 
 	dbInstance := res.DBInstances[0]
 
-	if nifcloud.StringValue(dbInstance.DBInstanceIdentifier) != d.Id() {
+	if nifcloud.ToString(dbInstance.DBInstanceIdentifier) != d.Id() {
 		return fmt.Errorf("unable to find DB instance within: %#v", res.DBInstances)
 	}
 
@@ -90,7 +90,7 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesResponse) error
 		return err
 	}
 
-	if multiAZType, err := strconv.Atoi(nifcloud.StringValue(dbInstance.NiftyMultiAZType)); err == nil {
+	if multiAZType, err := strconv.Atoi(nifcloud.ToString(dbInstance.NiftyMultiAZType)); err == nil {
 		if err := d.Set("multi_az_type", multiAZType); err != nil {
 			return err
 		}

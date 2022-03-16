@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
+	"github.com/nifcloud/nifcloud-sdk-go/service/nas/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,17 +35,17 @@ func TestExpandCreateNASInstanceInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &nas.CreateNASInstanceInput{
-				AllocatedStorage:       nifcloud.Int64(100),
+				AllocatedStorage:       nifcloud.Int32(100),
 				AvailabilityZone:       nifcloud.String("test_zone"),
 				MasterPrivateAddress:   nifcloud.String("192.168.0.1/24"),
 				MasterUserPassword:     nifcloud.String("test_master_user_password"),
 				MasterUsername:         nifcloud.String("test_master_username"),
 				NASInstanceDescription: nifcloud.String("test_description"),
 				NASInstanceIdentifier:  nifcloud.String("test_identifier"),
-				NASInstanceType:        nifcloud.Int64(0),
+				NASInstanceType:        nifcloud.Int32(0),
 				NASSecurityGroups:      []string{"test_group_name"},
 				NetworkId:              nifcloud.String("test_network_id"),
-				Protocol:               nifcloud.String("test_protocol"),
+				Protocol:               types.ProtocolOfCreateNASInstanceRequest("test_protocol"),
 			},
 		},
 	}
@@ -128,7 +129,7 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 			name: "expands the resource data for nfs",
 			args: rdForNFS,
 			want: &nas.ModifyNASInstanceInput{
-				AllocatedStorage:         nifcloud.Int64(100),
+				AllocatedStorage:         nifcloud.Int32(100),
 				MasterPrivateAddress:     nifcloud.String("192.168.0.1/24"),
 				NASInstanceDescription:   nifcloud.String("test_description"),
 				NASInstanceIdentifier:    nifcloud.String("test_identifier"),
@@ -142,12 +143,12 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 			name: "expands the resource data for cifs",
 			args: rdForCIFS,
 			want: &nas.ModifyNASInstanceInput{
-				AllocatedStorage:                      nifcloud.Int64(100),
-				AuthenticationType:                    nifcloud.Int64(1),
+				AllocatedStorage:                      nifcloud.Int32(100),
+				AuthenticationType:                    nifcloud.Int32(1),
 				DirectoryServiceAdministratorName:     nifcloud.String("test_directory_service_administrator_name"),
 				DirectoryServiceAdministratorPassword: nifcloud.String("test_directory_service_administrator_password"),
 				DirectoryServiceDomainName:            nifcloud.String("test_directory_service_domain_name"),
-				DomainControllers: []nas.RequestDomainControllers{
+				DomainControllers: []types.RequestDomainControllers{
 					{
 						Hostname:  nifcloud.String("test_hostname"),
 						IPAddress: nifcloud.String("test_ip_address"),

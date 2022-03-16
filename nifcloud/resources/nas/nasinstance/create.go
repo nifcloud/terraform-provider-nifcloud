@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateNASInstanceInput(d)
 
 	svc := meta.(*client.Client).NAS
-	req := svc.CreateNASInstanceRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateNASInstance(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating NAS instance: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.NASInstance.NASInstanceIdentifier))
+	d.SetId(nifcloud.ToString(res.NASInstance.NASInstanceIdentifier))
 
 	return update(ctx, d, meta)
 }

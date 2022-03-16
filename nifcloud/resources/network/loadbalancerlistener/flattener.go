@@ -9,14 +9,14 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersOutput) error {
 
-	if res == nil || len(res.DescribeLoadBalancersOutput.LoadBalancerDescriptions) == 0 {
+	if res == nil || len(res.DescribeLoadBalancersResult.LoadBalancerDescriptions) == 0 {
 		d.SetId("")
 		return nil
 	}
-	loadBalancer := res.DescribeLoadBalancersOutput.LoadBalancerDescriptions[0]
-	if nifcloud.StringValue(loadBalancer.LoadBalancerName) != d.Get("load_balancer_name") {
+	loadBalancer := res.DescribeLoadBalancersResult.LoadBalancerDescriptions[0]
+	if nifcloud.ToString(loadBalancer.LoadBalancerName) != d.Get("load_balancer_name") {
 		return fmt.Errorf("unable to find load balancer within: %#v", loadBalancer.LoadBalancerName)
 	}
 	if err := d.Set("load_balancer_name", loadBalancer.LoadBalancerName); err != nil {
@@ -24,7 +24,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 	}
 	instances := make([]string, len(loadBalancer.Instances))
 	for i, instance := range loadBalancer.Instances {
-		instances[i] = nifcloud.StringValue(instance.InstanceId)
+		instances[i] = nifcloud.ToString(instance.InstanceId)
 	}
 	if err := d.Set("instances", instances); err != nil {
 		return err
@@ -32,7 +32,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 	if d.Get("filter") != nil && len(loadBalancer.Filter.IPAddresses) > 0 && *loadBalancer.Filter.IPAddresses[0].IPAddress != "*.*.*.*" {
 		filters := make([]string, len(loadBalancer.Filter.IPAddresses))
 		for i, filter := range loadBalancer.Filter.IPAddresses {
-			filters[i] = nifcloud.StringValue(filter.IPAddress)
+			filters[i] = nifcloud.ToString(filter.IPAddress)
 		}
 		if err := d.Set("filter", filters); err != nil {
 			return err
@@ -110,7 +110,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersRespons
 		}
 	}
 
-	if ip := net.ParseIP(nifcloud.StringValue(loadBalancer.DNSName)); ip != nil {
+	if ip := net.ParseIP(nifcloud.ToString(loadBalancer.DNSName)); ip != nil {
 		if ip.To4() != nil {
 			if err := d.Set("ip_version", "v4"); err != nil {
 				return err

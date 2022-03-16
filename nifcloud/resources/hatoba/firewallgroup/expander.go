@@ -4,11 +4,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 )
 
 func expandCreateFirewallGroupInput(d *schema.ResourceData) *hatoba.CreateFirewallGroupInput {
 	return &hatoba.CreateFirewallGroupInput{
-		FirewallGroup: &hatoba.RequestFirewallGroup{
+		FirewallGroup: &types.RequestFirewallGroup{
 			Name:        nifcloud.String(d.Get("name").(string)),
 			Description: nifcloud.String(d.Get("description").(string)),
 		},
@@ -16,23 +17,23 @@ func expandCreateFirewallGroupInput(d *schema.ResourceData) *hatoba.CreateFirewa
 }
 
 func expandAuthorizeFirewallGroupInput(d *schema.ResourceData, rule map[string]interface{}) *hatoba.AuthorizeFirewallGroupInput {
-	r := hatoba.RequestRules{
-		Protocol:    nifcloud.String(rule["protocol"].(string)),
-		Direction:   nifcloud.String(rule["direction"].(string)),
+	r := types.RequestRules{
+		Protocol:    types.ProtocolOfrulesForAuthorizeFirewallGroup(rule["protocol"].(string)),
+		Direction:   types.DirectionOfrulesForAuthorizeFirewallGroup(rule["direction"].(string)),
 		CidrIp:      nifcloud.String(rule["cidr_ip"].(string)),
 		Description: nifcloud.String(rule["description"].(string)),
 	}
 
 	if rule["from_port"] != nil && rule["from_port"] != 0 {
-		r.FromPort = nifcloud.Int64(int64(rule["from_port"].(int)))
+		r.FromPort = nifcloud.Int32(int32(rule["from_port"].(int)))
 	}
 	if rule["to_port"] != nil && rule["to_port"] != 0 {
-		r.ToPort = nifcloud.Int64(int64(rule["to_port"].(int)))
+		r.ToPort = nifcloud.Int32(int32(rule["to_port"].(int)))
 	}
 
 	return &hatoba.AuthorizeFirewallGroupInput{
 		FirewallGroupName: nifcloud.String(d.Id()),
-		Rules:             []hatoba.RequestRules{r},
+		Rules:             []types.RequestRules{r},
 	}
 }
 
@@ -52,7 +53,7 @@ func expandGetFirewallGroupInput(d *schema.ResourceData) *hatoba.GetFirewallGrou
 func expandUpdateFirewallGroupInput(d *schema.ResourceData) *hatoba.UpdateFirewallGroupInput {
 	input := &hatoba.UpdateFirewallGroupInput{
 		FirewallGroupName: nifcloud.String(d.Id()),
-		FirewallGroup: &hatoba.RequestFirewallGroupOfUpdateFirewallGroup{
+		FirewallGroup: &types.RequestFirewallGroupOfUpdateFirewallGroup{
 			Description: nifcloud.String(d.Get("description").(string)),
 		},
 	}

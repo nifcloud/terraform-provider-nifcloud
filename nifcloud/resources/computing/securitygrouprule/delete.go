@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -18,9 +19,10 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	inputList := expandRevokeSecurityGroupIngressInputList(d)
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	describeSecurityGroupsInput := expandDescribeSecurityGroupsInput(d)
-	describeSecurityGroupsOutput, err := svc.DescribeSecurityGroupsRequest(describeSecurityGroupsInput).Send(ctx)
+	describeSecurityGroupsOutput, err := svc.DescribeSecurityGroups(ctx, describeSecurityGroupsInput)
 	if err != nil {
 		return diag.Errorf("failed describe security groups: %s", err)
 	}
@@ -29,26 +31,25 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	for _, input := range inputList {
 		input := input
 		eg.Go(func() error {
-			mutexKV.Lock(nifcloud.StringValue(input.GroupName))
-			defer mutexKV.Unlock(nifcloud.StringValue(input.GroupName))
+			mutexKV.Lock(nifcloud.ToString(input.GroupName))
+			defer mutexKV.Unlock(nifcloud.ToString(input.GroupName))
 
-			err = checkSecurityGroupExist(describeSecurityGroupsOutput.SecurityGroupInfo, nifcloud.StringValue(input.GroupName))
+			err = checkSecurityGroupExist(describeSecurityGroupsOutput.SecurityGroupInfo, nifcloud.ToString(input.GroupName))
 			if err != nil {
 				return nil
 			}
 
-			err := svc.WaitUntilSecurityGroupApplied(ctxt, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.StringValue(input.GroupName)}})
+			err := computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctxt, &computing.DescribeSecurityGroupsInput{GroupName: []string{nifcloud.ToString(input.GroupName)}}, time.Until(deadline))
 			if err != nil {
 				return fmt.Errorf("failed wait until securityGroup applied: %s", err)
 			}
 
-			req := svc.RevokeSecurityGroupIngressRequest(input)
+			_, err = svc.RevokeSecurityGroupIngress(ctx, input)
 
 			err = resource.RetryContext(ctxt, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
-				_, err = req.Send(ctxt)
 				if err != nil {
-					var awsErr awserr.Error
-					if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroupIngress" {
+					var awsErr smithy.APIError
+					if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroupIngress" {
 						return nil
 					}
 					return resource.RetryableError(err)

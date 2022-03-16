@@ -7,11 +7,12 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -26,7 +27,7 @@ func init() {
 }
 
 func TestAcc_DhcpConfig(t *testing.T) {
-	var dhcpConfig computing.DhcpConfigsSet
+	var dhcpConfig types.DhcpConfigsSet
 
 	resourceName := "nifcloud_dhcp_config.basic"
 
@@ -75,7 +76,7 @@ func testAccDhcpConfig(t *testing.T, fileName string) string {
 	return string(b)
 }
 
-func testAccCheckDhcpConfigExists(n string, dhcpConfig *computing.DhcpConfigsSet) resource.TestCheckFunc {
+func testAccCheckDhcpConfigExists(n string, dhcpConfig *types.DhcpConfigsSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -87,9 +88,9 @@ func testAccCheckDhcpConfigExists(n string, dhcpConfig *computing.DhcpConfigsSet
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.NiftyDescribeDhcpConfigsRequest(&computing.NiftyDescribeDhcpConfigsInput{
+		res, err := svc.NiftyDescribeDhcpConfigs(context.Background(), &computing.NiftyDescribeDhcpConfigsInput{
 			DhcpConfigId: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -101,7 +102,7 @@ func testAccCheckDhcpConfigExists(n string, dhcpConfig *computing.DhcpConfigsSet
 
 		foundDhcpConfig := res.DhcpConfigsSet[0]
 
-		if nifcloud.StringValue(foundDhcpConfig.DhcpConfigId) != saved.Primary.ID {
+		if nifcloud.ToString(foundDhcpConfig.DhcpConfigId) != saved.Primary.ID {
 			return fmt.Errorf("dhcpConfig does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -110,7 +111,7 @@ func testAccCheckDhcpConfigExists(n string, dhcpConfig *computing.DhcpConfigsSet
 	}
 }
 
-func testAccCheckDhcpConfigValues(dhcpConfig *computing.DhcpConfigsSet) resource.TestCheckFunc {
+func testAccCheckDhcpConfigValues(dhcpConfig *types.DhcpConfigsSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if len(dhcpConfig.StaticMappingsSet) != 1 {
 			return fmt.Errorf("bad static mappings: %#v", dhcpConfig.StaticMappingsSet)
@@ -120,12 +121,12 @@ func testAccCheckDhcpConfigValues(dhcpConfig *computing.DhcpConfigsSet) resource
 			return fmt.Errorf("bad ipaddress pools: %#v", dhcpConfig.IpAddressPoolsSet)
 		}
 
-		staticmappings := make(map[string]computing.StaticMappingsSet)
+		staticmappings := make(map[string]types.StaticMappingsSet)
 		for _, r := range dhcpConfig.StaticMappingsSet {
 			staticmappings[*r.Description] = r
 		}
 
-		ipaddresspools := make(map[string]computing.IpAddressPoolsSet)
+		ipaddresspools := make(map[string]types.IpAddressPoolsSet)
 		for _, r := range dhcpConfig.IpAddressPoolsSet {
 			ipaddresspools[*r.Description] = r
 		}
@@ -138,33 +139,33 @@ func testAccCheckDhcpConfigValues(dhcpConfig *computing.DhcpConfigsSet) resource
 			return fmt.Errorf("bad ipaddress pool: %#v", dhcpConfig.IpAddressPoolsSet)
 		}
 
-		if nifcloud.StringValue(staticmappings["static-mapping-memo"].IpAddress) != "192.168.1.10" {
-			return fmt.Errorf("bad static mapping IP address, expected \"192.168.1.10\", got: %#v", nifcloud.StringValue(staticmappings["static-mapping-memo"].IpAddress))
+		if nifcloud.ToString(staticmappings["static-mapping-memo"].IpAddress) != "192.168.1.10" {
+			return fmt.Errorf("bad static mapping IP address, expected \"192.168.1.10\", got: %#v", nifcloud.ToString(staticmappings["static-mapping-memo"].IpAddress))
 		}
 
-		if nifcloud.StringValue(staticmappings["static-mapping-memo"].MacAddress) != "00:00:5e:00:53:00" {
-			return fmt.Errorf("bad static mapping MAC address, expected \"00:00:5e:00:53:00\", got: %#v", nifcloud.StringValue(staticmappings["static-mapping-memo"].MacAddress))
+		if nifcloud.ToString(staticmappings["static-mapping-memo"].MacAddress) != "00:00:5e:00:53:00" {
+			return fmt.Errorf("bad static mapping MAC address, expected \"00:00:5e:00:53:00\", got: %#v", nifcloud.ToString(staticmappings["static-mapping-memo"].MacAddress))
 		}
 
-		if nifcloud.StringValue(ipaddresspools["ipaddress-pool-memo"].StartIpAddress) != "192.168.2.1" {
-			return fmt.Errorf("bad ipaddress pool start IP address, expected \"192.168.2.1\", got: %#v", nifcloud.StringValue(ipaddresspools["ipaddress-pool-memo"].StartIpAddress))
+		if nifcloud.ToString(ipaddresspools["ipaddress-pool-memo"].StartIpAddress) != "192.168.2.1" {
+			return fmt.Errorf("bad ipaddress pool start IP address, expected \"192.168.2.1\", got: %#v", nifcloud.ToString(ipaddresspools["ipaddress-pool-memo"].StartIpAddress))
 		}
 
-		if nifcloud.StringValue(ipaddresspools["ipaddress-pool-memo"].StopIpAddress) != "192.168.2.100" {
-			return fmt.Errorf("bad ipaddress pool stop IP address, expected \"192.168.2.100\", got: %#v", nifcloud.StringValue(ipaddresspools["ipaddress-pool-memo"].StopIpAddress))
+		if nifcloud.ToString(ipaddresspools["ipaddress-pool-memo"].StopIpAddress) != "192.168.2.100" {
+			return fmt.Errorf("bad ipaddress pool stop IP address, expected \"192.168.2.100\", got: %#v", nifcloud.ToString(ipaddresspools["ipaddress-pool-memo"].StopIpAddress))
 		}
 
 		return nil
 	}
 }
 
-func testAccCheckDhcpConfigValuesUpdated(dhcpConfig *computing.DhcpConfigsSet) resource.TestCheckFunc {
+func testAccCheckDhcpConfigValuesUpdated(dhcpConfig *types.DhcpConfigsSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if len(dhcpConfig.StaticMappingsSet) != 1 {
 			return fmt.Errorf("bad static mappings: %#v", dhcpConfig.StaticMappingsSet)
 		}
 
-		staticmappings := make(map[string]computing.StaticMappingsSet)
+		staticmappings := make(map[string]types.StaticMappingsSet)
 		for _, r := range dhcpConfig.StaticMappingsSet {
 			staticmappings[*r.Description] = r
 		}
@@ -173,12 +174,12 @@ func testAccCheckDhcpConfigValuesUpdated(dhcpConfig *computing.DhcpConfigsSet) r
 			return fmt.Errorf("bad static mapping: %#v", dhcpConfig.StaticMappingsSet)
 		}
 
-		if nifcloud.StringValue(staticmappings["static-mapping-memo-upd"].IpAddress) != "192.168.2.10" {
-			return fmt.Errorf("bad static mapping IP address, expected \"192.168.2.10\", got: %#v", nifcloud.StringValue(staticmappings["static-mapping-memo-upd"].IpAddress))
+		if nifcloud.ToString(staticmappings["static-mapping-memo-upd"].IpAddress) != "192.168.2.10" {
+			return fmt.Errorf("bad static mapping IP address, expected \"192.168.2.10\", got: %#v", nifcloud.ToString(staticmappings["static-mapping-memo-upd"].IpAddress))
 		}
 
-		if nifcloud.StringValue(staticmappings["static-mapping-memo-upd"].MacAddress) != "00:00:5e:00:53:FF" {
-			return fmt.Errorf("bad static mapping MAC address, expected \"00:00:5e:00:53:FF\", got: %#v", nifcloud.StringValue(staticmappings["static-mapping-memo-upd"].MacAddress))
+		if nifcloud.ToString(staticmappings["static-mapping-memo-upd"].MacAddress) != "00:00:5e:00:53:FF" {
+			return fmt.Errorf("bad static mapping MAC address, expected \"00:00:5e:00:53:FF\", got: %#v", nifcloud.ToString(staticmappings["static-mapping-memo-upd"].MacAddress))
 		}
 
 		return nil
@@ -193,13 +194,13 @@ func testAccDhcpConfigResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.NiftyDescribeDhcpConfigsRequest(&computing.NiftyDescribeDhcpConfigsInput{
+		res, err := svc.NiftyDescribeDhcpConfigs(context.Background(), &computing.NiftyDescribeDhcpConfigsInput{
 			DhcpConfigId: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DhcpConfigId" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DhcpConfigId" {
 				return nil
 			}
 			return fmt.Errorf("failed NiftyDescribeDhcpConfigsRequest: %s", err)
@@ -216,7 +217,7 @@ func testSweepDhcpConfig(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.NiftyDescribeDhcpConfigsRequest(nil).Send(ctx)
+	res, err := svc.NiftyDescribeDhcpConfigs(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -227,7 +228,7 @@ func testSweepDhcpConfig(region string) error {
 			DhcpConfigId: dhcpConfig.DhcpConfigId,
 		}
 
-		_, err := svc.NiftyDeleteDhcpConfigRequest(input).Send(ctx)
+		_, err := svc.NiftyDeleteDhcpConfig(ctx, input)
 		if err != nil {
 			return err
 		}

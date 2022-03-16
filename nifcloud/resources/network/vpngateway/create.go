@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
@@ -17,6 +18,7 @@ const waiterInitialDelayForCreate = 3
 func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandCreateVpnGatewayInput(d)
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if raw, ok := d.GetOk("network_name"); ok && len(raw.(string)) > 0 {
 		key, err := mutexkv.LockPrivateLanByName(ctx, raw.(string), svc)
@@ -33,24 +35,21 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		defer mutexkv.UnlockPrivateLan(key)
 	}
 
-	req := svc.CreateVpnGatewayRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateVpnGateway(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating VPN Gateway: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.VpnGateway.VpnGatewayId))
+	d.SetId(nifcloud.ToString(res.VpnGateway.VpnGatewayId))
 
 	describeVpnGatewaysInput := expandDescribeVpnGatewaysInput(d)
 
 	if _, ok := d.GetOk("route_table_id"); ok {
-		if err := svc.WaitUntilVpnGatewayAvailable(ctx, describeVpnGatewaysInput); err != nil {
+		if err := computing.NewVpnGatewayAvailableWaiter(svc).Wait(ctx, describeVpnGatewaysInput, time.Until(deadline)); err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for vpngateway to become ready: %s", err))
 		}
 		niftyAssociateRouteTableWithVpnGatewayInput := expandNiftyAssociateRouteTableWithVpnGatewayInput(d)
-		niftyAssociateRouteTableWithVpnGatewayRequest := svc.NiftyAssociateRouteTableWithVpnGatewayRequest(niftyAssociateRouteTableWithVpnGatewayInput)
-		if _, err := niftyAssociateRouteTableWithVpnGatewayRequest.Send(ctx); err != nil {
+		if _, err := svc.NiftyAssociateRouteTableWithVpnGateway(ctx, niftyAssociateRouteTableWithVpnGatewayInput); err != nil {
 			return diag.FromErr(fmt.Errorf("failed associating route table to vpngateway: %s", err))
 		}
 	}
@@ -59,7 +58,7 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	time.Sleep(waiterInitialDelayForCreate * time.Second)
 
 	// wait for AssociateId.
-	if err := svc.WaitUntilVpnGatewayAvailable(ctx, expandDescribeVpnGatewaysInput(d)); err != nil {
+	if err := computing.NewVpnGatewayAvailableWaiter(svc).Wait(ctx, expandDescribeVpnGatewaysInput(d), time.Until(deadline)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed waiting for vpngateway available: %s", err))
 	}
 

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/smithy-go/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -14,8 +15,11 @@ import (
 
 type debugLogger struct{}
 
-func (l debugLogger) Log(v ...interface{}) {
-	log.Println(v...)
+func (l debugLogger) Logf(classification logging.Classification, format string, v ...interface{}) {
+	if len(classification) != 0 {
+		format = string(classification) + " " + format
+	}
+	log.Printf(format, v...)
 }
 
 // configure implements schema.ConfigureContextFunc
@@ -25,8 +29,10 @@ func configure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Dia
 		d.Get("secret_key").(string),
 		d.Get("region").(string),
 	)
-	cfg.Retryer = aws.NoOpRetryer{}
-	cfg.LogLevel = aws.LogDebugWithHTTPBody
+	cfg.Retryer = func() aws.Retryer {
+		return aws.NopRetryer{}
+	}
+	cfg.ClientLogMode = aws.LogRequestWithBody
 	cfg.Logger = &debugLogger{}
 
 	client := client.New(cfg)

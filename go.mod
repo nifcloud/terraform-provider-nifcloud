@@ -3,7 +3,8 @@ module github.com/nifcloud/terraform-provider-nifcloud
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go-v2 v0.24.0
+	github.com/aws/aws-sdk-go-v2 v1.14.0
+	github.com/aws/smithy-go v1.11.1
 	github.com/bflad/tfproviderdocs v0.9.1
 	github.com/bflad/tfproviderlint v0.26.0
 	github.com/client9/misspell v0.3.4
@@ -11,7 +12,7 @@ require (
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
 	github.com/katbyte/terrafmt v0.3.0
-	github.com/nifcloud/nifcloud-sdk-go v1.12.0
+	github.com/nifcloud/nifcloud-sdk-go v1.15.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 )
@@ -77,7 +78,7 @@ require (
 	github.com/golangci/misspell v0.3.5 // indirect
 	github.com/golangci/revgrep v0.0.0-20210208091834-cd28932614b5 // indirect
 	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4 // indirect
-	github.com/google/go-cmp v0.5.6 // indirect
+	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/gookit/color v1.3.8 // indirect

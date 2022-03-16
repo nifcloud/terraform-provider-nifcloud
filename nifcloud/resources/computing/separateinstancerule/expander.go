@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandNiftyCreateSeparateInstanceRuleInput(d *schema.ResourceData) *computing.NiftyCreateSeparateInstanceRuleInput {
@@ -12,7 +13,7 @@ func expandNiftyCreateSeparateInstanceRuleInput(d *schema.ResourceData) *computi
 		SeparateInstanceRuleDescription: nifcloud.String(d.Get("description").(string)),
 		InstanceId:                      expandInstanceIds(d.Get("instance_id").(*schema.Set).List()),
 		InstanceUniqueId:                expandInstanceIds(d.Get("instance_unique_id").(*schema.Set).List()),
-		Placement: &computing.RequestPlacementOfNiftyCreateSeparateInstanceRule{
+		Placement: &types.RequestPlacementOfNiftyCreateSeparateInstanceRule{
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
 	}

@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -15,20 +17,19 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	input := expandDescribeDBInstancesInput(d)
 
 	svc := meta.(*client.Client).RDB
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilDBInstanceAvailable(ctx, expandDescribeDBInstancesInput(d))
+		err := rdb.NewDBInstanceAvailableWaiter(svc).Wait(ctx, expandDescribeDBInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for db instance to become ready: %s", err))
 		}
 	}
 
-	req := svc.DescribeDBInstancesRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.DescribeDBInstances(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBInstance" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DBInstance" {
 			d.SetId("")
 			return nil
 		}

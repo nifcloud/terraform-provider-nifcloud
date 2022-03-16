@@ -6,48 +6,49 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 )
 
 func expandCreateDBInstanceInput(d *schema.ResourceData) *rdb.CreateDBInstanceInput {
 	input := &rdb.CreateDBInstanceInput{
-		AccountingType:                       nifcloud.String(d.Get("accounting_type").(string)),
-		AllocatedStorage:                     nifcloud.Int64(int64(d.Get("allocated_storage").(int))),
+		AccountingType:                       types.AccountingTypeOfCreateDBInstanceRequest(d.Get("accounting_type").(string)),
+		AllocatedStorage:                     nifcloud.Int32(int32(d.Get("allocated_storage").(int))),
 		AvailabilityZone:                     nifcloud.String(d.Get("availability_zone").(string)),
-		BackupRetentionPeriod:                nifcloud.Int64(int64(d.Get("backup_retention_period").(int))),
-		DBInstanceClass:                      nifcloud.String(d.Get("instance_class").(string)),
+		BackupRetentionPeriod:                nifcloud.Int32(int32(d.Get("backup_retention_period").(int))),
+		DBInstanceClass:                      types.DBInstanceClassOfCreateDBInstanceRequest(d.Get("instance_class").(string)),
 		DBInstanceIdentifier:                 nifcloud.String(d.Get("identifier").(string)),
 		DBName:                               nifcloud.String(d.Get("db_name").(string)),
 		DBParameterGroupName:                 nifcloud.String(d.Get("parameter_group_name").(string)),
 		DBSecurityGroups:                     []string{d.Get("db_security_group_name").(string)},
-		Engine:                               nifcloud.String(d.Get("engine").(string)),
+		Engine:                               types.EngineOfCreateDBInstanceRequest(d.Get("engine").(string)),
 		EngineVersion:                        nifcloud.String(d.Get("engine_version").(string)),
 		MasterUserPassword:                   nifcloud.String(d.Get("password").(string)),
 		MasterUsername:                       nifcloud.String(d.Get("username").(string)),
 		MultiAZ:                              nifcloud.Bool(d.Get("multi_az").(bool)),
-		NiftyMultiAZType:                     nifcloud.Int64(int64(d.Get("multi_az_type").(int))),
-		Port:                                 nifcloud.Int64(int64(d.Get("port").(int))),
+		NiftyMultiAZType:                     nifcloud.Int32(int32(d.Get("multi_az_type").(int))),
+		Port:                                 nifcloud.Int32(int32(d.Get("port").(int))),
 		PreferredBackupWindow:                nifcloud.String(d.Get("backup_window").(string)),
 		PreferredMaintenanceWindow:           nifcloud.String(d.Get("maintenance_window").(string)),
 		PubliclyAccessible:                   nifcloud.Bool(d.Get("publicly_accessible").(bool)),
-		NiftyStorageType:                     nifcloud.Int64(int64(d.Get("storage_type").(int))),
+		NiftyStorageType:                     nifcloud.Int32(int32(d.Get("storage_type").(int))),
 		NiftyNetworkId:                       nifcloud.String(d.Get("network_id").(string)),
 		NiftyVirtualPrivateAddress:           nifcloud.String(d.Get("virtual_private_address").(string)),
 		NiftyMasterPrivateAddress:            nifcloud.String(d.Get("master_private_address").(string)),
 		NiftySlavePrivateAddress:             nifcloud.String(d.Get("slave_private_address").(string)),
 		NiftyReadReplicaPrivateAddress:       nifcloud.String(d.Get("read_replica_private_address").(string)),
 		NiftyReadReplicaDBInstanceIdentifier: nifcloud.String(d.Get("read_replica_identifier").(string)),
-		ReadReplicaAccountingType:            nifcloud.String(d.Get("accounting_type").(string)),
+		ReadReplicaAccountingType:            types.ReadReplicaAccountingTypeOfCreateDBInstanceRequest(d.Get("accounting_type").(string)),
 	}
 	return input
 }
 
 func expandCreateDBInstanceReadReplicaInput(d *schema.ResourceData) *rdb.CreateDBInstanceReadReplicaInput {
 	input := &rdb.CreateDBInstanceReadReplicaInput{
-		AccountingType:                 nifcloud.String(d.Get("accounting_type").(string)),
-		DBInstanceClass:                nifcloud.String(d.Get("instance_class").(string)),
+		AccountingType:                 types.AccountingTypeOfCreateDBInstanceReadReplicaRequest(d.Get("accounting_type").(string)),
+		DBInstanceClass:                types.DBInstanceClassOfCreateDBInstanceReadReplicaRequest(d.Get("instance_class").(string)),
 		DBInstanceIdentifier:           nifcloud.String(d.Get("identifier").(string)),
 		SourceDBInstanceIdentifier:     nifcloud.String(d.Get("replicate_source_db").(string)),
-		NiftyStorageType:               nifcloud.Int64(int64(d.Get("storage_type").(int))),
+		NiftyStorageType:               nifcloud.Int32(int32(d.Get("storage_type").(int))),
 		NiftyReadReplicaPrivateAddress: nifcloud.String(d.Get("read_replica_private_address").(string)),
 	}
 	return input
@@ -55,25 +56,25 @@ func expandCreateDBInstanceReadReplicaInput(d *schema.ResourceData) *rdb.CreateD
 
 func expandRestoreDBInstanceFromDBSnapshotInput(d *schema.ResourceData) *rdb.RestoreDBInstanceFromDBSnapshotInput {
 	input := &rdb.RestoreDBInstanceFromDBSnapshotInput{
-		AccountingType:                       nifcloud.String(d.Get("accounting_type").(string)),
+		AccountingType:                       types.AccountingTypeOfRestoreDBInstanceFromDBSnapshotRequest(d.Get("accounting_type").(string)),
 		AvailabilityZone:                     nifcloud.String(d.Get("availability_zone").(string)),
-		DBInstanceClass:                      nifcloud.String(d.Get("instance_class").(string)),
+		DBInstanceClass:                      types.DBInstanceClassOfRestoreDBInstanceFromDBSnapshotRequest(d.Get("instance_class").(string)),
 		DBInstanceIdentifier:                 nifcloud.String(d.Get("identifier").(string)),
 		NiftyDBParameterGroupName:            nifcloud.String(d.Get("parameter_group_name").(string)),
 		NiftyDBSecurityGroups:                []string{d.Get("db_security_group_name").(string)},
 		DBSnapshotIdentifier:                 nifcloud.String(d.Get("snapshot_identifier").(string)),
 		MultiAZ:                              nifcloud.Bool(d.Get("multi_az").(bool)),
-		NiftyMultiAZType:                     nifcloud.Int64(int64(d.Get("multi_az_type").(int))),
-		Port:                                 nifcloud.Int64(int64(d.Get("port").(int))),
+		NiftyMultiAZType:                     nifcloud.Int32(int32(d.Get("multi_az_type").(int))),
+		Port:                                 nifcloud.Int32(int32(d.Get("port").(int))),
 		PubliclyAccessible:                   nifcloud.Bool(d.Get("publicly_accessible").(bool)),
-		NiftyStorageType:                     nifcloud.Int64(int64(d.Get("storage_type").(int))),
+		NiftyStorageType:                     nifcloud.Int32(int32(d.Get("storage_type").(int))),
 		NiftyNetworkId:                       nifcloud.String(d.Get("network_id").(string)),
 		NiftyVirtualPrivateAddress:           nifcloud.String(d.Get("virtual_private_address").(string)),
 		NiftyMasterPrivateAddress:            nifcloud.String(d.Get("master_private_address").(string)),
 		NiftySlavePrivateAddress:             nifcloud.String(d.Get("slave_private_address").(string)),
 		NiftyReadReplicaPrivateAddress:       nifcloud.String(d.Get("read_replica_private_address").(string)),
 		NiftyReadReplicaDBInstanceIdentifier: nifcloud.String(d.Get("read_replica_identifier").(string)),
-		ReadReplicaAccountingType:            nifcloud.String(d.Get("accounting_type").(string)),
+		ReadReplicaAccountingType:            types.ReadReplicaAccountingTypeOfRestoreDBInstanceFromDBSnapshotRequest(d.Get("accounting_type").(string)),
 	}
 	return input
 }
@@ -82,24 +83,24 @@ func expandRestoreDBInstanceToPointInTimeInput(d *schema.ResourceData) *rdb.Rest
 	tfMap := d.Get("restore_to_point_in_time").([]interface{})[0].(map[string]interface{})
 
 	input := &rdb.RestoreDBInstanceToPointInTimeInput{
-		AccountingType:                       nifcloud.String(d.Get("accounting_type").(string)),
+		AccountingType:                       types.AccountingTypeOfRestoreDBInstanceToPointInTimeRequest(d.Get("accounting_type").(string)),
 		AvailabilityZone:                     nifcloud.String(d.Get("availability_zone").(string)),
-		DBInstanceClass:                      nifcloud.String(d.Get("instance_class").(string)),
+		DBInstanceClass:                      types.DBInstanceClassOfRestoreDBInstanceToPointInTimeRequest(d.Get("instance_class").(string)),
 		NiftyDBParameterGroupName:            nifcloud.String(d.Get("parameter_group_name").(string)),
 		NiftyDBSecurityGroups:                []string{d.Get("db_security_group_name").(string)},
 		MultiAZ:                              nifcloud.Bool(d.Get("multi_az").(bool)),
-		NiftyMultiAZType:                     nifcloud.Int64(int64(d.Get("multi_az_type").(int))),
-		Port:                                 nifcloud.Int64(int64(d.Get("port").(int))),
+		NiftyMultiAZType:                     nifcloud.Int32(int32(d.Get("multi_az_type").(int))),
+		Port:                                 nifcloud.Int32(int32(d.Get("port").(int))),
 		PubliclyAccessible:                   nifcloud.Bool(d.Get("publicly_accessible").(bool)),
 		TargetDBInstanceIdentifier:           nifcloud.String(d.Get("identifier").(string)),
-		NiftyStorageType:                     nifcloud.Int64(int64(d.Get("storage_type").(int))),
+		NiftyStorageType:                     nifcloud.Int32(int32(d.Get("storage_type").(int))),
 		NiftyNetworkId:                       nifcloud.String(d.Get("network_id").(string)),
 		NiftyVirtualPrivateAddress:           nifcloud.String(d.Get("virtual_private_address").(string)),
 		NiftyMasterPrivateAddress:            nifcloud.String(d.Get("master_private_address").(string)),
 		NiftySlavePrivateAddress:             nifcloud.String(d.Get("slave_private_address").(string)),
 		NiftyReadReplicaPrivateAddress:       nifcloud.String(d.Get("read_replica_private_address").(string)),
 		NiftyReadReplicaDBInstanceIdentifier: nifcloud.String(d.Get("read_replica_identifier").(string)),
-		ReadReplicaAccountingType:            nifcloud.String(d.Get("accounting_type").(string)),
+		ReadReplicaAccountingType:            types.ReadReplicaAccountingTypeOfRestoreDBInstanceToPointInTimeRequest(d.Get("accounting_type").(string)),
 	}
 
 	if v, ok := tfMap["restore_time"].(string); ok && v != "" {
@@ -138,24 +139,24 @@ func expandDeleteDBInstanceInput(d *schema.ResourceData) *rdb.DeleteDBInstanceIn
 func expandModifyDBInstanceInput(d *schema.ResourceData) *rdb.ModifyDBInstanceInput {
 	input := &rdb.ModifyDBInstanceInput{
 		DBInstanceIdentifier:                 nifcloud.String(d.Id()),
-		AccountingType:                       nifcloud.String(d.Get("accounting_type").(string)),
+		AccountingType:                       types.AccountingTypeOfModifyDBInstanceRequest(d.Get("accounting_type").(string)),
 		ApplyImmediately:                     nifcloud.Bool(d.Get("apply_immediately").(bool)),
-		AllocatedStorage:                     nifcloud.Int64(int64(d.Get("allocated_storage").(int))),
-		BackupRetentionPeriod:                nifcloud.Int64(int64(d.Get("backup_retention_period").(int))),
-		BinlogRetentionPeriod:                nifcloud.Int64(int64(d.Get("binlog_retention_period").(int))),
+		AllocatedStorage:                     nifcloud.Int32(int32(d.Get("allocated_storage").(int))),
+		BackupRetentionPeriod:                nifcloud.Int32(int32(d.Get("backup_retention_period").(int))),
+		BinlogRetentionPeriod:                nifcloud.Int32(int32(d.Get("binlog_retention_period").(int))),
 		CustomBinlogRetentionPeriod:          nifcloud.Bool(d.Get("custom_binlog_retention_period").(bool)),
-		DBInstanceClass:                      nifcloud.String(d.Get("instance_class").(string)),
+		DBInstanceClass:                      types.DBInstanceClassOfModifyDBInstanceRequest(d.Get("instance_class").(string)),
 		DBParameterGroupName:                 nifcloud.String(d.Get("parameter_group_name").(string)),
 		DBSecurityGroups:                     []string{d.Get("db_security_group_name").(string)},
 		MasterUserPassword:                   nifcloud.String(d.Get("password").(string)),
 		MultiAZ:                              nifcloud.Bool(d.Get("multi_az").(bool)),
-		NiftyMultiAZType:                     nifcloud.Int64(int64(d.Get("multi_az_type").(int))),
+		NiftyMultiAZType:                     nifcloud.Int32(int32(d.Get("multi_az_type").(int))),
 		PreferredBackupWindow:                nifcloud.String(d.Get("backup_window").(string)),
 		PreferredMaintenanceWindow:           nifcloud.String(d.Get("maintenance_window").(string)),
 		NiftySlavePrivateAddress:             nifcloud.String(d.Get("slave_private_address").(string)),
 		NiftyReadReplicaDBInstanceIdentifier: nifcloud.String(d.Get("read_replica_identifier").(string)),
 		NiftyReadReplicaPrivateAddress:       nifcloud.String(d.Get("read_replica_private_address").(string)),
-		ReadReplicaAccountingType:            nifcloud.String(d.Get("accounting_type").(string)),
+		ReadReplicaAccountingType:            types.ReadReplicaAccountingTypeOfModifyDBInstanceRequest(d.Get("accounting_type").(string)),
 	}
 
 	if d.HasChange("identifier") && !d.IsNewResource() {

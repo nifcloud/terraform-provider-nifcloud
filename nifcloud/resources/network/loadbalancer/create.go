@@ -13,9 +13,8 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateLoadBalancerInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateLoadBalancerRequest(input)
 
-	_, err := req.Send(ctx)
+	_, err := svc.CreateLoadBalancer(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating load_balancer: %s", err))
 	}

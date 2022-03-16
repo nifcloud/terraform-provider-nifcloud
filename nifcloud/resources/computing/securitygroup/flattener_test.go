@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +22,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeSecurityGroupsResponse
+		res *computing.DescribeSecurityGroupsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -33,15 +34,13 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeSecurityGroupsResponse{
-					DescribeSecurityGroupsOutput: &computing.DescribeSecurityGroupsOutput{
-						SecurityGroupInfo: []computing.SecurityGroupInfo{
-							{
-								GroupName:        nifcloud.String("test_group_name"),
-								GroupDescription: nifcloud.String("test_description"),
-								GroupLogLimit:    nifcloud.Int64(1000),
-								AvailabilityZone: nifcloud.String("test_availability_zone"),
-							},
+				res: &computing.DescribeSecurityGroupsOutput{
+					SecurityGroupInfo: []types.SecurityGroupInfo{
+						{
+							GroupName:        nifcloud.String("test_group_name"),
+							GroupDescription: nifcloud.String("test_description"),
+							GroupLogLimit:    nifcloud.Int32(1000),
+							AvailabilityZone: nifcloud.String("test_availability_zone"),
 						},
 					},
 				},
@@ -52,10 +51,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeSecurityGroupsResponse{
-					DescribeSecurityGroupsOutput: &computing.DescribeSecurityGroupsOutput{
-						SecurityGroupInfo: []computing.SecurityGroupInfo{},
-					},
+				res: &computing.DescribeSecurityGroupsOutput{
+					SecurityGroupInfo: []types.SecurityGroupInfo{},
 				},
 			},
 			want: wantNotFoundRd,

@@ -14,17 +14,15 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandAllocateAddressInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.AllocateAddressRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.AllocateAddress(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating elastic ip: %s", err))
 	}
 
 	if d.Get("ip_type").(bool) {
-		d.SetId(nifcloud.StringValue(res.PrivateIpAddress))
+		d.SetId(nifcloud.ToString(res.PrivateIpAddress))
 	} else {
-		d.SetId(nifcloud.StringValue(res.PublicIp))
+		d.SetId(nifcloud.ToString(res.PublicIp))
 	}
 
 	return update(ctx, d, meta)

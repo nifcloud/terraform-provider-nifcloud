@@ -15,9 +15,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		input := expandNiftyModifyAddressAttributeInput(d)
 
 		svc := meta.(*client.Client).Computing
-		req := svc.NiftyModifyAddressAttributeRequest(input)
+		_, err := svc.NiftyModifyAddressAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating elastic ip: %s", err))
 		}

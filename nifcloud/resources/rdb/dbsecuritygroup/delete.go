@@ -12,9 +12,8 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDeleteDBSecurityGroupInput(d)
 	svc := meta.(*client.Client).RDB
-	req := svc.DeleteDBSecurityGroupRequest(input)
 
-	_, err := req.Send(ctx)
+	_, err := svc.DeleteDBSecurityGroup(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}
