@@ -23,6 +23,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_dns_zone", &resource.Sweeper{
 		Name: "nifcloud_dns_zone",
 		F:    testSweepDnsZone,
+		Dependencies: []string{
+			"nifcloud_dns_record",
+		},
 	})
 }
 
