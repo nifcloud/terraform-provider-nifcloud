@@ -80,7 +80,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 ## Import
 
-nifcloud_dns_zone can be imported using the `set_identifier`, `zone_id`.
+nifcloud_dns_record can be imported using the `set_identifier`, `zone_id`.
 separated by underscores ( _ ). All parts are required.
 
 ```

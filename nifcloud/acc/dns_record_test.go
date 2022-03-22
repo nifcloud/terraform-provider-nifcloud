@@ -152,23 +152,23 @@ func testAccCheckDnsRecordWeightValues(dnsRecord *dns.ResourceRecordSets) resour
 		}
 
 		if nifcloud.StringValue(dnsRecord.Type) != "A" {
-			return fmt.Errorf("bad comment state, expected \"A\", got: %#v", dnsRecord.Type)
+			return fmt.Errorf("bad type state, expected \"A\", got: %#v", dnsRecord.Type)
 		}
 
 		if nifcloud.Int64Value(dnsRecord.TTL) != 60 {
-			return fmt.Errorf("bad comment state, expected 60, got: %#v", dnsRecord.TTL)
+			return fmt.Errorf("bad ttl state, expected 60, got: %#v", dnsRecord.TTL)
 		}
 
 		if nifcloud.StringValue(dnsRecord.ResourceRecords[0].Value) != "192.0.2.1" {
-			return fmt.Errorf("bad comment state, expected \"192.0.2.1\", got: %#v", dnsRecord.ResourceRecords[0].Value)
+			return fmt.Errorf("bad resource_records.0.value state, expected \"192.0.2.1\", got: %#v", dnsRecord.ResourceRecords[0].Value)
 		}
 
 		if nifcloud.StringValue(dnsRecord.XniftyComment) != "tfacc-memo" {
-			return fmt.Errorf("bad comment state, expected \"tfacc-memo\", got: %#v", dnsRecord.XniftyComment)
+			return fmt.Errorf("bad x_nifty_comment state, expected \"tfacc-memo\", got: %#v", dnsRecord.XniftyComment)
 		}
 
 		if nifcloud.Int64Value(dnsRecord.Weight) != 90 {
-			return fmt.Errorf("bad comment state, expected \"90\", got: %#v", dnsRecord.Weight)
+			return fmt.Errorf("bad weight state, expected \"90\", got: %#v", dnsRecord.Weight)
 		}
 
 		return nil
@@ -182,43 +182,43 @@ func testAccCheckDnsRecordFailoverValues(dnsRecord *dns.ResourceRecordSets) reso
 		}
 
 		if nifcloud.StringValue(dnsRecord.Type) != "A" {
-			return fmt.Errorf("bad comment state, expected \"A\", got: %#v", dnsRecord.Type)
+			return fmt.Errorf("bad type state, expected \"A\", got: %#v", dnsRecord.Type)
 		}
 
 		if nifcloud.Int64Value(dnsRecord.TTL) != 60 {
-			return fmt.Errorf("bad comment state, expected 60, got: %#v", dnsRecord.TTL)
+			return fmt.Errorf("bad ttl state, expected 60, got: %#v", dnsRecord.TTL)
 		}
 
 		if nifcloud.StringValue(dnsRecord.ResourceRecords[0].Value) != "192.0.2.1" {
-			return fmt.Errorf("bad comment state, expected \"192.0.2.1\", got: %#v", dnsRecord.ResourceRecords[0].Value)
+			return fmt.Errorf("bad resource_records.0.value state, expected \"192.0.2.1\", got: %#v", dnsRecord.ResourceRecords[0].Value)
 		}
 
 		if nifcloud.StringValue(dnsRecord.XniftyComment) != "tfacc-memo" {
-			return fmt.Errorf("bad comment state, expected \"tfacc-memo\", got: %#v", dnsRecord.XniftyComment)
+			return fmt.Errorf("bad x_nifty_comment state, expected \"tfacc-memo\", got: %#v", dnsRecord.XniftyComment)
 		}
 
 		if nifcloud.StringValue(dnsRecord.Failover) != "PRIMARY" {
-			return fmt.Errorf("bad comment state, expected \"PRIMARY\", got: %#v", dnsRecord.Failover)
+			return fmt.Errorf("bad failover state, expected \"PRIMARY\", got: %#v", dnsRecord.Failover)
 		}
 
 		if nifcloud.StringValue(dnsRecord.XniftyHealthCheckConfig.Protocol) != "HTTPS" {
-			return fmt.Errorf("bad comment state, expected \"HTTPS\", got: %#v", dnsRecord.XniftyHealthCheckConfig.Protocol)
+			return fmt.Errorf("bad x_nifty_health_check_config.protocol state, expected \"HTTPS\", got: %#v", dnsRecord.XniftyHealthCheckConfig.Protocol)
 		}
 
 		if nifcloud.StringValue(dnsRecord.XniftyHealthCheckConfig.IPAddress) != "192.0.2.2" {
-			return fmt.Errorf("bad comment state, expected \"192.0.2.2\", got: %#v", dnsRecord.XniftyHealthCheckConfig.IPAddress)
+			return fmt.Errorf("bad x_nifty_health_check_config.ipaddress state, expected \"192.0.2.2\", got: %#v", dnsRecord.XniftyHealthCheckConfig.IPAddress)
 		}
 
 		if nifcloud.Int64Value(dnsRecord.XniftyHealthCheckConfig.Port) != 443 {
-			return fmt.Errorf("bad comment state, expected \"443\", got: %#v", dnsRecord.XniftyHealthCheckConfig.Port)
+			return fmt.Errorf("bad x_nifty_health_check_config.port state, expected \"443\", got: %#v", dnsRecord.XniftyHealthCheckConfig.Port)
 		}
 
 		if nifcloud.StringValue(dnsRecord.XniftyHealthCheckConfig.ResourcePath) != "test" {
-			return fmt.Errorf("bad comment state, expected \"test\", got: %#v", dnsRecord.XniftyHealthCheckConfig.ResourcePath)
+			return fmt.Errorf("bad x_nifty_health_check_config.resource_path state, expected \"test\", got: %#v", dnsRecord.XniftyHealthCheckConfig.ResourcePath)
 		}
 
 		if nifcloud.StringValue(dnsRecord.XniftyHealthCheckConfig.FullyQualifiedDomainName) != "example.test" {
-			return fmt.Errorf("bad comment state, expected \"example.test\", got: %#v", dnsRecord.XniftyHealthCheckConfig.FullyQualifiedDomainName)
+			return fmt.Errorf("bad x_nifty_health_check_config.fully_qualified_domain_name state, expected \"example.test\", got: %#v", dnsRecord.XniftyHealthCheckConfig.FullyQualifiedDomainName)
 		}
 
 		return nil
