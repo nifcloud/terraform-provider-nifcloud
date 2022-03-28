@@ -13,6 +13,9 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/volume"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/record"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/zone"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/ess/domaindkim"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/ess/domainidentity"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/ess/emailidentity"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/cluster"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/firewallgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nasinstance"
@@ -78,6 +81,9 @@ func Provider() *schema.Provider {
 			"nifcloud_elastic_ip":             elasticip.New(),
 			"nifcloud_elb":                    elb.New(),
 			"nifcloud_elb_listener":           elblistener.New(),
+			"nifcloud_ess_domain_dkim":        domaindkim.New(),
+			"nifcloud_ess_domain_identity":    domainidentity.New(),
+			"nifcloud_ess_email_identity":     emailidentity.New(),
 			"nifcloud_instance":               instance.New(),
 			"nifcloud_key_pair":               keypair.New(),
 			"nifcloud_nas_instance":           nasinstance.New(),
