@@ -13,9 +13,8 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandNiftyDeleteDhcpConfigInput(d)
 	svc := meta.(*client.Client).Computing
 
-	req := svc.NiftyDeleteDhcpConfigRequest(input)
+	_, err := svc.NiftyDeleteDhcpConfig(ctx, input)
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
@@ -16,11 +16,10 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	svc := meta.(*client.Client).Computing
 
-	req := svc.DescribeSecurityGroupsRequest(input)
-	res, err := req.Send(ctx)
+	res, err := svc.DescribeSecurityGroups(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroup" {
 			d.SetId("")
 			return nil
 		}

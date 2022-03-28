@@ -3,17 +3,20 @@ package elb
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+		err := computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}
@@ -35,14 +38,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	) {
 		input := expandNiftyModifyElasticLoadBalancerAttributesInput(d)
 
-		req := svc.NiftyModifyElasticLoadBalancerAttributesRequest(input)
+		_, err := svc.NiftyModifyElasticLoadBalancerAttributes(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating elb attributes: %s", err))
 		}
 
-		err = svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+		err = computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}
@@ -51,14 +53,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChanges("elb_name", "accounting_type", "network_volume") {
 		input := expandNiftyUpdateElasticLoadBalancerInput(d)
 
-		req := svc.NiftyUpdateElasticLoadBalancerRequest(input)
+		_, err := svc.NiftyUpdateElasticLoadBalancer(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating elb: %s", err))
 		}
 
-		err = svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+		err = computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}
@@ -74,14 +75,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	) {
 		input := expandNiftyConfigureElasticLoadBalancerHealthCheckInput(d)
 
-		req := svc.NiftyConfigureElasticLoadBalancerHealthCheckRequest(input)
+		_, err := svc.NiftyConfigureElasticLoadBalancerHealthCheck(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating elb health check: %s", err))
 		}
 
-		err = svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+		err = computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}
@@ -98,14 +98,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if len(addInstances) > 0 {
 			input := expandNiftyRegisterInstancesWithElasticLoadBalancerInput(d, addInstances)
 
-			req := svc.NiftyRegisterInstancesWithElasticLoadBalancerRequest(input)
+			_, err := svc.NiftyRegisterInstancesWithElasticLoadBalancer(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed registering instances with elb: %s", err))
 			}
 
-			err = svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+			err = computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 			}
@@ -114,14 +113,13 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if len(delInstances) > 0 {
 			input := expandNiftyDeregisterInstancesFromElasticLoadBalancerInput(d, delInstances)
 
-			req := svc.NiftyDeregisterInstancesFromElasticLoadBalancerRequest(input)
+			_, err := svc.NiftyDeregisterInstancesFromElasticLoadBalancer(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed deregistering instances with elb: %s", err))
 			}
 
-			err = svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+			err = computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 			}
@@ -135,33 +133,30 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 		if ors != "" && nrs != "" {
 			input := expandNiftyReplaceRouteTableAssociationWithElasticLoadBalancerInput(d)
-			req := svc.NiftyReplaceRouteTableAssociationWithElasticLoadBalancerRequest(input)
+			_, err := svc.NiftyReplaceRouteTableAssociationWithElasticLoadBalancer(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed replace route table with elb: %s", err))
 			}
 		}
 		if ors == "" && nrs != "" {
 			input := expandNiftyAssociateRouteTableWithElasticLoadBalancerInput(d)
-			req := svc.NiftyAssociateRouteTableWithElasticLoadBalancerRequest(input)
+			_, err := svc.NiftyAssociateRouteTableWithElasticLoadBalancer(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed associating route table with elb: %s", err))
 			}
 		}
 		if ors != "" && nrs == "" {
 			input := expandNiftyDisassociateRouteTableFromElasticLoadBalancerInput(d)
-			req := svc.NiftyDisassociateRouteTableFromElasticLoadBalancerRequest(input)
+			_, err := svc.NiftyDisassociateRouteTableFromElasticLoadBalancer(ctx, input)
 
-			_, err := req.Send(ctx)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed disassociating route table with elb: %s", err))
 			}
 		}
 
-		err := svc.WaitUntilElasticLoadBalancerAvailable(ctx, expandNiftyDescribeElasticLoadBalancersInput(d))
+		err := computing.NewElasticLoadBalancerAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeElasticLoadBalancersInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until elb available: %s", err))
 		}

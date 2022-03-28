@@ -13,9 +13,8 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateChangeResourceRecordSetsInput(d)
 
 	svc := meta.(*client.Client).DNS
-	req := svc.ChangeResourceRecordSetsRequest(input)
 
-	_, err := req.Send(ctx)
+	_, err := svc.ChangeResourceRecordSets(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating dns record: %s", err))
 	}

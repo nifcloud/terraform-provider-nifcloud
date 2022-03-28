@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +26,7 @@ func TestExpandAllocateAddressInput(t *testing.T) {
 			args: rd,
 			want: &computing.AllocateAddressInput{
 				NiftyPrivateIp: nifcloud.Bool(false),
-				Placement: &computing.RequestPlacementOfAllocateAddress{
+				Placement: &types.RequestPlacementOfAllocateAddress{
 					AvailabilityZone: nifcloud.String("east-21"),
 				},
 			},

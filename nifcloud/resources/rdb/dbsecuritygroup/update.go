@@ -3,17 +3,20 @@ package dbsecuritygroup
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).RDB
 
+	deadline, _ := ctx.Deadline()
 	if d.IsNewResource() {
-		err := svc.WaitUntilDBSecurityGroupExists(ctx, expandDescribeDBSecurityGroupsInput(d))
+		err := rdb.NewDBSecurityGroupExistsWaiter(svc).Wait(ctx, expandDescribeDBSecurityGroupsInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed wait until db security group available: %s", err))
 		}
@@ -28,9 +31,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		for _, r := range ors.List() {
 			rule := r.(map[string]interface{})
 			input := expandRevokeDBSecurityGroupIngressInput(d, rule)
-			req := svc.RevokeDBSecurityGroupIngressRequest(input)
 
-			_, err := req.Send(ctx)
+			_, err := svc.RevokeDBSecurityGroupIngress(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating db security group to delete rule: %s", err))
 			}
@@ -50,17 +52,16 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		for _, r := range nrs.List() {
 			rule := r.(map[string]interface{})
 			input := expandAuthorizeDBSecurityGroupIngressInput(d, rule)
-			req := svc.AuthorizeDBSecurityGroupIngressRequest(input)
 
-			_, err := req.Send(ctx)
+			_, err := svc.AuthorizeDBSecurityGroupIngress(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating db security group to create rule: %s", err))
 			}
 
 			if rule["cidr_ip"] != "" {
-				err = svc.WaitUntilDBSecurityGroupIPRangesAuthorized(ctx, expandDescribeDBSecurityGroupsInput(d))
+				err = rdb.NewDBSecurityGroupIPRangesAuthorizedWaiter(svc).Wait(ctx, expandDescribeDBSecurityGroupsInput(d), time.Until(deadline))
 			} else if rule["security_group_name"] != "" {
-				err = svc.WaitUntilDBSecurityGroupEC2SecurityGroupsAuthorized(ctx, expandDescribeDBSecurityGroupsInput(d))
+				err = rdb.NewDBSecurityGroupEC2SecurityGroupsAuthorizedWaiter(svc).Wait(ctx, expandDescribeDBSecurityGroupsInput(d), time.Until(deadline))
 			}
 
 			if err != nil {

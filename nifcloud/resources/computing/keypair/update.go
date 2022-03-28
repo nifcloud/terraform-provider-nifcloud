@@ -14,9 +14,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		input := expandNiftyModifyKeyPairAttributeInput(d)
 
 		svc := meta.(*client.Client).Computing
-		req := svc.NiftyModifyKeyPairAttributeRequest(input)
+		_, err := svc.NiftyModifyKeyPairAttribute(ctx, input)
 
-		_, err := req.Send(ctx)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating KeyPair: %s", err))
 		}

@@ -12,9 +12,9 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDeleteFirewallGroupInput(d)
 	svc := meta.(*client.Client).Hatoba
-	req := svc.DeleteFirewallGroupRequest(input)
+	_, err := svc.DeleteFirewallGroup(ctx, input)
 
-	if _, err := req.Send(ctx); err != nil {
+	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting Hatoba firewall group: %s", err))
 	}
 

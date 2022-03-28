@@ -4,13 +4,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandNiftyCreateRouterInput(d *schema.ResourceData) *computing.NiftyCreateRouterInput {
-	var networkInterface []computing.RequestNetworkInterfaceOfNiftyCreateRouter
+	var networkInterface []types.RequestNetworkInterfaceOfNiftyCreateRouter
 	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
 		if v, ok := ni.(map[string]interface{}); ok {
-			n := computing.RequestNetworkInterfaceOfNiftyCreateRouter{}
+			n := types.RequestNetworkInterfaceOfNiftyCreateRouter{}
 			if row, ok := v["network_id"]; ok {
 				n.NetworkId = nifcloud.String(row.(string))
 			}
@@ -41,9 +42,9 @@ func expandNiftyCreateRouterInput(d *schema.ResourceData) *computing.NiftyCreate
 	input := &computing.NiftyCreateRouterInput{
 		RouterName:       nifcloud.String(d.Get("name").(string)),
 		SecurityGroup:    securityGroup,
-		Type:             computing.TypeOfNiftyCreateRouterRequest(d.Get("type").(string)),
+		Type:             types.TypeOfNiftyCreateRouterRequest(d.Get("type").(string)),
 		AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
-		AccountingType:   computing.AccountingTypeOfNiftyCreateRouterRequest(d.Get("accounting_type").(string)),
+		AccountingType:   types.AccountingTypeOfNiftyCreateRouterRequest(d.Get("accounting_type").(string)),
 		Description:      nifcloud.String(d.Get("description").(string)),
 		NetworkInterface: networkInterface,
 	}
@@ -74,7 +75,7 @@ func expandNiftyDescribeRoutersInput(d *schema.ResourceData) *computing.NiftyDes
 func expandNiftyModifyRouterAttributeInputForRouterName(d *schema.ResourceData) *computing.NiftyModifyRouterAttributeInput {
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestRouterName,
+		Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestRouterName,
 		Value:     nifcloud.String(d.Get("name").(string)),
 	}
 }
@@ -82,7 +83,7 @@ func expandNiftyModifyRouterAttributeInputForRouterName(d *schema.ResourceData) 
 func expandNiftyModifyRouterAttributeInputForAccountingType(d *schema.ResourceData) *computing.NiftyModifyRouterAttributeInput {
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestAccountingType,
+		Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestAccountingType,
 		Value:     nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
@@ -90,7 +91,7 @@ func expandNiftyModifyRouterAttributeInputForAccountingType(d *schema.ResourceDa
 func expandNiftyModifyRouterAttributeInputForDescription(d *schema.ResourceData) *computing.NiftyModifyRouterAttributeInput {
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestDescription,
+		Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestDescription,
 		Value:     nifcloud.String(d.Get("description").(string)),
 	}
 }
@@ -98,7 +99,7 @@ func expandNiftyModifyRouterAttributeInputForDescription(d *schema.ResourceData)
 func expandNiftyModifyRouterAttributeInputForType(d *schema.ResourceData) *computing.NiftyModifyRouterAttributeInput {
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestType,
+		Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestType,
 		Value:     nifcloud.String(d.Get("type").(string)),
 	}
 }
@@ -106,7 +107,7 @@ func expandNiftyModifyRouterAttributeInputForType(d *schema.ResourceData) *compu
 func expandNiftyModifyRouterAttributeInputForSecurityGroup(d *schema.ResourceData) *computing.NiftyModifyRouterAttributeInput {
 	return &computing.NiftyModifyRouterAttributeInput{
 		RouterId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestGroupId,
+		Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestGroupId,
 		Value:     nifcloud.String(d.Get("security_group").(string)),
 	}
 }
@@ -115,7 +116,7 @@ func expandNiftyDeregisterRoutersFromSecurityGroupInput(d *schema.ResourceData) 
 	securityGroup, _ := d.GetChange("security_group")
 	return &computing.NiftyDeregisterRoutersFromSecurityGroupInput{
 		GroupName: nifcloud.String(securityGroup.(string)),
-		RouterSet: []computing.RequestRouterSet{
+		RouterSet: []types.RequestRouterSet{
 			{
 				RouterId: nifcloud.String(d.Id()),
 			},
@@ -124,10 +125,10 @@ func expandNiftyDeregisterRoutersFromSecurityGroupInput(d *schema.ResourceData) 
 }
 
 func expandNiftyUpdateRouterNetworkInterfacesInput(d *schema.ResourceData) *computing.NiftyUpdateRouterNetworkInterfacesInput {
-	var networkInterface []computing.RequestNetworkInterfaceOfNiftyUpdateRouterNetworkInterfaces
+	var networkInterface []types.RequestNetworkInterfaceOfNiftyUpdateRouterNetworkInterfaces
 	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
 		if v, ok := ni.(map[string]interface{}); ok {
-			n := computing.RequestNetworkInterfaceOfNiftyUpdateRouterNetworkInterfaces{}
+			n := types.RequestNetworkInterfaceOfNiftyUpdateRouterNetworkInterfaces{}
 			if row, ok := v["network_id"]; ok {
 				n.NetworkId = nifcloud.String(row.(string))
 			}

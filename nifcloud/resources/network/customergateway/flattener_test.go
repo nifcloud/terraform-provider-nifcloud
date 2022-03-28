@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeCustomerGatewaysResponse
+		res *computing.DescribeCustomerGatewaysOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -35,17 +36,15 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeCustomerGatewaysResponse{
-					DescribeCustomerGatewaysOutput: &computing.DescribeCustomerGatewaysOutput{
-						CustomerGatewaySet: []computing.CustomerGatewaySet{
-							{
-								CustomerGatewayId:               nifcloud.String("test_customer_gateway_id"),
-								NiftyCustomerGatewayName:        nifcloud.String("test_name"),
-								NiftyCustomerGatewayDescription: nifcloud.String("test_description"),
-								IpAddress:                       nifcloud.String("test_ip_address"),
-								NiftyLanSideIpAddress:           nifcloud.String("test_lan_side_ip_address"),
-								NiftyLanSideCidrBlock:           nifcloud.String("test_lan_side_cidr_block"),
-							},
+				res: &computing.DescribeCustomerGatewaysOutput{
+					CustomerGatewaySet: []types.CustomerGatewaySet{
+						{
+							CustomerGatewayId:               nifcloud.String("test_customer_gateway_id"),
+							NiftyCustomerGatewayName:        nifcloud.String("test_name"),
+							NiftyCustomerGatewayDescription: nifcloud.String("test_description"),
+							IpAddress:                       nifcloud.String("test_ip_address"),
+							NiftyLanSideIpAddress:           nifcloud.String("test_lan_side_ip_address"),
+							NiftyLanSideCidrBlock:           nifcloud.String("test_lan_side_cidr_block"),
 						},
 					},
 				},
@@ -56,10 +55,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeCustomerGatewaysResponse{
-					DescribeCustomerGatewaysOutput: &computing.DescribeCustomerGatewaysOutput{
-						CustomerGatewaySet: []computing.CustomerGatewaySet{},
-					},
+				res: &computing.DescribeCustomerGatewaysOutput{
+					CustomerGatewaySet: []types.CustomerGatewaySet{},
 				},
 			},
 			want: wantNotFoundRd,

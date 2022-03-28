@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +36,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribeElasticLoadBalancersResponse
+		res *computing.NiftyDescribeElasticLoadBalancersOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -47,42 +48,42 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribeElasticLoadBalancersResponse{
-					NiftyDescribeElasticLoadBalancersOutput: &computing.NiftyDescribeElasticLoadBalancersOutput{
-						ElasticLoadBalancerDescriptions: []computing.ElasticLoadBalancerDescriptions{
+				res: &computing.NiftyDescribeElasticLoadBalancersOutput{
+					NiftyDescribeElasticLoadBalancersResult: &types.NiftyDescribeElasticLoadBalancersResult{
+						ElasticLoadBalancerDescriptions: []types.ElasticLoadBalancerDescriptions{
 							{
 								ElasticLoadBalancerId: nifcloud.String("test-elb-id"),
-								ElasticLoadBalancerListenerDescriptions: []computing.ElasticLoadBalancerListenerDescriptions{
+								ElasticLoadBalancerListenerDescriptions: []types.ElasticLoadBalancerListenerDescriptions{
 									{
-										Listener: &computing.ListenerOfNiftyDescribeElasticLoadBalancers{
+										Listener: &types.ListenerOfNiftyDescribeElasticLoadBalancers{
 											Description:             nifcloud.String("test_description"),
-											BalancingType:           nifcloud.Int64(1),
-											InstancePort:            nifcloud.Int64(1),
+											BalancingType:           nifcloud.Int32(1),
+											InstancePort:            nifcloud.Int32(1),
 											Protocol:                nifcloud.String("test_protocol"),
-											ElasticLoadBalancerPort: nifcloud.Int64(1),
+											ElasticLoadBalancerPort: nifcloud.Int32(1),
 											SSLCertificateId:        nifcloud.String("test_ssl_certificate_id"),
-											HealthCheck: &computing.HealthCheckOfNiftyDescribeElasticLoadBalancers{
-												UnhealthyThreshold: nifcloud.Int64(1),
+											HealthCheck: &types.HealthCheckOfNiftyDescribeElasticLoadBalancers{
+												UnhealthyThreshold: nifcloud.Int32(1),
 												Target:             nifcloud.String("test_health_check_target"),
-												Interval:           nifcloud.Int64(1),
+												Interval:           nifcloud.Int32(1),
 												Path:               nifcloud.String("test_health_check_path"),
-												Expectation: []computing.Expectation{
+												Expectation: []types.Expectation{
 													{
-														HttpCode: nifcloud.Int64(1),
+														HttpCode: nifcloud.Int32(1),
 													},
 												},
 											},
-											Instances: []computing.Instances{
+											Instances: []types.Instances{
 												{
 													InstanceId: nifcloud.String("test_instances"),
 												},
 											},
-											SessionStickinessPolicy: &computing.SessionStickinessPolicyOfNiftyDescribeElasticLoadBalancers{
+											SessionStickinessPolicy: &types.SessionStickinessPolicyOfNiftyDescribeElasticLoadBalancers{
 												Enabled:          nifcloud.Bool(true),
-												Method:           nifcloud.Int64(1),
-												ExpirationPeriod: nifcloud.Int64(1),
+												Method:           nifcloud.Int32(1),
+												ExpirationPeriod: nifcloud.Int32(1),
 											},
-											SorryPage: &computing.SorryPageOfNiftyDescribeElasticLoadBalancers{
+											SorryPage: &types.SorryPageOfNiftyDescribeElasticLoadBalancers{
 												Enabled:     nifcloud.Bool(true),
 												RedirectUrl: nifcloud.String("test_sorry_page_redirect_url"),
 											},
@@ -100,8 +101,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribeElasticLoadBalancersResponse{
-					NiftyDescribeElasticLoadBalancersOutput: &computing.NiftyDescribeElasticLoadBalancersOutput{},
+				res: &computing.NiftyDescribeElasticLoadBalancersOutput{
+					NiftyDescribeElasticLoadBalancersResult: &types.NiftyDescribeElasticLoadBalancersResult{},
 				},
 			},
 			want: wantNotFoundRd,

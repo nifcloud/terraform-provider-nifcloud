@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,11 +42,11 @@ func TestExpandCreateDBParameterGroupInput(t *testing.T) {
 }
 
 func TestExpandModifyDBParameterGroupInput(t *testing.T) {
-	parameters := []rdb.RequestParameters{
+	parameters := []types.RequestParameters{
 		{
 			ParameterName:  nifcloud.String("test_name"),
 			ParameterValue: nifcloud.String("test_value"),
-			ApplyMethod:    nifcloud.String("test_apply_method"),
+			ApplyMethod:    types.ApplyMethodOfParametersForModifyDBParameterGroup("test_apply_method"),
 		},
 	}
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
@@ -75,10 +76,10 @@ func TestExpandModifyDBParameterGroupInput(t *testing.T) {
 }
 
 func TestExpandResetDBParameterGroupInput(t *testing.T) {
-	parameters := []rdb.RequestParametersOfResetDBParameterGroup{
+	parameters := []types.RequestParametersOfResetDBParameterGroup{
 		{
 			ParameterName: nifcloud.String("test_name"),
-			ApplyMethod:   nifcloud.String("test_apply_method"),
+			ApplyMethod:   types.ApplyMethodOfParametersForResetDBParameterGroup("test_apply_method"),
 		},
 	}
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
@@ -155,7 +156,7 @@ func TestExpandDescribeDBParametersInput(t *testing.T) {
 			},
 			want: &rdb.DescribeDBParametersInput{
 				DBParameterGroupName: nifcloud.String("test_db_parameter_group_id"),
-				Source:               nifcloud.String("user"),
+				Source:               types.SourceOfDescribeDBParametersRequestUser,
 			},
 		},
 		{
@@ -167,7 +168,7 @@ func TestExpandDescribeDBParametersInput(t *testing.T) {
 			want: &rdb.DescribeDBParametersInput{
 				DBParameterGroupName: nifcloud.String("test_db_parameter_group_id"),
 				Marker:               nifcloud.String("test_marker"),
-				Source:               nifcloud.String("user"),
+				Source:               types.SourceOfDescribeDBParametersRequestUser,
 			},
 		},
 	}
@@ -229,12 +230,12 @@ func TestExpandParameters(t *testing.T) {
 	tests := []struct {
 		name string
 		args []interface{}
-		want []rdb.Parameters
+		want []types.Parameters
 	}{
 		{
 			name: "expands the resource data",
 			args: rd.Get("parameter").(*schema.Set).List(),
-			want: []rdb.Parameters{
+			want: []types.Parameters{
 				{
 					ParameterName:  nifcloud.String("test_name_02"),
 					ParameterValue: nifcloud.String("test_value_02"),
@@ -280,21 +281,21 @@ func TestExpandModifyDBParameterGroupParameters(t *testing.T) {
 	tests := []struct {
 		name string
 		args []interface{}
-		want []rdb.RequestParameters
+		want []types.RequestParameters
 	}{
 		{
 			name: "expands the resource data",
 			args: rd.Get("parameter").(*schema.Set).List(),
-			want: []rdb.RequestParameters{
+			want: []types.RequestParameters{
 				{
 					ParameterName:  nifcloud.String("test_name_02"),
 					ParameterValue: nifcloud.String("test_value_02"),
-					ApplyMethod:    nifcloud.String("test_apply_method_02"),
+					ApplyMethod:    types.ApplyMethodOfParametersForModifyDBParameterGroup("test_apply_method_02"),
 				},
 				{
 					ParameterName:  nifcloud.String("test_name_01"),
 					ParameterValue: nifcloud.String("test_value_01"),
-					ApplyMethod:    nifcloud.String("test_apply_method_01"),
+					ApplyMethod:    types.ApplyMethodOfParametersForModifyDBParameterGroup("test_apply_method_01"),
 				},
 			},
 		},
@@ -331,19 +332,19 @@ func TestExpandResetDBParameterGroupParameters(t *testing.T) {
 	tests := []struct {
 		name string
 		args []interface{}
-		want []rdb.RequestParametersOfResetDBParameterGroup
+		want []types.RequestParametersOfResetDBParameterGroup
 	}{
 		{
 			name: "expands the resource data",
 			args: rd.Get("parameter").(*schema.Set).List(),
-			want: []rdb.RequestParametersOfResetDBParameterGroup{
+			want: []types.RequestParametersOfResetDBParameterGroup{
 				{
 					ParameterName: nifcloud.String("test_name_02"),
-					ApplyMethod:   nifcloud.String("test_apply_method_02"),
+					ApplyMethod:   types.ApplyMethodOfParametersForResetDBParameterGroup("test_apply_method_02"),
 				},
 				{
 					ParameterName: nifcloud.String("test_name_01"),
-					ApplyMethod:   nifcloud.String("test_apply_method_01"),
+					ApplyMethod:   types.ApplyMethodOfParametersForResetDBParameterGroup("test_apply_method_01"),
 				},
 			},
 		},

@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateNASSecurityGroupInput(d)
 
 	svc := meta.(*client.Client).NAS
-	req := svc.CreateNASSecurityGroupRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateNASSecurityGroup(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating NAS security group: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.NASSecurityGroup.NASSecurityGroupName))
+	d.SetId(nifcloud.ToString(res.NASSecurityGroup.NASSecurityGroupName))
 
 	return update(ctx, d, meta)
 }

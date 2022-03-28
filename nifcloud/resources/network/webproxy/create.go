@@ -14,13 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandNiftyCreateWebProxyInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyCreateWebProxyRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.NiftyCreateWebProxy(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating web proxy: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.NiftyCreateWebProxyOutput.WebProxy.RouterId))
+	d.SetId(nifcloud.ToString(res.WebProxy.RouterId))
 	return read(ctx, d, meta)
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -14,9 +15,10 @@ const asyncActionWaitDelay = 15 // 15sec
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Hatoba
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d))
+		err := hatoba.NewClusterRunningWaiter(svc).Wait(ctx, expandGetClusterInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for Hatoba cluster to become ready: %s", err))
 		}
@@ -26,8 +28,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	if d.HasChanges("name", "description", "kubernetes_version", "addons_config") {
 		input := expandUpdateClusterInput(d)
-		req := svc.UpdateClusterRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.UpdateCluster(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating Hatoba cluster: %s", err))
 		}
 
@@ -36,7 +38,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// lintignore:R018
 		time.Sleep(asyncActionWaitDelay * time.Second)
 
-		err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d))
+		err = hatoba.NewClusterRunningWaiter(svc).Wait(ctx, expandGetClusterInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for Hatoba cluster to become ready: %s", err))
 		}
@@ -61,30 +63,30 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 		for _, elm := range toChangeSize {
 			input := expandSetNodePoolSizeInput(d, elm.(map[string]interface{}))
-			req := svc.SetNodePoolSizeRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.SetNodePoolSize(ctx, input)
+			if err != nil {
 				return diag.Errorf(err.Error())
 			}
 
 			// lintignore:R018
 			time.Sleep(asyncActionWaitDelay * time.Second)
 
-			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
+			if err := hatoba.NewClusterRunningWaiter(svc).Wait(ctx, expandGetClusterInput(d), time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
 			}
 		}
 
 		for _, elm := range toCreate {
 			input := expandCreateNodePoolInput(d, elm.(map[string]interface{}))
-			req := svc.CreateNodePoolRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.CreateNodePool(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed creating Hatoba cluster node pool: %s", err))
 			}
 
 			// lintignore:R018
 			time.Sleep(asyncActionWaitDelay * time.Second)
 
-			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
+			if err := hatoba.NewClusterRunningWaiter(svc).Wait(ctx, expandGetClusterInput(d), time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
 			}
 		}
@@ -96,15 +98,15 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 		if len(toDeleteNames) != 0 {
 			deleteNodePoolsInput := expandDeleteNodePoolsInput(d, toDeleteNames)
-			req := svc.DeleteNodePoolsRequest(deleteNodePoolsInput)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.DeleteNodePools(ctx, deleteNodePoolsInput)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed deleting Hatoba cluster node pools: %s", err))
 			}
 
 			// lintignore:R018
 			time.Sleep(asyncActionWaitDelay * time.Second)
 
-			if err := svc.WaitUntilClusterRunning(ctx, expandGetClusterInput(d)); err != nil {
+			if err := hatoba.NewClusterRunningWaiter(svc).Wait(ctx, expandGetClusterInput(d), time.Until(deadline)); err != nil {
 				return diag.FromErr(fmt.Errorf("failed wait Hatoba cluster available: %s", err))
 			}
 		}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -29,7 +29,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		parametersToModify := getParametersToModify(os, ns)
 		if len(parametersToModify) != 0 {
 			for parametersToModify != nil {
-				var targetParams []rdb.RequestParameters
+				var targetParams []types.RequestParameters
 				if len(parametersToModify) <= maxModifyParams {
 					targetParams, parametersToModify = parametersToModify[:], nil
 				} else {
@@ -37,9 +37,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				}
 
 				input := expandModifyDBParameterGroupInput(d, targetParams)
-				req := svc.ModifyDBParameterGroupRequest(input)
 
-				if _, err := req.Send(ctx); err != nil {
+				if _, err := svc.ModifyDBParameterGroup(ctx, input); err != nil {
 					return diag.FromErr(fmt.Errorf("failed modifying DBParameterGroup: %s", err))
 				}
 			}
@@ -48,7 +47,7 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		parametersToReset := getParametersToReset(os, ns)
 		if len(parametersToReset) != 0 {
 			for parametersToReset != nil {
-				var targetParams []rdb.RequestParametersOfResetDBParameterGroup
+				var targetParams []types.RequestParametersOfResetDBParameterGroup
 				if len(parametersToReset) <= maxModifyParams {
 					targetParams, parametersToReset = parametersToReset[:], nil
 				} else {
@@ -56,9 +55,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 				}
 
 				input := expandResetDBParameterGroupInput(d, targetParams)
-				req := svc.ResetDBParameterGroupRequest(input)
 
-				if _, err := req.Send(ctx); err != nil {
+				if _, err := svc.ResetDBParameterGroup(ctx, input); err != nil {
 					return diag.FromErr(fmt.Errorf("failed resetting DBParameterGroup: %s", err))
 				}
 			}
@@ -68,12 +66,12 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	return read(ctx, d, meta)
 }
 
-func getParametersToModify(old, new *schema.Set) []rdb.RequestParameters {
+func getParametersToModify(old, new *schema.Set) []types.RequestParameters {
 	return expandModifyDBParameterGroupParameters(new.Difference(old).List())
 }
 
-func getParametersToReset(old, new *schema.Set) []rdb.RequestParametersOfResetDBParameterGroup {
-	toReset := map[string]rdb.RequestParametersOfResetDBParameterGroup{}
+func getParametersToReset(old, new *schema.Set) []types.RequestParametersOfResetDBParameterGroup {
+	toReset := map[string]types.RequestParametersOfResetDBParameterGroup{}
 	for _, p := range expandResetDBParameterGroupParameters(old.List()) {
 		if p.ParameterName != nil {
 			toReset[*p.ParameterName] = p
@@ -85,7 +83,7 @@ func getParametersToReset(old, new *schema.Set) []rdb.RequestParametersOfResetDB
 		}
 	}
 
-	var toResetParameters []rdb.RequestParametersOfResetDBParameterGroup
+	var toResetParameters []types.RequestParametersOfResetDBParameterGroup
 	for _, v := range toReset {
 		toResetParameters = append(toResetParameters, v)
 	}

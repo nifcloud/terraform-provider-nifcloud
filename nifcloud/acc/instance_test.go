@@ -7,13 +7,15 @@ import (
 	"io/ioutil"
 	"strings"
 	"testing"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,7 +31,7 @@ func init() {
 }
 
 func TestAcc_Instance(t *testing.T) {
-	var instance computing.InstancesSet
+	var instance types.InstancesSet
 
 	resourceName := "nifcloud_instance.basic"
 	randName := prefix + acctest.RandString(7)
@@ -99,7 +101,7 @@ func TestAcc_Instance(t *testing.T) {
 }
 
 func TestAcc_Instance_windows(t *testing.T) {
-	var instance computing.InstancesSet
+	var instance types.InstancesSet
 
 	resourceName := "nifcloud_instance.basic"
 	randName := prefix + acctest.RandString(7)
@@ -158,7 +160,7 @@ func testAccInstanceWindows(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckInstanceExists(n string, instance *computing.InstancesSet) resource.TestCheckFunc {
+func testAccCheckInstanceExists(n string, instance *types.InstancesSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -170,9 +172,9 @@ func testAccCheckInstanceExists(n string, instance *computing.InstancesSet) reso
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeInstancesRequest(&computing.DescribeInstancesInput{
+		res, err := svc.DescribeInstances(context.Background(), &computing.DescribeInstancesInput{
 			InstanceId: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -184,7 +186,7 @@ func testAccCheckInstanceExists(n string, instance *computing.InstancesSet) reso
 
 		foundInstance := res.ReservationSet[0].InstancesSet[0]
 
-		if nifcloud.StringValue(foundInstance.InstanceId) != saved.Primary.ID {
+		if nifcloud.ToString(foundInstance.InstanceId) != saved.Primary.ID {
 			return fmt.Errorf("instance does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -193,118 +195,118 @@ func testAccCheckInstanceExists(n string, instance *computing.InstancesSet) reso
 	}
 }
 
-func testAccCheckInstanceValues(instance *computing.InstancesSet, rName string) resource.TestCheckFunc {
+func testAccCheckInstanceValues(instance *types.InstancesSet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(instance.NextMonthAccountingType) != "2" {
+		if nifcloud.ToString(instance.NextMonthAccountingType) != "2" {
 			return fmt.Errorf("bad accounting_type state, expected \"2\", got: %#v", instance.NextMonthAccountingType)
 		}
 
-		if nifcloud.StringValue(instance.Placement.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(instance.Placement.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", instance.Placement.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(instance.Description) != "memo" {
+		if nifcloud.ToString(instance.Description) != "memo" {
 			return fmt.Errorf("bad description state,  expected \"memo\", got: %#v", instance.Description)
 		}
 
-		if nifcloud.StringValue(instance.ImageId) != "221" {
+		if nifcloud.ToString(instance.ImageId) != "221" {
 			return fmt.Errorf("bad image_id state,  expected \"221\", got: %#v", instance.ImageId)
 		}
 
-		if nifcloud.StringValue(instance.InstanceId) != rName {
+		if nifcloud.ToString(instance.InstanceId) != rName {
 			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, instance.InstanceId)
 		}
 
-		if nifcloud.StringValue(instance.InstanceType) != "mini" {
+		if nifcloud.ToString(instance.InstanceType) != "mini" {
 			return fmt.Errorf("bad instance_type state,  expected \"mini\", got: %#v", instance.InstanceType)
 		}
 
-		if nifcloud.StringValue(instance.KeyName) != rName {
+		if nifcloud.ToString(instance.KeyName) != rName {
 			return fmt.Errorf("bad key_name state,  expected \"%s\", got: %#v", rName, instance.KeyName)
 		}
 
-		if nifcloud.StringValue(instance.PrivateIpAddress) == "" {
+		if nifcloud.ToString(instance.PrivateIpAddress) == "" {
 			return fmt.Errorf("bad private_ip state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.IpAddress) == "" {
+		if nifcloud.ToString(instance.IpAddress) == "" {
 			return fmt.Errorf("bad public_ip state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.InstanceUniqueId) == "" {
+		if nifcloud.ToString(instance.InstanceUniqueId) == "" {
 			return fmt.Errorf("bad unique_id state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.InstanceState.Name) == "" {
+		if nifcloud.ToString(instance.InstanceState.Name) == "" {
 			return fmt.Errorf("bad instance_state state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.NetworkInterfaceSet[0].NiftyNetworkId) != "net-COMMON_GLOBAL" {
+		if nifcloud.ToString(instance.NetworkInterfaceSet[0].NiftyNetworkId) != "net-COMMON_GLOBAL" {
 			return fmt.Errorf("bad network_interface.0.network_id state,  expected net-COMMON_GLOBAL, got: %#v", instance.NetworkInterfaceSet[0].NiftyNetworkId)
 		}
 
-		if nifcloud.StringValue(instance.NetworkInterfaceSet[1].NiftyNetworkId) != "net-COMMON_PRIVATE" {
+		if nifcloud.ToString(instance.NetworkInterfaceSet[1].NiftyNetworkId) != "net-COMMON_PRIVATE" {
 			return fmt.Errorf("bad network_interface.1.network_id state,  expected net-COMMON_GLOBAL, got: %#v", instance.NetworkInterfaceSet[1].NiftyNetworkId)
 		}
 
-		if nifcloud.StringValue(instance.NetworkInterfaceSet[1].PrivateIpAddress) == "" {
+		if nifcloud.ToString(instance.NetworkInterfaceSet[1].PrivateIpAddress) == "" {
 			return fmt.Errorf("bad network_interface.1.ip_address state,  expected not nil, got: nil")
 		}
 		return nil
 	}
 }
 
-func testAccCheckInstanceValuesUpdated(instance *computing.InstancesSet, rName string) resource.TestCheckFunc {
+func testAccCheckInstanceValuesUpdated(instance *types.InstancesSet, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(instance.NextMonthAccountingType) != "1" {
+		if nifcloud.ToString(instance.NextMonthAccountingType) != "1" {
 			return fmt.Errorf("bad accounting_type state, expected \"1\", got: %#v", instance.NextMonthAccountingType)
 		}
 
-		if nifcloud.StringValue(instance.Placement.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(instance.Placement.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", instance.Placement.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(instance.Description) != "memo-upd" {
+		if nifcloud.ToString(instance.Description) != "memo-upd" {
 			return fmt.Errorf("bad description state,  expected \"memo-upd\", got: %#v", instance.Description)
 		}
 
-		if nifcloud.StringValue(instance.ImageId) != "221" {
+		if nifcloud.ToString(instance.ImageId) != "221" {
 			return fmt.Errorf("bad image_id state,  expected \"221\", got: %#v", instance.ImageId)
 		}
 
-		if nifcloud.StringValue(instance.InstanceId) != rName+"upd" {
+		if nifcloud.ToString(instance.InstanceId) != rName+"upd" {
 			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName+"upd", instance.InstanceId)
 		}
 
-		if nifcloud.StringValue(instance.InstanceType) != "small" {
+		if nifcloud.ToString(instance.InstanceType) != "small" {
 			return fmt.Errorf("bad instance_type state,  expected \"small\", got: %#v", instance.InstanceType)
 		}
 
-		if nifcloud.StringValue(instance.KeyName) != rName {
+		if nifcloud.ToString(instance.KeyName) != rName {
 			return fmt.Errorf("bad key_name state,  expected \"%s\", got: %#v", rName, instance.KeyName)
 		}
 
-		if nifcloud.StringValue(instance.PrivateIpAddress) == "" {
+		if nifcloud.ToString(instance.PrivateIpAddress) == "" {
 			return fmt.Errorf("bad private_ip state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.IpAddress) != "" {
+		if nifcloud.ToString(instance.IpAddress) != "" {
 			return fmt.Errorf("bad public_ip state,  expected nil, got: not nil")
 		}
 
-		if nifcloud.StringValue(instance.InstanceUniqueId) == "" {
+		if nifcloud.ToString(instance.InstanceUniqueId) == "" {
 			return fmt.Errorf("bad unique_id state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.InstanceState.Name) == "" {
+		if nifcloud.ToString(instance.InstanceState.Name) == "" {
 			return fmt.Errorf("bad instance_state state,  expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(instance.NetworkInterfaceSet[0].NiftyNetworkId) != "net-COMMON_PRIVATE" {
+		if nifcloud.ToString(instance.NetworkInterfaceSet[0].NiftyNetworkId) != "net-COMMON_PRIVATE" {
 			return fmt.Errorf("bad network_interface.1.network_id state,  expected net-COMMON_GLOBAL, got: %#v", instance.NetworkInterfaceSet[1].NiftyNetworkId)
 		}
 
-		if nifcloud.StringValue(instance.NetworkInterfaceSet[0].PrivateIpAddress) == "" {
+		if nifcloud.ToString(instance.NetworkInterfaceSet[0].PrivateIpAddress) == "" {
 			return fmt.Errorf("bad network_interface.1.ip_address state,  expected not nil, got: nil")
 		}
 
@@ -321,13 +323,13 @@ func testAccInstanceResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeInstancesRequest(&computing.DescribeInstancesInput{
+		res, err := svc.DescribeInstances(context.Background(), &computing.DescribeInstancesInput{
 			InstanceId: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Instance" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.Instance" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeInstancesRequest: %s", err)
@@ -344,7 +346,7 @@ func testSweepInstance(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeInstancesRequest(nil).Send(ctx)
+	res, err := svc.DescribeInstances(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -352,8 +354,8 @@ func testSweepInstance(region string) error {
 	var sweepInstances []string
 	for _, r := range res.ReservationSet {
 		for _, i := range r.InstancesSet {
-			if strings.HasPrefix(nifcloud.StringValue(i.InstanceId), prefix) {
-				sweepInstances = append(sweepInstances, nifcloud.StringValue(i.InstanceId))
+			if strings.HasPrefix(nifcloud.ToString(i.InstanceId), prefix) {
+				sweepInstances = append(sweepInstances, nifcloud.ToString(i.InstanceId))
 			}
 		}
 	}
@@ -362,29 +364,29 @@ func testSweepInstance(region string) error {
 	for _, n := range sweepInstances {
 		instanceID := n
 		eg.Go(func() error {
-			_, err = svc.StopInstancesRequest(&computing.StopInstancesInput{
-				InstanceId: []string{instanceID},
-			}).Send(ctx)
-			if err != nil {
-				return err
-			}
-
-			err = svc.WaitUntilInstanceStopped(ctx, &computing.DescribeInstancesInput{
+			_, err = svc.StopInstances(ctx, &computing.StopInstancesInput{
 				InstanceId: []string{instanceID},
 			})
 			if err != nil {
 				return err
 			}
-			_, err = svc.TerminateInstancesRequest(&computing.TerminateInstancesInput{
+
+			err = computing.NewInstanceStoppedWaiter(svc).Wait(ctx, &computing.DescribeInstancesInput{
 				InstanceId: []string{instanceID},
-			}).Send(ctx)
+			}, 600*time.Second)
+			if err != nil {
+				return err
+			}
+			_, err = svc.TerminateInstances(ctx, &computing.TerminateInstancesInput{
+				InstanceId: []string{instanceID},
+			})
 			if err != nil {
 				return err
 			}
 
-			err = svc.WaitUntilInstanceDeleted(ctx, &computing.DescribeInstancesInput{
+			err = computing.NewInstanceDeletedWaiter(svc).Wait(ctx, &computing.DescribeInstancesInput{
 				InstanceId: []string{instanceID},
-			})
+			}, 600*time.Second)
 			if err != nil {
 				return err
 			}

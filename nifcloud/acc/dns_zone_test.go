@@ -9,11 +9,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
+	"github.com/nifcloud/nifcloud-sdk-go/service/dns/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -30,7 +31,7 @@ func init() {
 }
 
 func TestAcc_DnsZone(t *testing.T) {
-	var zone dns.HostedZone
+	var zone types.HostedZone
 
 	resourceName := "nifcloud_dns_zone.basic"
 
@@ -65,7 +66,7 @@ func testAccDnsZone(t *testing.T, fileName string) string {
 	return string(b)
 }
 
-func testAccCheckDnsZoneExists(n string, dnsZone *dns.HostedZone) resource.TestCheckFunc {
+func testAccCheckDnsZoneExists(n string, dnsZone *types.HostedZone) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -77,9 +78,9 @@ func testAccCheckDnsZoneExists(n string, dnsZone *dns.HostedZone) resource.TestC
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).DNS
-		res, err := svc.GetHostedZoneRequest(&dns.GetHostedZoneInput{
+		res, err := svc.GetHostedZone(context.Background(), &dns.GetHostedZoneInput{
 			ZoneID: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -87,7 +88,7 @@ func testAccCheckDnsZoneExists(n string, dnsZone *dns.HostedZone) resource.TestC
 
 		foundDnsZone := res.HostedZone
 
-		if nifcloud.StringValue(foundDnsZone.Name) != saved.Primary.ID {
+		if nifcloud.ToString(foundDnsZone.Name) != saved.Primary.ID {
 			return fmt.Errorf("dnsZone does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -96,13 +97,13 @@ func testAccCheckDnsZoneExists(n string, dnsZone *dns.HostedZone) resource.TestC
 	}
 }
 
-func testAccCheckDnsZoneValues(dnsZone *dns.HostedZone) resource.TestCheckFunc {
+func testAccCheckDnsZoneValues(dnsZone *types.HostedZone) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(dnsZone.Name) != dnsZoneName {
+		if nifcloud.ToString(dnsZone.Name) != dnsZoneName {
 			return fmt.Errorf("bad name state, expected %s, got: %#v", dnsZoneName, dnsZone.Name)
 		}
 
-		if nifcloud.StringValue(dnsZone.Config.Comment) != "tfacc-memo" {
+		if nifcloud.ToString(dnsZone.Config.Comment) != "tfacc-memo" {
 			return fmt.Errorf("bad comment state, expected \"tfacc-memo\", got: %#v", dnsZone.Config.Comment)
 		}
 
@@ -118,13 +119,13 @@ func testAccDnsZoneResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.GetHostedZoneRequest(&dns.GetHostedZoneInput{
+		res, err := svc.GetHostedZone(context.Background(), &dns.GetHostedZoneInput{
 			ZoneID: nifcloud.String(rs.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "NoSuchHostedZone" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "NoSuchHostedZone" {
 				return nil
 			}
 			return fmt.Errorf("failed GetHostedZoneRequest: %s", err)
@@ -141,18 +142,18 @@ func testSweepDnsZone(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).DNS
 
-	res, err := svc.ListHostedZonesRequest(nil).Send(ctx)
+	res, err := svc.ListHostedZones(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	for _, dnsZone := range res.HostedZones {
-		if strings.HasPrefix(nifcloud.StringValue(dnsZone.Config.Comment), prefix) {
+		if strings.HasPrefix(nifcloud.ToString(dnsZone.Config.Comment), prefix) {
 			input := &dns.DeleteHostedZoneInput{
 				ZoneID: dnsZone.Name,
 			}
 
-			_, err := svc.DeleteHostedZoneRequest(input).Send(ctx)
+			_, err := svc.DeleteHostedZone(ctx, input)
 			if err != nil {
 				return err
 			}

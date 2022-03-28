@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,13 +44,13 @@ func TestExpandCreateVpnConnectionInputForIdTunnel(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.CreateVpnConnectionInput{
-				Type:              computing.TypeOfCreateVpnConnectionRequest("L2TPv3 / IPsec"),
+				Type:              types.TypeOfCreateVpnConnectionRequest("L2TPv3 / IPsec"),
 				VpnGatewayId:      nifcloud.String("test_vpn_gateway_id"),
 				CustomerGatewayId: nifcloud.String("test_customer_gateway_id"),
-				NiftyTunnel: &computing.RequestNiftyTunnel{
-					Type:            computing.TypeOfNiftyTunnelForCreateVpnConnection("L2TPv3"),
-					Mode:            computing.ModeOfNiftyTunnelForCreateVpnConnection("Unmanaged"),
-					Encapsulation:   computing.EncapsulationOfNiftyTunnelForCreateVpnConnection("UDP"),
+				NiftyTunnel: &types.RequestNiftyTunnel{
+					Type:            types.TypeOfNiftyTunnelForCreateVpnConnection("L2TPv3"),
+					Mode:            types.ModeOfNiftyTunnelForCreateVpnConnection("Unmanaged"),
+					Encapsulation:   types.EncapsulationOfNiftyTunnelForCreateVpnConnection("UDP"),
 					TunnelId:        nifcloud.String("1"),
 					PeerTunnelId:    nifcloud.String("2"),
 					SessionId:       nifcloud.String("1"),
@@ -57,14 +58,14 @@ func TestExpandCreateVpnConnectionInputForIdTunnel(t *testing.T) {
 					SourcePort:      nifcloud.String("7777"),
 					DestinationPort: nifcloud.String("7777"),
 				},
-				NiftyIpsecConfiguration: &computing.RequestNiftyIpsecConfiguration{
-					EncryptionAlgorithm:                  computing.EncryptionAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("AES256"),
-					HashAlgorithm:                        computing.HashAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("SHA256"),
+				NiftyIpsecConfiguration: &types.RequestNiftyIpsecConfiguration{
+					EncryptionAlgorithm:                  types.EncryptionAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("AES256"),
+					HashAlgorithm:                        types.HashAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("SHA256"),
 					PreSharedKey:                         nifcloud.String("test_pre_shared_key"),
-					InternetKeyExchange:                  computing.InternetKeyExchangeOfNiftyIpsecConfigurationForCreateVpnConnection("IKEv2"),
-					InternetKeyExchangeLifetime:          nifcloud.Int64(300),
-					EncapsulatingSecurityPayloadLifetime: nifcloud.Int64(300),
-					DiffieHellmanGroup:                   nifcloud.Int64(5),
+					InternetKeyExchange:                  types.InternetKeyExchangeOfNiftyIpsecConfigurationForCreateVpnConnection("IKEv2"),
+					InternetKeyExchangeLifetime:          nifcloud.Int32(300),
+					EncapsulatingSecurityPayloadLifetime: nifcloud.Int32(300),
+					DiffieHellmanGroup:                   nifcloud.Int32(5),
 				},
 				NiftyVpnConnectionMtu:         nifcloud.String("1000"),
 				NiftyVpnConnectionDescription: nifcloud.String("test_description"),
@@ -106,17 +107,17 @@ func TestExpandCreateVpnConnectionInputForNameNoTunnel(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.CreateVpnConnectionInput{
-				Type:                     computing.TypeOfCreateVpnConnectionRequest("IPsec"),
+				Type:                     types.TypeOfCreateVpnConnectionRequest("IPsec"),
 				NiftyVpnGatewayName:      nifcloud.String("test_vpn_gateway_name"),
 				NiftyCustomerGatewayName: nifcloud.String("test_customer_gateway_name"),
-				NiftyIpsecConfiguration: &computing.RequestNiftyIpsecConfiguration{
-					EncryptionAlgorithm:                  computing.EncryptionAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("AES256"),
-					HashAlgorithm:                        computing.HashAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("SHA256"),
+				NiftyIpsecConfiguration: &types.RequestNiftyIpsecConfiguration{
+					EncryptionAlgorithm:                  types.EncryptionAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("AES256"),
+					HashAlgorithm:                        types.HashAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection("SHA256"),
 					PreSharedKey:                         nifcloud.String("test_pre_shared_key"),
-					InternetKeyExchange:                  computing.InternetKeyExchangeOfNiftyIpsecConfigurationForCreateVpnConnection("IKEv2"),
-					InternetKeyExchangeLifetime:          nifcloud.Int64(300),
-					EncapsulatingSecurityPayloadLifetime: nifcloud.Int64(300),
-					DiffieHellmanGroup:                   nifcloud.Int64(5),
+					InternetKeyExchange:                  types.InternetKeyExchangeOfNiftyIpsecConfigurationForCreateVpnConnection("IKEv2"),
+					InternetKeyExchangeLifetime:          nifcloud.Int32(300),
+					EncapsulatingSecurityPayloadLifetime: nifcloud.Int32(300),
+					DiffieHellmanGroup:                   nifcloud.Int32(5),
 				},
 				NiftyVpnConnectionDescription: nifcloud.String("test_description"),
 				Agreement:                     nifcloud.Bool(false),

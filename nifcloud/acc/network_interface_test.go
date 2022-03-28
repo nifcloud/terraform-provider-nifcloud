@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,7 +30,7 @@ func init() {
 }
 
 func TestAcc_NetworkInterface(t *testing.T) {
-	var networkInterface computing.NetworkInterfaceSetOfDescribeNetworkInterfaces
+	var networkInterface types.NetworkInterfaceSetOfDescribeNetworkInterfaces
 
 	resourceName := "nifcloud_network_interface.basic"
 	randName := prefix + acctest.RandString(7)
@@ -86,7 +87,7 @@ func testAccNetworkInterface(t *testing.T, fileName, rName string) string {
 	)
 }
 
-func testAccCheckNetworkInterfaceExists(n string, networkInterface *computing.NetworkInterfaceSetOfDescribeNetworkInterfaces) resource.TestCheckFunc {
+func testAccCheckNetworkInterfaceExists(n string, networkInterface *types.NetworkInterfaceSetOfDescribeNetworkInterfaces) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -98,9 +99,9 @@ func testAccCheckNetworkInterfaceExists(n string, networkInterface *computing.Ne
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeNetworkInterfacesRequest(&computing.DescribeNetworkInterfacesInput{
+		res, err := svc.DescribeNetworkInterfaces(context.Background(), &computing.DescribeNetworkInterfacesInput{
 			NetworkInterfaceId: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -112,7 +113,7 @@ func testAccCheckNetworkInterfaceExists(n string, networkInterface *computing.Ne
 
 		foundNetworkInterface := res.NetworkInterfaceSet[0]
 
-		if nifcloud.StringValue(foundNetworkInterface.NetworkInterfaceId) != saved.Primary.ID {
+		if nifcloud.ToString(foundNetworkInterface.NetworkInterfaceId) != saved.Primary.ID {
 			return fmt.Errorf("networkInterface does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -121,50 +122,50 @@ func testAccCheckNetworkInterfaceExists(n string, networkInterface *computing.Ne
 	}
 }
 
-func testAccCheckNetworkInterfaceValues(networkInterface *computing.NetworkInterfaceSetOfDescribeNetworkInterfaces, rName string) resource.TestCheckFunc {
+func testAccCheckNetworkInterfaceValues(networkInterface *types.NetworkInterfaceSetOfDescribeNetworkInterfaces, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(networkInterface.Description) != rName {
+		if nifcloud.ToString(networkInterface.Description) != rName {
 			return fmt.Errorf("bad description state, expected \"%s\", got: %#v", rName, networkInterface.Description)
 		}
 
-		if nifcloud.StringValue(networkInterface.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(networkInterface.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", networkInterface.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(networkInterface.PrivateIpAddress) != "" {
+		if nifcloud.ToString(networkInterface.PrivateIpAddress) != "" {
 			return fmt.Errorf("bad private_ip state,  expected \"empty\", got: %#v", networkInterface.PrivateIpAddress)
 		}
 
-		if nifcloud.StringValue(networkInterface.NetworkInterfaceId) == "" {
+		if nifcloud.ToString(networkInterface.NetworkInterfaceId) == "" {
 			return fmt.Errorf("bad network_interface_id state,  expected \"not empty\", got: %#v", networkInterface.NetworkInterfaceId)
 		}
 
-		if nifcloud.StringValue(networkInterface.NiftyNetworkId) == "" {
+		if nifcloud.ToString(networkInterface.NiftyNetworkId) == "" {
 			return fmt.Errorf("bad network_id state,  expected \"not empty\", got: %#v", networkInterface.NiftyNetworkId)
 		}
 		return nil
 	}
 }
 
-func testAccCheckNetworkInterfaceValuesUpdated(networkInterface *computing.NetworkInterfaceSetOfDescribeNetworkInterfaces, rName string) resource.TestCheckFunc {
+func testAccCheckNetworkInterfaceValuesUpdated(networkInterface *types.NetworkInterfaceSetOfDescribeNetworkInterfaces, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(networkInterface.Description) != rName {
+		if nifcloud.ToString(networkInterface.Description) != rName {
 			return fmt.Errorf("bad description state, expected \"%s\", got: %#v", rName, networkInterface.Description)
 		}
 
-		if nifcloud.StringValue(networkInterface.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(networkInterface.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", networkInterface.AvailabilityZone)
 		}
 
-		if nifcloud.StringValue(networkInterface.PrivateIpAddress) != "192.168.100.100" {
+		if nifcloud.ToString(networkInterface.PrivateIpAddress) != "192.168.100.100" {
 			return fmt.Errorf("bad private_ip state,  expected \"192.168.100.100\", got: %#v", networkInterface.PrivateIpAddress)
 		}
 
-		if nifcloud.StringValue(networkInterface.NetworkInterfaceId) == "" {
+		if nifcloud.ToString(networkInterface.NetworkInterfaceId) == "" {
 			return fmt.Errorf("bad network_interface_id state,  expected \"not empty\", got: %#v", networkInterface.NetworkInterfaceId)
 		}
 
-		if nifcloud.StringValue(networkInterface.NiftyNetworkId) == "" {
+		if nifcloud.ToString(networkInterface.NiftyNetworkId) == "" {
 			return fmt.Errorf("bad network_id state,  expected \"not empty\", got: %#v", networkInterface.NiftyNetworkId)
 		}
 		return nil
@@ -179,13 +180,13 @@ func testAccNetworkInterfaceResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeNetworkInterfacesRequest(&computing.DescribeNetworkInterfacesInput{
+		res, err := svc.DescribeNetworkInterfaces(context.Background(), &computing.DescribeNetworkInterfacesInput{
 			NetworkInterfaceId: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NetworkInterfaceId" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.NetworkInterfaceId" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeNetworkInterfacesRequest: %s", err)
@@ -202,15 +203,15 @@ func testSweepNetworkInterface(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeNetworkInterfacesRequest(nil).Send(ctx)
+	res, err := svc.DescribeNetworkInterfaces(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepNetworkInterfaces []string
 	for _, k := range res.NetworkInterfaceSet {
-		if strings.HasPrefix(nifcloud.StringValue(k.Description), prefix) {
-			sweepNetworkInterfaces = append(sweepNetworkInterfaces, nifcloud.StringValue(k.NetworkInterfaceId))
+		if strings.HasPrefix(nifcloud.ToString(k.Description), prefix) {
+			sweepNetworkInterfaces = append(sweepNetworkInterfaces, nifcloud.ToString(k.NetworkInterfaceId))
 		}
 	}
 
@@ -218,9 +219,9 @@ func testSweepNetworkInterface(region string) error {
 	for _, n := range sweepNetworkInterfaces {
 		id := n
 		eg.Go(func() error {
-			_, err := svc.DeleteNetworkInterfaceRequest(&computing.DeleteNetworkInterfaceInput{
+			_, err := svc.DeleteNetworkInterface(ctx, &computing.DeleteNetworkInterfaceInput{
 				NetworkInterfaceId: nifcloud.String(id),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

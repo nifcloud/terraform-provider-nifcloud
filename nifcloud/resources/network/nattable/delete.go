@@ -12,9 +12,8 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandNiftyDeleteNatTableInput(d)
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyDeleteNatTableRequest(input)
 
-	_, err := req.Send(ctx)
+	_, err := svc.NiftyDeleteNatTable(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

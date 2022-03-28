@@ -20,9 +20,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// Now first loop through all the old routes and delete any obsolete ones
 		for _, route := range ors.List() {
 			input := expandDeleteRouteInput(d, route.(map[string]interface{}))
-			req := svc.DeleteRouteRequest(input)
 
-			_, err := req.Send(ctx)
+			_, err := svc.DeleteRoute(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating route table to delete route: %s", err))
 			}
@@ -37,9 +36,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		// Then loop through all the newly configured routes and create them
 		for _, route := range nrs.List() {
 			input := expandCreateRouteInput(d, route.(map[string]interface{}))
-			req := svc.CreateRouteRequest(input)
 
-			_, err := req.Send(ctx)
+			_, err := svc.CreateRoute(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating route table to create route: %s", err))
 			}

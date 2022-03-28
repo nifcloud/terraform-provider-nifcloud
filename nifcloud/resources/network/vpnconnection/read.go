@@ -4,30 +4,31 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDescribeVpnConnectionsInput(d)
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilVpnConnectionAvailable(ctx, input)
+		err := computing.NewVpnConnectionAvailableWaiter(svc).Wait(ctx, input, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for vpn connection to become ready: %s", err))
 		}
 	}
 
-	req := svc.DescribeVpnConnectionsRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.DescribeVpnConnections(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.VpnConnectionId" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.VpnConnectionId" {
 			d.SetId("")
 			return nil
 		}

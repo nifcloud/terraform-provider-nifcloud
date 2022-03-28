@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
 
@@ -18,7 +19,7 @@ var mutexKV = mutexkv.NewMutexKV()
 
 type securityGroupNotFound struct {
 	name           string
-	securityGroups []computing.SecurityGroupInfo
+	securityGroups []types.SecurityGroupInfo
 }
 
 func (err securityGroupNotFound) Error() string {
@@ -29,9 +30,9 @@ func (err securityGroupNotFound) Error() string {
 		err.name, err.securityGroups)
 }
 
-func checkSecurityGroupExist(securityGroupInfo []computing.SecurityGroupInfo, groupName string) error {
+func checkSecurityGroupExist(securityGroupInfo []types.SecurityGroupInfo, groupName string) error {
 	for _, s := range securityGroupInfo {
-		if nifcloud.StringValue(s.GroupName) == groupName {
+		if nifcloud.ToString(s.GroupName) == groupName {
 			return nil
 		}
 	}
@@ -41,19 +42,19 @@ func checkSecurityGroupExist(securityGroupInfo []computing.SecurityGroupInfo, gr
 func idHash(inputList []*computing.AuthorizeSecurityGroupIngressInput) string {
 	var buf bytes.Buffer
 	ip := inputList[0].IpPermissions[0]
-	if ip.FromPort != nil && nifcloud.Int64Value(ip.FromPort) > 0 {
-		buf.WriteString(fmt.Sprintf("%d-", nifcloud.Int64Value(ip.FromPort)))
+	if ip.FromPort != nil && nifcloud.ToInt32(ip.FromPort) > 0 {
+		buf.WriteString(fmt.Sprintf("%d-", nifcloud.ToInt32(ip.FromPort)))
 	}
-	if ip.ToPort != nil && nifcloud.Int64Value(ip.ToPort) > 0 {
-		buf.WriteString(fmt.Sprintf("%d-", nifcloud.Int64Value(ip.ToPort)))
+	if ip.ToPort != nil && nifcloud.ToInt32(ip.ToPort) > 0 {
+		buf.WriteString(fmt.Sprintf("%d-", nifcloud.ToInt32(ip.ToPort)))
 	}
 	buf.WriteString(fmt.Sprintf("%s-", ip.IpProtocol))
 	buf.WriteString(fmt.Sprintf("%s-", ip.InOut))
-	buf.WriteString(fmt.Sprintf("%s-", nifcloud.StringValue(ip.Description)))
+	buf.WriteString(fmt.Sprintf("%s-", nifcloud.ToString(ip.Description)))
 
 	s := make([]string, len(inputList))
 	for i, input := range inputList {
-		s[i] = nifcloud.StringValue(input.GroupName)
+		s[i] = nifcloud.ToString(input.GroupName)
 		sort.Strings(s)
 	}
 
@@ -62,11 +63,11 @@ func idHash(inputList []*computing.AuthorizeSecurityGroupIngressInput) string {
 	}
 
 	if ip.ListOfRequestIpRanges != nil && len(ip.ListOfRequestIpRanges) > 0 {
-		buf.WriteString(fmt.Sprintf("%s-", ip.ListOfRequestIpRanges[0]))
+		buf.WriteString(fmt.Sprintf("%s-", nifcloud.ToString(ip.ListOfRequestIpRanges[0].CidrIp)))
 
 	}
 	if ip.ListOfRequestGroups != nil && len(ip.ListOfRequestGroups) > 0 {
-		buf.WriteString(fmt.Sprintf("%s-", ip.ListOfRequestGroups[0]))
+		buf.WriteString(fmt.Sprintf("%s-", nifcloud.ToString(ip.ListOfRequestGroups[0].GroupName)))
 	}
 
 	hashcode := 0

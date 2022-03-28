@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
@@ -16,12 +16,10 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 	input := expandDeleteSSLCertificateInput(d)
 
-	req := svc.DeleteSslCertificateRequest(input)
-
-	_, err := req.Send(ctx)
+	_, err := svc.DeleteSslCertificate(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SslCertificate" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SslCertificate" {
 			d.SetId("")
 			return nil
 		}

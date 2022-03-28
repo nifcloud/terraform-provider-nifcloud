@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,27 +48,27 @@ func TestExpandRunInstancesInput(t *testing.T) {
 				ImageId:       nifcloud.String("test_image_id"),
 				KeyName:       nifcloud.String("test_key_name"),
 				SecurityGroup: []string{"test_security_group"},
-				InstanceType:  computing.InstanceTypeOfRunInstancesRequest("test_instance_type"),
-				Placement: &computing.RequestPlacement{
+				InstanceType:  types.InstanceTypeOfRunInstancesRequest("test_instance_type"),
+				Placement: &types.RequestPlacement{
 					AvailabilityZone: nifcloud.String(("test_availability_zone")),
 				},
 				DisableApiTermination: nifcloud.Bool(false),
-				AccountingType:        computing.AccountingTypeOfRunInstancesRequest("test_accounting_type"),
+				AccountingType:        types.AccountingTypeOfRunInstancesRequest("test_accounting_type"),
 				Description:           nifcloud.String("test_description"),
 				Admin:                 nifcloud.String("test_admin"),
 				Password:              nifcloud.String("test_password"),
 				Agreement:             nifcloud.Bool(true),
-				UserData: &computing.RequestUserData{
+				UserData: &types.RequestUserData{
 					Content:  nifcloud.String(base64.StdEncoding.EncodeToString([]byte("test_user_data"))),
 					Encoding: nifcloud.String("base64"),
 				},
-				License: []computing.RequestLicense{
+				License: []types.RequestLicense{
 					{
-						LicenseName: computing.LicenseNameOfLicenseForRunInstances("test_license_name"),
+						LicenseName: types.LicenseNameOfLicenseForRunInstances("test_license_name"),
 						LicenseNum:  nifcloud.String("200"),
 					},
 				},
-				NetworkInterface: []computing.RequestNetworkInterface{{
+				NetworkInterface: []types.RequestNetworkInterface{{
 					NetworkId:   nifcloud.String("test_network_id"),
 					NetworkName: nifcloud.String("test_network_name"),
 					IpAddress:   nifcloud.String("test_ip_address"),
@@ -128,7 +129,7 @@ func TestExpandDescribeInstanceAttributeInputWithDisableAPITermination(t *testin
 			args: rd,
 			want: &computing.DescribeInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfDescribeInstanceAttributeRequestDisableApiTermination,
+				Attribute:  types.AttributeOfDescribeInstanceAttributeRequestDisableApiTermination,
 			},
 		},
 	}
@@ -215,7 +216,7 @@ func TestExpandModifyInstanceAttributeInputForAccountingType(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestAccountingType,
+				Attribute:  types.AttributeOfModifyInstanceAttributeRequestAccountingType,
 				Value:      nifcloud.String("test_accounting_type"),
 			},
 		},
@@ -246,7 +247,7 @@ func TestExpandModifyInstanceAttributeInputForDescription(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDescription,
+				Attribute:  types.AttributeOfModifyInstanceAttributeRequestDescription,
 				Value:      nifcloud.String("test_description"),
 			},
 		},
@@ -277,7 +278,7 @@ func TestExpandModifyInstanceAttributeInputForDisableAPITermination(t *testing.T
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestDisableApiTermination,
+				Attribute:  types.AttributeOfModifyInstanceAttributeRequestDisableApiTermination,
 				Value:      nifcloud.String("false"),
 			},
 		},
@@ -309,7 +310,7 @@ func TestExpandModifyInstanceAttributeInputForInstanceID(t *testing.T) {
 			args: dn,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceName,
+				Attribute:  types.AttributeOfModifyInstanceAttributeRequestInstanceName,
 				Value:      nifcloud.String("test_instance_id"),
 			},
 		},
@@ -340,7 +341,7 @@ func TestExpandModifyInstanceAttributeInputForInstanceType(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestInstanceType,
+				Attribute:  types.AttributeOfModifyInstanceAttributeRequestInstanceType,
 				Value:      nifcloud.String("test_instance_type"),
 			},
 		},
@@ -371,7 +372,7 @@ func TestExpandModifyInstanceAttributeInputForSecurityGroup(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyInstanceAttributeInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				Attribute:  computing.AttributeOfModifyInstanceAttributeRequestGroupId,
+				Attribute:  types.AttributeOfModifyInstanceAttributeRequestGroupId,
 				Value:      nifcloud.String("test_security_group"),
 			},
 		},
@@ -406,7 +407,7 @@ func TestExpandNiftyUpdateInstanceNetworkInterfacesInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyUpdateInstanceNetworkInterfacesInput{
 				InstanceId: nifcloud.String("test_instance_id"),
-				NetworkInterface: []computing.RequestNetworkInterface{{
+				NetworkInterface: []types.RequestNetworkInterface{{
 					NetworkId:   nifcloud.String("test_network_id"),
 					NetworkName: nifcloud.String("test_network_name"),
 					IpAddress:   nifcloud.String("test_ip_address"),
@@ -440,7 +441,7 @@ func TestExpandAttachNetworkInterfaceInput(t *testing.T) {
 			want: &computing.AttachNetworkInterfaceInput{
 				InstanceId:         nifcloud.String("test_instance_id"),
 				NetworkInterfaceId: nifcloud.String("test_network_interface_id"),
-				NiftyReboot:        computing.NiftyRebootOfAttachNetworkInterfaceRequestForce,
+				NiftyReboot:        types.NiftyRebootOfAttachNetworkInterfaceRequestForce,
 			},
 		},
 	}
@@ -467,7 +468,7 @@ func TestExpandDetachNetworkInterfaceInput(t *testing.T) {
 			args: rd,
 			want: &computing.DetachNetworkInterfaceInput{
 				AttachmentId: nifcloud.String("test_network_interface_attachment_id"),
-				NiftyReboot:  computing.NiftyRebootOfDetachNetworkInterfaceRequestForce,
+				NiftyReboot:  types.NiftyRebootOfDetachNetworkInterfaceRequestForce,
 			},
 		},
 	}

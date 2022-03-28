@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +40,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeVpnConnectionsResponse
+		res *computing.DescribeVpnConnectionsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -51,38 +52,36 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeVpnConnectionsResponse{
-					DescribeVpnConnectionsOutput: &computing.DescribeVpnConnectionsOutput{
-						VpnConnectionSet: []computing.VpnConnectionSet{
-							{
-								Type:                     nifcloud.String("L2TPv3 / IPsec"),
-								VpnGatewayId:             nifcloud.String("test_vpn_gateway_id"),
-								NiftyVpnGatewayName:      nifcloud.String("test_vpn_gateway_name"),
-								CustomerGatewayId:        nifcloud.String("test_customer_gateway_id"),
-								NiftyCustomerGatewayName: nifcloud.String("test_customer_gateway_name"),
-								NiftyTunnel: &computing.NiftyTunnel{
-									Type:            nifcloud.String("L2TPv3"),
-									Mode:            nifcloud.String("Unmanaged"),
-									Encapsulation:   nifcloud.String("UDP"),
-									TunnelId:        nifcloud.String("1"),
-									PeerTunnelId:    nifcloud.String("2"),
-									SessionId:       nifcloud.String("1"),
-									PeerSessionId:   nifcloud.String("2"),
-									SourcePort:      nifcloud.String("7777"),
-									DestinationPort: nifcloud.String("7777"),
-								},
-								NiftyIpsecConfiguration: &computing.NiftyIpsecConfiguration{
-									EncryptionAlgorithm:                  nifcloud.String("AES256"),
-									HashingAlgorithm:                     nifcloud.String("SHA256"),
-									PreSharedKey:                         nifcloud.String("test_pre_shared_key"),
-									InternetKeyExchange:                  nifcloud.String("IKEv2"),
-									InternetKeyExchangeLifetime:          nifcloud.Int64(300),
-									EncapsulatingSecurityPayloadLifetime: nifcloud.Int64(300),
-									DiffieHellmanGroup:                   nifcloud.Int64(5),
-									Mtu:                                  nifcloud.String("1000"),
-								},
-								NiftyVpnConnectionDescription: nifcloud.String("test_description"),
+				res: &computing.DescribeVpnConnectionsOutput{
+					VpnConnectionSet: []types.VpnConnectionSet{
+						{
+							Type:                     nifcloud.String("L2TPv3 / IPsec"),
+							VpnGatewayId:             nifcloud.String("test_vpn_gateway_id"),
+							NiftyVpnGatewayName:      nifcloud.String("test_vpn_gateway_name"),
+							CustomerGatewayId:        nifcloud.String("test_customer_gateway_id"),
+							NiftyCustomerGatewayName: nifcloud.String("test_customer_gateway_name"),
+							NiftyTunnel: &types.NiftyTunnel{
+								Type:            nifcloud.String("L2TPv3"),
+								Mode:            nifcloud.String("Unmanaged"),
+								Encapsulation:   nifcloud.String("UDP"),
+								TunnelId:        nifcloud.String("1"),
+								PeerTunnelId:    nifcloud.String("2"),
+								SessionId:       nifcloud.String("1"),
+								PeerSessionId:   nifcloud.String("2"),
+								SourcePort:      nifcloud.String("7777"),
+								DestinationPort: nifcloud.String("7777"),
 							},
+							NiftyIpsecConfiguration: &types.NiftyIpsecConfiguration{
+								EncryptionAlgorithm:                  nifcloud.String("AES256"),
+								HashingAlgorithm:                     nifcloud.String("SHA256"),
+								PreSharedKey:                         nifcloud.String("test_pre_shared_key"),
+								InternetKeyExchange:                  nifcloud.String("IKEv2"),
+								InternetKeyExchangeLifetime:          nifcloud.Int32(300),
+								EncapsulatingSecurityPayloadLifetime: nifcloud.Int32(300),
+								DiffieHellmanGroup:                   nifcloud.Int32(5),
+								Mtu:                                  nifcloud.String("1000"),
+							},
+							NiftyVpnConnectionDescription: nifcloud.String("test_description"),
 						},
 					},
 				},
@@ -93,10 +92,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeVpnConnectionsResponse{
-					DescribeVpnConnectionsOutput: &computing.DescribeVpnConnectionsOutput{
-						VpnConnectionSet: []computing.VpnConnectionSet{},
-					},
+				res: &computing.DescribeVpnConnectionsOutput{
+					VpnConnectionSet: []types.VpnConnectionSet{},
 				},
 			},
 			want: wantNotFoundRd,

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,7 +41,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeLoadBalancersResponse
+		res *computing.DescribeLoadBalancersOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -52,53 +53,53 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeLoadBalancersResponse{
-					DescribeLoadBalancersOutput: &computing.DescribeLoadBalancersOutput{
-						LoadBalancerDescriptions: []computing.LoadBalancerDescriptions{
+				res: &computing.DescribeLoadBalancersOutput{
+					DescribeLoadBalancersResult: &types.DescribeLoadBalancersResult{
+						LoadBalancerDescriptions: []types.LoadBalancerDescriptions{
 							{
 								AccountingType: nifcloud.String("1"),
 								DNSName:        nifcloud.String("test_dns_name"),
-								Filter: &computing.Filter{
+								Filter: &types.Filter{
 									FilterType: nifcloud.String("1"),
-									IPAddresses: []computing.IPAddresses{
+									IPAddresses: []types.IPAddresses{
 										{IPAddress: nifcloud.String("192.168.1.1")},
 									},
 								},
-								HealthCheck: &computing.HealthCheckOfDescribeLoadBalancers{
-									HealthyThreshold:   nifcloud.Int64(1),
-									Interval:           nifcloud.Int64(5),
+								HealthCheck: &types.HealthCheckOfDescribeLoadBalancers{
+									HealthyThreshold:   nifcloud.Int32(1),
+									Interval:           nifcloud.Int32(5),
 									Target:             nifcloud.String("test_target"),
-									Timeout:            nifcloud.Int64(5),
-									UnhealthyThreshold: nifcloud.Int64(1),
+									Timeout:            nifcloud.Int32(5),
+									UnhealthyThreshold: nifcloud.Int32(1),
 								},
-								ListenerDescriptions: []computing.ListenerDescriptions{
+								ListenerDescriptions: []types.ListenerDescriptions{
 									{
-										Listener: &computing.Listener{
-											InstancePort:     nifcloud.Int64(int64(80)),
-											LoadBalancerPort: nifcloud.Int64(int64(80)),
-											SSLPolicy: &computing.SSLPolicy{
+										Listener: &types.Listener{
+											InstancePort:     nifcloud.Int32(int32(80)),
+											LoadBalancerPort: nifcloud.Int32(int32(80)),
+											SSLPolicy: &types.SSLPolicy{
 												SSLPolicyId:   nifcloud.String("test_ssl_policy_id"),
 												SSLPolicyName: nifcloud.String("test_ssl_policy_name"),
 											},
 										},
 									},
 								},
-								Instances: []computing.Instances{
+								Instances: []types.Instances{
 									{
 										InstanceId: nifcloud.String("test_instance_id"),
 									},
 								},
 								LoadBalancerName:        nifcloud.String("test_load_balancer_name"),
-								NetworkVolume:           nifcloud.Int64(10),
+								NetworkVolume:           nifcloud.Int32(10),
 								NextMonthAccountingType: nifcloud.String("test_accounting_type"),
-								Policies: &computing.Policies{
-									AppCookieStickinessPolicies: []computing.AppCookieStickinessPolicies{
+								Policies: &types.Policies{
+									AppCookieStickinessPolicies: []types.AppCookieStickinessPolicies{
 										{
 											CookieName: nifcloud.String("test_cookie_name"),
 											PolicyName: nifcloud.String("test_app_policy_name"),
 										},
 									},
-									LBCookieStickinessPolicies: []computing.LBCookieStickinessPolicies{
+									LBCookieStickinessPolicies: []types.LBCookieStickinessPolicies{
 										{
 											CookieExpirationPeriod: nifcloud.String("test_cookie_expiration_period"),
 											PolicyName:             nifcloud.String("test_lb_policy_name"),
@@ -106,11 +107,11 @@ func TestFlatten(t *testing.T) {
 									},
 								},
 								PolicyType: nifcloud.String("test_policy_type"),
-								Option: &computing.Option{
-									SessionStickinessPolicy: &computing.SessionStickinessPolicy{
+								Option: &types.Option{
+									SessionStickinessPolicy: &types.SessionStickinessPolicy{
 										Enabled: nifcloud.Bool(false),
 									},
-									SorryPage: &computing.SorryPage{
+									SorryPage: &types.SorryPage{
 										Enabled: nifcloud.Bool(false),
 									},
 								},
@@ -125,9 +126,9 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeLoadBalancersResponse{
-					DescribeLoadBalancersOutput: &computing.DescribeLoadBalancersOutput{
-						LoadBalancerDescriptions: []computing.LoadBalancerDescriptions{},
+				res: &computing.DescribeLoadBalancersOutput{
+					DescribeLoadBalancersResult: &types.DescribeLoadBalancersResult{
+						LoadBalancerDescriptions: []types.LoadBalancerDescriptions{},
 					},
 				},
 			},

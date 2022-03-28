@@ -14,13 +14,11 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandImportKeyPairInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.ImportKeyPairRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.ImportKeyPair(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating KeyPair: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.KeyName))
+	d.SetId(nifcloud.ToString(res.KeyName))
 	return read(ctx, d, meta)
 }

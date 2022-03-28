@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.NiftyDescribePrivateLansResponse) error {
+func flatten(d *schema.ResourceData, res *computing.NiftyDescribePrivateLansOutput) error {
 
 	if res == nil || len(res.PrivateLanSet) == 0 {
 		d.SetId("")
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribePrivateLansResp
 	}
 	privateLan := res.PrivateLanSet[0]
 
-	if nifcloud.StringValue(privateLan.NetworkId) != d.Id() {
+	if nifcloud.ToString(privateLan.NetworkId) != d.Id() {
 		return fmt.Errorf("unable to find private lan within: %#v", res.PrivateLanSet)
 	}
 

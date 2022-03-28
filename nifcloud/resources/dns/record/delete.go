@@ -13,9 +13,8 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandDeleteChangeResourceRecordSetsInput(d)
 
 	svc := meta.(*client.Client).DNS
-	req := svc.ChangeResourceRecordSetsRequest(input)
 
-	if _, err := req.Send(ctx); err != nil {
+	if _, err := svc.ChangeResourceRecordSets(ctx, input); err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting dns record error: %s", err))
 	}
 

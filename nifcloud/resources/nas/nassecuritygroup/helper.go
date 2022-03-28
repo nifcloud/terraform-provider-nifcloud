@@ -16,8 +16,7 @@ func waitUntilNASSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resourc
 
 	err := resource.RetryContext(ctx, timeout, func() *resource.RetryError {
 		input := expandDescribeNASSecurityGroupsInput(d)
-		req := svc.DescribeNASSecurityGroupsRequest(input)
-		res, err := req.Send(ctx)
+		res, err := svc.DescribeNASSecurityGroups(ctx, input)
 		if err != nil {
 			return resource.NonRetryableError(err)
 		}
@@ -25,16 +24,16 @@ func waitUntilNASSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resourc
 		targetExists := false
 		if rule["cidr_ip"] != "" {
 			target := rule["cidr_ip"].(string)
-			for _, ip := range res.DescribeNASSecurityGroupsOutput.NASSecurityGroups[0].IPRanges {
-				if nifcloud.StringValue(ip.CIDRIP) == target && nifcloud.StringValue(ip.Status) == "revoking" {
+			for _, ip := range res.NASSecurityGroups[0].IPRanges {
+				if nifcloud.ToString(ip.CIDRIP) == target && nifcloud.ToString(ip.Status) == "revoking" {
 					targetExists = true
 					break
 				}
 			}
 		} else {
 			target := rule["security_group_name"].(string)
-			for _, group := range res.DescribeNASSecurityGroupsOutput.NASSecurityGroups[0].SecurityGroups {
-				if nifcloud.StringValue(group.SecurityGroupName) == target && nifcloud.StringValue(group.Status) == "revoking" {
+			for _, group := range res.NASSecurityGroups[0].SecurityGroups {
+				if nifcloud.ToString(group.SecurityGroupName) == target && nifcloud.ToString(group.Status) == "revoking" {
 					targetExists = true
 					break
 				}

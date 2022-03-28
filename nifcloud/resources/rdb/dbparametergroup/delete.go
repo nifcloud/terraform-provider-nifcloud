@@ -13,9 +13,8 @@ func deletegroup(ctx context.Context, d *schema.ResourceData, meta interface{}) 
 	svc := meta.(*client.Client).RDB
 
 	input := expandDeleteDBParameterGroupInput(d)
-	req := svc.DeleteDBParameterGroupRequest(input)
 
-	if _, err := req.Send(ctx); err != nil {
+	if _, err := svc.DeleteDBParameterGroup(ctx, input); err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting DBParameterGroup: %s", err))
 	}
 

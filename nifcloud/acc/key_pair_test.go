@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -26,7 +27,7 @@ func init() {
 }
 
 func TestAcc_KeyPair(t *testing.T) {
-	var keyPair computing.KeySet
+	var keyPair types.KeySet
 
 	resourceName := "nifcloud_key_pair.basic"
 	randName := prefix + acctest.RandString(10)
@@ -78,7 +79,7 @@ func testAccKeyPair(t *testing.T, fileName, keyName string) string {
 	)
 }
 
-func testAccCheckKeyPairExists(n string, keyPair *computing.KeySet) resource.TestCheckFunc {
+func testAccCheckKeyPairExists(n string, keyPair *types.KeySet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -90,9 +91,9 @@ func testAccCheckKeyPairExists(n string, keyPair *computing.KeySet) resource.Tes
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeKeyPairsRequest(&computing.DescribeKeyPairsInput{
+		res, err := svc.DescribeKeyPairs(context.Background(), &computing.DescribeKeyPairsInput{
 			KeyName: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -104,7 +105,7 @@ func testAccCheckKeyPairExists(n string, keyPair *computing.KeySet) resource.Tes
 
 		foundKeyPair := res.KeySet[0]
 
-		if nifcloud.StringValue(foundKeyPair.KeyName) != saved.Primary.ID {
+		if nifcloud.ToString(foundKeyPair.KeyName) != saved.Primary.ID {
 			return fmt.Errorf("keyPair does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -113,34 +114,34 @@ func testAccCheckKeyPairExists(n string, keyPair *computing.KeySet) resource.Tes
 	}
 }
 
-func testAccCheckKeyPairValues(keyPair *computing.KeySet, keyName string) resource.TestCheckFunc {
+func testAccCheckKeyPairValues(keyPair *types.KeySet, keyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(keyPair.KeyName) != keyName {
+		if nifcloud.ToString(keyPair.KeyName) != keyName {
 			return fmt.Errorf("bad key_name state, expected \"%s\", got: %#v", keyName, keyPair.KeyName)
 		}
 
-		if nifcloud.StringValue(keyPair.Description) != "memo" {
+		if nifcloud.ToString(keyPair.Description) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", keyPair.Description)
 		}
 
-		if nifcloud.StringValue(keyPair.KeyFingerprint) == "" {
+		if nifcloud.ToString(keyPair.KeyFingerprint) == "" {
 			return fmt.Errorf("bad fingerprint state, expected not nil, got: nil")
 		}
 		return nil
 	}
 }
 
-func testAccCheckKeyPairValuesUpdated(keyPair *computing.KeySet, keyName string) resource.TestCheckFunc {
+func testAccCheckKeyPairValuesUpdated(keyPair *types.KeySet, keyName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(keyPair.KeyName) != keyName {
+		if nifcloud.ToString(keyPair.KeyName) != keyName {
 			return fmt.Errorf("bad key_name state, expected \"%s\", got: %#v", keyName, keyPair.KeyName)
 		}
 
-		if nifcloud.StringValue(keyPair.Description) != "memo-upd" {
+		if nifcloud.ToString(keyPair.Description) != "memo-upd" {
 			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", keyPair.Description)
 		}
 
-		if nifcloud.StringValue(keyPair.KeyFingerprint) == "" {
+		if nifcloud.ToString(keyPair.KeyFingerprint) == "" {
 			return fmt.Errorf("bad fingerprint state, expected not nil, got: nil")
 		}
 		return nil
@@ -155,13 +156,13 @@ func testAccKeyPairResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeKeyPairsRequest(&computing.DescribeKeyPairsInput{
+		res, err := svc.DescribeKeyPairs(context.Background(), &computing.DescribeKeyPairsInput{
 			KeyName: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.KeyPair" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.KeyPair" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeKeyPairsRequest: %s", err)
@@ -178,15 +179,15 @@ func testSweepKeyPair(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeKeyPairsRequest(nil).Send(ctx)
+	res, err := svc.DescribeKeyPairs(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepKeyPairs []string
 	for _, k := range res.KeySet {
-		if strings.HasPrefix(nifcloud.StringValue(k.KeyName), prefix) {
-			sweepKeyPairs = append(sweepKeyPairs, nifcloud.StringValue(k.KeyName))
+		if strings.HasPrefix(nifcloud.ToString(k.KeyName), prefix) {
+			sweepKeyPairs = append(sweepKeyPairs, nifcloud.ToString(k.KeyName))
 		}
 	}
 
@@ -194,9 +195,9 @@ func testSweepKeyPair(region string) error {
 	for _, n := range sweepKeyPairs {
 		keyName := n
 		eg.Go(func() error {
-			_, err := svc.DeleteKeyPairRequest(&computing.DeleteKeyPairInput{
+			_, err := svc.DeleteKeyPair(ctx, &computing.DeleteKeyPairInput{
 				KeyName: nifcloud.String(keyName),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.NiftyDescribeNatTablesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.NiftyDescribeNatTablesOutput) error {
 	if res == nil || len(res.NatTableSet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeNatTablesRespon
 
 	natTable := res.NatTableSet[0]
 
-	if nifcloud.StringValue(natTable.NatTableId) != d.Id() {
+	if nifcloud.ToString(natTable.NatTableId) != d.Id() {
 		return fmt.Errorf("unable to find nat table within: %#v", res.NatTableSet)
 	}
 
@@ -29,12 +29,12 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeNatTablesRespon
 
 	for _, r := range natTable.NatRuleSet {
 
-		if nifcloud.StringValue(r.NatType) == "snat" {
+		if nifcloud.ToString(r.NatType) == "snat" {
 			var findElm map[string]interface{}
 			for _, e := range d.Get("snat").(*schema.Set).List() {
 				elm := e.(map[string]interface{})
 
-				if elm["rule_number"] == nifcloud.StringValue(r.RuleNumber) {
+				if elm["rule_number"] == nifcloud.ToString(r.RuleNumber) {
 					findElm = elm
 					break
 				}
@@ -47,30 +47,30 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeNatTablesRespon
 				"source_address": r.Source.Address,
 			}
 
-			if nifcloud.StringValue(r.Protocol) != "ALL" && nifcloud.StringValue(r.Protocol) != "ICMP" {
-				snat["source_port"] = nifcloud.Int64Value(r.Source.Port)
-				snat["translation_port"] = nifcloud.Int64Value(r.Translation.Port)
+			if nifcloud.ToString(r.Protocol) != "ALL" && nifcloud.ToString(r.Protocol) != "ICMP" {
+				snat["source_port"] = nifcloud.ToInt32(r.Source.Port)
+				snat["translation_port"] = nifcloud.ToInt32(r.Translation.Port)
 			}
 
 			if findElm != nil {
 				if findElm["outbound_interface_network_id"] != "" {
-					snat["outbound_interface_network_id"] = nifcloud.StringValue(r.OutboundInterface.NetworkId)
+					snat["outbound_interface_network_id"] = nifcloud.ToString(r.OutboundInterface.NetworkId)
 				}
 
 				if findElm["outbound_interface_network_name"] != "" {
-					snat["outbound_interface_network_name"] = nifcloud.StringValue(r.OutboundInterface.NetworkName)
+					snat["outbound_interface_network_name"] = nifcloud.ToString(r.OutboundInterface.NetworkName)
 				}
 			} else {
-				snat["outbound_interface_network_id"] = nifcloud.StringValue(r.OutboundInterface.NetworkId)
+				snat["outbound_interface_network_id"] = nifcloud.ToString(r.OutboundInterface.NetworkId)
 			}
 			snats = append(snats, snat)
 
-		} else if nifcloud.StringValue(r.NatType) == "dnat" {
+		} else if nifcloud.ToString(r.NatType) == "dnat" {
 			var findElm map[string]interface{}
 			for _, e := range d.Get("dnat").(*schema.Set).List() {
 				elm := e.(map[string]interface{})
 
-				if elm["rule_number"] == nifcloud.StringValue(r.RuleNumber) {
+				if elm["rule_number"] == nifcloud.ToString(r.RuleNumber) {
 					findElm = elm
 					break
 				}
@@ -83,21 +83,21 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeNatTablesRespon
 				"translation_address": r.Translation.Address,
 			}
 
-			if nifcloud.StringValue(r.Protocol) != "ALL" && nifcloud.StringValue(r.Protocol) != "ICMP" {
-				dnat["destination_port"] = nifcloud.Int64Value(r.Destination.Port)
-				dnat["translation_port"] = nifcloud.Int64Value(r.Translation.Port)
+			if nifcloud.ToString(r.Protocol) != "ALL" && nifcloud.ToString(r.Protocol) != "ICMP" {
+				dnat["destination_port"] = nifcloud.ToInt32(r.Destination.Port)
+				dnat["translation_port"] = nifcloud.ToInt32(r.Translation.Port)
 			}
 
 			if findElm != nil {
 				if findElm["inbound_interface_network_id"] != "" {
-					dnat["inbound_interface_network_id"] = nifcloud.StringValue(r.InboundInterface.NetworkId)
+					dnat["inbound_interface_network_id"] = nifcloud.ToString(r.InboundInterface.NetworkId)
 				}
 
 				if findElm["inbound_interface_network_name"] != "" {
-					dnat["inbound_interface_network_name"] = nifcloud.StringValue(r.InboundInterface.NetworkName)
+					dnat["inbound_interface_network_name"] = nifcloud.ToString(r.InboundInterface.NetworkName)
 				}
 			} else {
-				dnat["inbound_interface_network_id"] = nifcloud.StringValue(r.InboundInterface.NetworkId)
+				dnat["inbound_interface_network_id"] = nifcloud.ToString(r.InboundInterface.NetworkId)
 			}
 			dnats = append(dnats, dnat)
 		}

@@ -13,15 +13,13 @@ import (
 func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyCreateDhcpConfigRequest(nil)
-
-	res, err := req.Send(ctx)
+	res, err := svc.NiftyCreateDhcpConfig(ctx, nil)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating DhcpConfig: %s", err))
 	}
 
 	dhcpConfigID := res.DhcpConfig.DhcpConfigId
-	d.SetId(nifcloud.StringValue(dhcpConfigID))
+	d.SetId(nifcloud.ToString(dhcpConfigID))
 
 	return update(ctx, d, meta)
 }

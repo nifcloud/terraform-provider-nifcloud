@@ -3,14 +3,17 @@ package dbinstance
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).RDB
+	deadline, _ := ctx.Deadline()
 
 	// lintignore:R019
 	if d.HasChanges(
@@ -34,16 +37,14 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	) {
 		input := expandModifyDBInstanceInput(d)
 
-		req := svc.ModifyDBInstanceRequest(input)
-
-		_, err := req.Send(ctx)
+		_, err := svc.ModifyDBInstance(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating db instance: %s", err))
 
 		}
 		d.SetId(d.Get("identifier").(string))
 
-		err = svc.WaitUntilDBInstanceAvailable(ctx, expandDescribeDBInstancesInput(d))
+		err = rdb.NewDBInstanceAvailableWaiter(svc).Wait(ctx, expandDescribeDBInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for db instance to become ready: %s", err))
 		}
@@ -58,14 +59,12 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 		input := expandModifyDBInstanceNetworkInput(d)
 
-		req := svc.ModifyDBInstanceNetworkRequest(input)
-
-		_, err := req.Send(ctx)
+		_, err := svc.ModifyDBInstanceNetwork(ctx, input)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating db instance network: %s", err))
 		}
 
-		err = svc.WaitUntilDBInstanceAvailable(ctx, expandDescribeDBInstancesInput(d))
+		err = rdb.NewDBInstanceAvailableWaiter(svc).Wait(ctx, expandDescribeDBInstancesInput(d), time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for db instance to become ready: %s", err))
 		}

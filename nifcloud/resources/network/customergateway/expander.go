@@ -4,10 +4,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 const (
-	// Available types.
+	// AvailableWaiter(svc).Wait types.
 	// More info: https://pfs.nifcloud.com/api/rest/CreateCustomerGateway.htm
 
 	// TypeIpsec represents IPsec
@@ -21,10 +22,10 @@ const (
 var (
 	// typeMapping converts string to customer gateway type.
 	// More info: https://pfs.nifcloud.com/api/rest/CreateCustomerGateway.htm
-	typeMapping = map[string]computing.TypeOfCreateCustomerGatewayRequest{
-		typeIpsec:       computing.TypeOfCreateCustomerGatewayRequestIpsec,
-		typeIpsecVti:    computing.TypeOfCreateCustomerGatewayRequestIpsecVti,
-		typeL2tpv3Ipsec: computing.TypeOfCreateCustomerGatewayRequestL2tpv3Ipsec,
+	typeMapping = map[string]types.TypeOfCreateCustomerGatewayRequest{
+		typeIpsec:       types.TypeOfCreateCustomerGatewayRequestIpsec,
+		typeIpsecVti:    types.TypeOfCreateCustomerGatewayRequestIpsecVti,
+		typeL2tpv3Ipsec: types.TypeOfCreateCustomerGatewayRequestL2tpv3Ipsec,
 	}
 )
 
@@ -48,7 +49,7 @@ func expandDescribeCustomerGatewaysInput(d *schema.ResourceData) *computing.Desc
 func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(d *schema.ResourceData) *computing.NiftyModifyCustomerGatewayAttributeInput {
 	return &computing.NiftyModifyCustomerGatewayAttributeInput{
 		CustomerGatewayId: nifcloud.String(d.Id()),
-		Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
+		Attribute:         types.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayName,
 		Value:             nifcloud.String(d.Get("name").(string)),
 	}
 }
@@ -56,7 +57,7 @@ func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayName(d
 func expandNiftyModifyCustomerGatewayAttributeInputForNiftyCustomerGatewayDescription(d *schema.ResourceData) *computing.NiftyModifyCustomerGatewayAttributeInput {
 	return &computing.NiftyModifyCustomerGatewayAttributeInput{
 		CustomerGatewayId: nifcloud.String(d.Id()),
-		Attribute:         computing.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
+		Attribute:         types.AttributeOfNiftyModifyCustomerGatewayAttributeRequestNiftyCustomerGatewayDescription,
 		Value:             nifcloud.String(d.Get("description").(string)),
 	}
 }

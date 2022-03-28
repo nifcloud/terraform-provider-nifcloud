@@ -13,9 +13,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	input := expandDescribeAddressesInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.DescribeAddressesRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.DescribeAddresses(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed reading: %s", err))
 	}

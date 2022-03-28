@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,10 +29,10 @@ func TestExpandCreateVolumeInputForInstanceId(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.CreateVolumeInput{
-				Size:           nifcloud.Int64(100),
+				Size:           nifcloud.Int32(100),
 				VolumeId:       nifcloud.String("test_volume_id"),
-				DiskType:       computing.DiskTypeOfCreateVolumeRequest3,
-				AccountingType: computing.AccountingTypeOfCreateVolumeRequest1,
+				DiskType:       types.DiskTypeOfCreateVolumeRequestHighSpeedStorageA,
+				AccountingType: types.AccountingTypeOfCreateVolumeRequestMonthly,
 				Description:    nifcloud.String("test_description"),
 				InstanceId:     nifcloud.String("test_instance_id"),
 			},
@@ -65,10 +66,10 @@ func TestExpandCreateVolumeInputForInstanceUniqueId(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.CreateVolumeInput{
-				Size:             nifcloud.Int64(100),
+				Size:             nifcloud.Int32(100),
 				VolumeId:         nifcloud.String("test_volume_id"),
-				DiskType:         computing.DiskTypeOfCreateVolumeRequest3,
-				AccountingType:   computing.AccountingTypeOfCreateVolumeRequest1,
+				DiskType:         types.DiskTypeOfCreateVolumeRequestHighSpeedStorageA,
+				AccountingType:   types.AccountingTypeOfCreateVolumeRequestMonthly,
 				Description:      nifcloud.String("test_description"),
 				InstanceUniqueId: nifcloud.String("test_instance_unique_id"),
 			},
@@ -100,7 +101,7 @@ func TestExpandModifyVolumeAttributeInputForAccountingType(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyVolumeAttributeInput{
 				VolumeId:  nifcloud.String("test_volume_id"),
-				Attribute: computing.AttributeOfModifyVolumeAttributeRequestAccountingType,
+				Attribute: types.AttributeOfModifyVolumeAttributeRequestAccountingType,
 				Value:     nifcloud.String("1"),
 			},
 		},
@@ -132,7 +133,7 @@ func TestExpandModifyVolumeAttributeInputForVolumeName(t *testing.T) {
 			args: dn,
 			want: &computing.ModifyVolumeAttributeInput{
 				VolumeId:  nifcloud.String("test_volume_id"),
-				Attribute: computing.AttributeOfModifyVolumeAttributeRequestVolumeName,
+				Attribute: types.AttributeOfModifyVolumeAttributeRequestVolumeName,
 				Value:     nifcloud.String("test_volume_id"),
 			},
 		},
@@ -163,7 +164,7 @@ func TestExpandModifyVolumeAttributeInputForDescription(t *testing.T) {
 			args: rd,
 			want: &computing.ModifyVolumeAttributeInput{
 				VolumeId:  nifcloud.String("test_volume_id"),
-				Attribute: computing.AttributeOfModifyVolumeAttributeRequestDescription,
+				Attribute: types.AttributeOfModifyVolumeAttributeRequestDescription,
 				Value:     nifcloud.String("test_description"),
 			},
 		},
@@ -194,7 +195,7 @@ func TestExpandExtendVolumeSizeInput(t *testing.T) {
 			args: rd,
 			want: &computing.ExtendVolumeSizeInput{
 				VolumeId:    nifcloud.String("test_volume_id"),
-				NiftyReboot: computing.NiftyRebootOfExtendVolumeSizeRequest("true"),
+				NiftyReboot: types.NiftyRebootOfExtendVolumeSizeRequest("true"),
 			},
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,15 +37,15 @@ func TestExpandNiftyCreateWebProxyInput(t *testing.T) {
 				RouterName:  nifcloud.String("test_router_name"),
 				RouterId:    nifcloud.String("test_router_id"),
 				ListenPort:  nifcloud.String("test_listen_port"),
-				ListenInterface: &computing.RequestListenInterface{
+				ListenInterface: &types.RequestListenInterface{
 					NetworkId:   nifcloud.String("test_listen_interface_network_id"),
 					NetworkName: nifcloud.String("test_listen_interface_network_name"),
 				},
-				BypassInterface: &computing.RequestBypassInterface{
+				BypassInterface: &types.RequestBypassInterface{
 					NetworkId:   nifcloud.String("test_bypass_interface_network_id"),
 					NetworkName: nifcloud.String("test_bypass_interface_network_name"),
 				},
-				Option: &computing.RequestOption{
+				Option: &types.RequestOption{
 					NameServer: nifcloud.String("test_name_server"),
 				},
 			},
@@ -127,7 +128,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForDescription(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestDescription,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestDescription,
 				Value:     nifcloud.String("test_description"),
 			},
 		},
@@ -157,7 +158,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForNameServer(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestOptionNameServer,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestOptionNameserver,
 				Value:     nifcloud.String("test_name_server"),
 			},
 		},
@@ -187,7 +188,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForListenInterfaceNetworkID(t *t
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestListenInterfaceNetworkId,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestListeninterfaceNetworkid,
 				Value:     nifcloud.String("test_listen_interface_network_id"),
 			},
 		},
@@ -217,7 +218,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForListenInterfaceNetworkName(t 
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestListenInterfaceNetworkName,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestListeninterfaceNetworkname,
 				Value:     nifcloud.String("test_listen_interface_network_name"),
 			},
 		},
@@ -247,7 +248,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForBypassInterfaceNetworkName(t 
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestBypassInterfaceNetworkName,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestBypassinterfaceNetworkname,
 				Value:     nifcloud.String("test_bypass_interface_network_name"),
 			},
 		},
@@ -277,7 +278,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForBypassInterfaceNetworkID(t *t
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestBypassInterfaceNetworkId,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestBypassinterfaceNetworkid,
 				Value:     nifcloud.String("test_bypass_interface_network_id"),
 			},
 		},
@@ -307,7 +308,7 @@ func TestExpandNiftyModifyWebProxyAttributeInputForListenPort(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyWebProxyAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyWebProxyAttributeRequestListenPort,
+				Attribute: types.AttributeOfNiftyModifyWebProxyAttributeRequestListenPort,
 				Value:     nifcloud.String("test_listen_port"),
 			},
 		},

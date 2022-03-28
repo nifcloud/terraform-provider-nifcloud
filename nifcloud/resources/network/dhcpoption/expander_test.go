@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,33 +32,33 @@ func TestExpandCreateDhcpOptionsInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.CreateDhcpOptionsInput{
-				DhcpConfiguration: []computing.RequestDhcpConfiguration{
+				DhcpConfiguration: []types.RequestDhcpConfiguration{
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("default-router"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("default-router"),
 						ListOfRequestValue: []string{"test_default_router"},
 					},
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("domain-name"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("domain-name"),
 						ListOfRequestValue: []string{"test_domain_name"},
 					},
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("domain-name-servers"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("domain-name-servers"),
 						ListOfRequestValue: []string{"test_domain_name_servers1", "test_domain_name_servers2"},
 					},
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("ntp-servers"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("ntp-servers"),
 						ListOfRequestValue: []string{"test_ntp_servers"},
 					},
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("netbios-name-servers"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("netbios-name-servers"),
 						ListOfRequestValue: []string{"test_netbios_name_servers2", "test_netbios_name_servers1"},
 					},
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("netbios-node-type"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("netbios-node-type"),
 						ListOfRequestValue: []string{"test_netbios_node_type"},
 					},
 					{
-						Key:                computing.KeyOfDhcpConfigurationForCreateDhcpOptions("lease-time"),
+						Key:                types.KeyOfDhcpConfigurationForCreateDhcpOptions("lease-time"),
 						ListOfRequestValue: []string{"test_lease_time"},
 					},
 				},

@@ -14,13 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandNiftyCreatePrivateLanInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyCreatePrivateLanRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.NiftyCreatePrivateLan(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating private_lan: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.PrivateLan.NetworkId))
+	d.SetId(nifcloud.ToString(res.PrivateLan.NetworkId))
 	return read(ctx, d, meta)
 }

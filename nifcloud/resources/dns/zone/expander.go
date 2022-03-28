@@ -4,12 +4,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
+	"github.com/nifcloud/nifcloud-sdk-go/service/dns/types"
 )
 
 func expandCreateHostedZoneInput(d *schema.ResourceData) *dns.CreateHostedZoneInput {
 	return &dns.CreateHostedZoneInput{
 		Name: nifcloud.String(d.Get("name").(string)),
-		RequestHostedZoneConfig: &dns.RequestHostedZoneConfig{
+		RequestHostedZoneConfig: &types.RequestHostedZoneConfig{
 			Comment: nifcloud.String(d.Get("comment").(string)),
 		},
 	}

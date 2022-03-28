@@ -6,9 +6,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsOutput) error {
 	if res == nil || len(res.SecurityGroupInfo) == 0 {
 		d.SetId("")
 		return nil
@@ -16,34 +17,34 @@ func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsRespon
 
 	names := make([]string, len(res.SecurityGroupInfo))
 	for i, s := range res.SecurityGroupInfo {
-		names[i] = nifcloud.StringValue(s.GroupName)
+		names[i] = nifcloud.ToString(s.GroupName)
 	}
 
-	var rule *computing.IpPermissions
+	var rule *types.IpPermissions
 	r := expandAuthorizeSecurityGroupIngressInputList(d)[0].IpPermissions[0]
 	for i := range res.SecurityGroupInfo[0].IpPermissions {
 		p := &res.SecurityGroupInfo[0].IpPermissions[i]
 
-		if p.ToPort != nil && r.ToPort != nil && nifcloud.Int64Value(p.ToPort) != nifcloud.Int64Value(r.ToPort) {
+		if p.ToPort != nil && r.ToPort != nil && nifcloud.ToInt32(p.ToPort) != nifcloud.ToInt32(r.ToPort) {
 			continue
 		}
 
-		if p.FromPort != nil && r.FromPort != nil && nifcloud.Int64Value(p.FromPort) != nifcloud.Int64Value(r.FromPort) {
+		if p.FromPort != nil && r.FromPort != nil && nifcloud.ToInt32(p.FromPort) != nifcloud.ToInt32(r.FromPort) {
 			continue
 		}
 
-		if nifcloud.StringValue(p.IpProtocol) != string(r.IpProtocol) {
+		if nifcloud.ToString(p.IpProtocol) != string(r.IpProtocol) {
 			continue
 		}
 
-		if nifcloud.StringValue(p.InOut) != string(r.InOut) {
+		if nifcloud.ToString(p.InOut) != string(r.InOut) {
 			continue
 		}
 
 		findCidrIP := false
 		if len(r.ListOfRequestIpRanges) > 0 {
 			for _, ip := range p.IpRanges {
-				if nifcloud.StringValue(ip.CidrIp) == nifcloud.StringValue(r.ListOfRequestIpRanges[0].CidrIp) {
+				if nifcloud.ToString(ip.CidrIp) == nifcloud.ToString(r.ListOfRequestIpRanges[0].CidrIp) {
 					findCidrIP = true
 					break
 				}
@@ -57,7 +58,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeSecurityGroupsRespon
 		findGroup := false
 		if len(r.ListOfRequestGroups) > 0 {
 			for _, gn := range p.Groups {
-				if nifcloud.StringValue(gn.GroupName) == nifcloud.StringValue(r.ListOfRequestGroups[0].GroupName) {
+				if nifcloud.ToString(gn.GroupName) == nifcloud.ToString(r.ListOfRequestGroups[0].GroupName) {
 					findGroup = true
 					break
 				}

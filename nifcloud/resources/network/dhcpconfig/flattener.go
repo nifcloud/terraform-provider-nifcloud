@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.NiftyDescribeDhcpConfigsResponse) error {
+func flatten(d *schema.ResourceData, res *computing.NiftyDescribeDhcpConfigsOutput) error {
 	if res == nil || len(res.DhcpConfigsSet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeDhcpConfigsResp
 
 	dhcpConfig := res.DhcpConfigsSet[0]
 
-	if nifcloud.StringValue(dhcpConfig.DhcpConfigId) != d.Id() {
+	if nifcloud.ToString(dhcpConfig.DhcpConfigId) != d.Id() {
 		return fmt.Errorf("unable to find dhcp config within: %#v", res.DhcpConfigsSet)
 	}
 

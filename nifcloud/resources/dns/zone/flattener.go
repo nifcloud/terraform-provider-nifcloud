@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
 )
 
-func flatten(d *schema.ResourceData, res *dns.GetHostedZoneResponse) error {
+func flatten(d *schema.ResourceData, res *dns.GetHostedZoneOutput) error {
 	if res == nil {
 		d.SetId("")
 		return nil
@@ -17,7 +17,7 @@ func flatten(d *schema.ResourceData, res *dns.GetHostedZoneResponse) error {
 	hostedZone := res.HostedZone
 	delegationSet := res.DelegationSet
 
-	if nifcloud.StringValue(hostedZone.Name) != d.Id() {
+	if nifcloud.ToString(hostedZone.Name) != d.Id() {
 		return fmt.Errorf("unable to find hosted zone within: %#v", hostedZone)
 	}
 

@@ -12,15 +12,14 @@ import (
 
 func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyCreateNatTableRequest(nil)
 
-	res, err := req.Send(ctx)
+	res, err := svc.NiftyCreateNatTable(ctx, nil)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating natTable: %s", err))
 	}
 
 	natTableID := res.NatTable.NatTableId
-	d.SetId(nifcloud.StringValue(natTableID))
+	d.SetId(nifcloud.ToString(natTableID))
 
 	return update(ctx, d, meta)
 }

@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -30,7 +31,7 @@ func init() {
 }
 
 func TestAcc_SecurityGroup(t *testing.T) {
-	var securityGroup computing.SecurityGroupInfo
+	var securityGroup types.SecurityGroupInfo
 
 	resourceName := "nifcloud_security_group.basic"
 	randName := prefix + acctest.RandString(7)
@@ -87,7 +88,7 @@ func testAccSecurityGroup(t *testing.T, fileName, groupName string) string {
 	)
 }
 
-func testAccCheckSecurityGroupExists(n string, securityGroup *computing.SecurityGroupInfo) resource.TestCheckFunc {
+func testAccCheckSecurityGroupExists(n string, securityGroup *types.SecurityGroupInfo) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -99,9 +100,9 @@ func testAccCheckSecurityGroupExists(n string, securityGroup *computing.Security
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeSecurityGroupsRequest(&computing.DescribeSecurityGroupsInput{
+		res, err := svc.DescribeSecurityGroups(context.Background(), &computing.DescribeSecurityGroupsInput{
 			GroupName: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -113,7 +114,7 @@ func testAccCheckSecurityGroupExists(n string, securityGroup *computing.Security
 
 		foundSecurityGroup := res.SecurityGroupInfo[0]
 
-		if nifcloud.StringValue(foundSecurityGroup.GroupName) != saved.Primary.ID {
+		if nifcloud.ToString(foundSecurityGroup.GroupName) != saved.Primary.ID {
 			return fmt.Errorf("securityGroup does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -122,40 +123,40 @@ func testAccCheckSecurityGroupExists(n string, securityGroup *computing.Security
 	}
 }
 
-func testAccCheckSecurityGroupValues(securityGroup *computing.SecurityGroupInfo, groupName string) resource.TestCheckFunc {
+func testAccCheckSecurityGroupValues(securityGroup *types.SecurityGroupInfo, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(securityGroup.GroupName) != groupName {
+		if nifcloud.ToString(securityGroup.GroupName) != groupName {
 			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, securityGroup.GroupName)
 		}
 
-		if nifcloud.StringValue(securityGroup.GroupDescription) != "memo" {
+		if nifcloud.ToString(securityGroup.GroupDescription) != "memo" {
 			return fmt.Errorf("bad description state, expected \"memo\", got: %#v", securityGroup.GroupDescription)
 		}
 
-		if nifcloud.StringValue(securityGroup.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(securityGroup.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", securityGroup.AvailabilityZone)
 		}
-		if nifcloud.Int64Value(securityGroup.GroupLogLimit) != 1000 {
+		if nifcloud.ToInt32(securityGroup.GroupLogLimit) != 1000 {
 			return fmt.Errorf("bad log_limit state,  expected \"1000\", got: %#v", securityGroup.GroupLogLimit)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSecurityGroupValuesUpdated(securityGroup *computing.SecurityGroupInfo, groupName string) resource.TestCheckFunc {
+func testAccCheckSecurityGroupValuesUpdated(securityGroup *types.SecurityGroupInfo, groupName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(securityGroup.GroupName) != groupName {
+		if nifcloud.ToString(securityGroup.GroupName) != groupName {
 			return fmt.Errorf("bad group_name state, expected \"%s\", got: %#v", groupName, securityGroup.GroupName)
 		}
 
-		if nifcloud.StringValue(securityGroup.GroupDescription) != "memo-upd" {
+		if nifcloud.ToString(securityGroup.GroupDescription) != "memo-upd" {
 			return fmt.Errorf("bad description state, expected \"memo-upd\", got: %#v", securityGroup.GroupDescription)
 		}
 
-		if nifcloud.StringValue(securityGroup.AvailabilityZone) != "east-21" {
+		if nifcloud.ToString(securityGroup.AvailabilityZone) != "east-21" {
 			return fmt.Errorf("bad availability_zone state,  expected \"east-21\", got: %#v", securityGroup.AvailabilityZone)
 		}
-		if nifcloud.Int64Value(securityGroup.GroupLogLimit) != 100000 {
+		if nifcloud.ToInt32(securityGroup.GroupLogLimit) != 100000 {
 			return fmt.Errorf("bad log_limit state,  expected \"100000\", got: %#v", securityGroup.GroupLogLimit)
 		}
 		return nil
@@ -171,13 +172,13 @@ func testAccSecurityGroupResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeSecurityGroupsRequest(&computing.DescribeSecurityGroupsInput{
+		res, err := svc.DescribeSecurityGroups(context.Background(), &computing.DescribeSecurityGroupsInput{
 			GroupName: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroup" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeSecurityGroupsRequest: %s", err)
@@ -194,15 +195,15 @@ func testSweepSecurityGroup(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeSecurityGroupsRequest(nil).Send(ctx)
+	res, err := svc.DescribeSecurityGroups(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepSecurityGroups []string
 	for _, k := range res.SecurityGroupInfo {
-		if strings.HasPrefix(nifcloud.StringValue(k.GroupName), prefix) {
-			sweepSecurityGroups = append(sweepSecurityGroups, nifcloud.StringValue(k.GroupName))
+		if strings.HasPrefix(nifcloud.ToString(k.GroupName), prefix) {
+			sweepSecurityGroups = append(sweepSecurityGroups, nifcloud.ToString(k.GroupName))
 		}
 	}
 
@@ -210,9 +211,9 @@ func testSweepSecurityGroup(region string) error {
 	for _, n := range sweepSecurityGroups {
 		groupName := n
 		eg.Go(func() error {
-			_, err := svc.DeleteSecurityGroupRequest(&computing.DeleteSecurityGroupInput{
+			_, err := svc.DeleteSecurityGroup(ctx, &computing.DeleteSecurityGroupInput{
 				GroupName: nifcloud.String(groupName),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

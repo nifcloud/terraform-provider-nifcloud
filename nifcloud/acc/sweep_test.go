@@ -20,7 +20,9 @@ func sharedClientForRegion(region string) *client.Client {
 		os.Getenv("NIFCLOUD_SECRET_ACCESS_KEY"),
 		region,
 	)
-	cfg.Retryer = aws.NoOpRetryer{}
+	cfg.Retryer = func() aws.Retryer {
+		return aws.NopRetryer{}
+	}
 
 	client := client.New(cfg)
 	return client

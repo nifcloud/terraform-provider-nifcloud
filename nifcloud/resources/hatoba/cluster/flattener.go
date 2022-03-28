@@ -6,9 +6,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 )
 
-func flatten(d *schema.ResourceData, res *hatoba.GetClusterResponse) error {
+func flatten(d *schema.ResourceData, res *hatoba.GetClusterOutput) error {
 	if res == nil {
 		d.SetId("")
 		return nil
@@ -16,7 +17,7 @@ func flatten(d *schema.ResourceData, res *hatoba.GetClusterResponse) error {
 
 	cluster := res.Cluster
 
-	if nifcloud.StringValue(cluster.Name) != d.Id() {
+	if nifcloud.ToString(cluster.Name) != d.Id() {
 		return fmt.Errorf("unable to find Hatoba cluster within: %#v", cluster)
 	}
 
@@ -55,13 +56,13 @@ func flatten(d *schema.ResourceData, res *hatoba.GetClusterResponse) error {
 	return nil
 }
 
-func flattenAddonsConfig(c *hatoba.AddonsConfig) []map[string]interface{} {
+func flattenAddonsConfig(c *types.AddonsConfig) []map[string]interface{} {
 	res := map[string]interface{}{}
 
 	if c != nil && c.HttpLoadBalancing != nil {
 		res["http_load_balancing"] = []map[string]interface{}{
 			{
-				"disabled": nifcloud.BoolValue(c.HttpLoadBalancing.Disabled),
+				"disabled": nifcloud.ToBool(c.HttpLoadBalancing.Disabled),
 			},
 		}
 	}
@@ -69,24 +70,24 @@ func flattenAddonsConfig(c *hatoba.AddonsConfig) []map[string]interface{} {
 	return []map[string]interface{}{res}
 }
 
-func flattenNetworkConfig(c *hatoba.NetworkConfig) []map[string]interface{} {
+func flattenNetworkConfig(c *types.NetworkConfig) []map[string]interface{} {
 	res := map[string]interface{}{}
 
 	if c != nil && c.NetworkId != nil {
-		res["network_id"] = nifcloud.StringValue(c.NetworkId)
+		res["network_id"] = nifcloud.ToString(c.NetworkId)
 	}
 
 	return []map[string]interface{}{res}
 }
 
-func flattenNodePools(nodePools []hatoba.NodePools) []map[string]interface{} {
+func flattenNodePools(nodePools []types.NodePools) []map[string]interface{} {
 	res := make([]map[string]interface{}, len(nodePools))
 
 	for i, nodePool := range nodePools {
 		res[i] = map[string]interface{}{
-			"name":          nifcloud.StringValue(nodePool.Name),
-			"instance_type": nifcloud.StringValue(nodePool.InstanceType),
-			"node_count":    nifcloud.Int64Value(nodePool.NodeCount),
+			"name":          nifcloud.ToString(nodePool.Name),
+			"instance_type": nifcloud.ToString(nodePool.InstanceType),
+			"node_count":    nifcloud.ToInt32(nodePool.NodeCount),
 			"nodes":         flattenNodes(nodePool.Nodes),
 		}
 	}
@@ -94,21 +95,21 @@ func flattenNodePools(nodePools []hatoba.NodePools) []map[string]interface{} {
 	return res
 }
 
-func flattenNodes(nodes []hatoba.Nodes) []map[string]interface{} {
+func flattenNodes(nodes []types.Nodes) []map[string]interface{} {
 	res := make([]map[string]interface{}, len(nodes))
 
 	for i, n := range nodes {
 		res[i] = map[string]interface{}{
-			"name":               nifcloud.StringValue(n.Name),
-			"availability_zone":  nifcloud.StringValue(n.AvailabilityZone),
-			"public_ip_address":  nifcloud.StringValue(n.PublicIpAddress),
-			"private_ip_address": nifcloud.StringValue(n.PrivateIpAddress),
+			"name":               nifcloud.ToString(n.Name),
+			"availability_zone":  nifcloud.ToString(n.AvailabilityZone),
+			"public_ip_address":  nifcloud.ToString(n.PublicIpAddress),
+			"private_ip_address": nifcloud.ToString(n.PrivateIpAddress),
 		}
 	}
 
 	return res
 }
 
-func flattenCredentials(d *schema.ResourceData, res *hatoba.GetClusterCredentialsResponse) error {
+func flattenCredentials(d *schema.ResourceData, res *hatoba.GetClusterCredentialsOutput) error {
 	return d.Set("kube_config_raw", res.Credentials)
 }

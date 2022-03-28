@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +29,7 @@ func TestFlatten(t *testing.T) {
 	})
 
 	type args struct {
-		res *computing.DescribeSecurityGroupsResponse
+		res *computing.DescribeSecurityGroupsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -40,21 +41,19 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeSecurityGroupsResponse{
-					DescribeSecurityGroupsOutput: &computing.DescribeSecurityGroupsOutput{
-						SecurityGroupInfo: []computing.SecurityGroupInfo{
-							{
-								GroupName: nifcloud.String("test_security_group_name"),
-								IpPermissions: []computing.IpPermissions{{
-									InOut:       nifcloud.String("IN"),
-									IpRanges:    []computing.IpRanges{{CidrIp: nifcloud.String("0.0.0.0/0")}},
-									FromPort:    nifcloud.Int64(1),
-									IpProtocol:  nifcloud.String("TCP"),
-									Groups:      []computing.Groups{{GroupName: nifcloud.String("test_source_security_group_name")}},
-									ToPort:      nifcloud.Int64(65535),
-									Description: nifcloud.String("test_description"),
-								}},
-							},
+				res: &computing.DescribeSecurityGroupsOutput{
+					SecurityGroupInfo: []types.SecurityGroupInfo{
+						{
+							GroupName: nifcloud.String("test_security_group_name"),
+							IpPermissions: []types.IpPermissions{{
+								InOut:       nifcloud.String("IN"),
+								IpRanges:    []types.IpRanges{{CidrIp: nifcloud.String("0.0.0.0/0")}},
+								FromPort:    nifcloud.Int32(1),
+								IpProtocol:  nifcloud.String("TCP"),
+								Groups:      []types.Groups{{GroupName: nifcloud.String("test_source_security_group_name")}},
+								ToPort:      nifcloud.Int32(65535),
+								Description: nifcloud.String("test_description"),
+							}},
 						},
 					},
 				},
@@ -65,10 +64,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeSecurityGroupsResponse{
-					DescribeSecurityGroupsOutput: &computing.DescribeSecurityGroupsOutput{
-						SecurityGroupInfo: []computing.SecurityGroupInfo{},
-					},
+				res: &computing.DescribeSecurityGroupsOutput{
+					SecurityGroupInfo: []types.SecurityGroupInfo{},
 				},
 			},
 			want: wantNotFoundRd,
@@ -77,10 +74,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally in security group",
 			args: args{
 				d: wantNotFoundRuleRd,
-				res: &computing.DescribeSecurityGroupsResponse{
-					DescribeSecurityGroupsOutput: &computing.DescribeSecurityGroupsOutput{
-						SecurityGroupInfo: []computing.SecurityGroupInfo{{GroupName: nifcloud.String("test_security_group_name")}},
-					},
+				res: &computing.DescribeSecurityGroupsOutput{
+					SecurityGroupInfo: []types.SecurityGroupInfo{{GroupName: nifcloud.String("test_security_group_name")}},
 				},
 			},
 			want: wantNotFoundRuleRd,

@@ -12,9 +12,8 @@ import (
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDeleteRouteTableInput(d)
 	svc := meta.(*client.Client).Computing
-	req := svc.DeleteRouteTableRequest(input)
 
-	_, err := req.Send(ctx)
+	_, err := svc.DeleteRouteTable(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}

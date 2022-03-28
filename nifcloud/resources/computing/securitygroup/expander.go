@@ -4,13 +4,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandCreateSecurityGroupInput(d *schema.ResourceData) *computing.CreateSecurityGroupInput {
 	return &computing.CreateSecurityGroupInput{
 		GroupName:        nifcloud.String(d.Get("group_name").(string)),
 		GroupDescription: nifcloud.String(d.Get("description").(string)),
-		Placement: &computing.RequestPlacementOfCreateSecurityGroup{
+		Placement: &types.RequestPlacementOfCreateSecurityGroup{
 			AvailabilityZone: nifcloud.String(d.Get("availability_zone").(string)),
 		},
 	}
@@ -19,7 +20,7 @@ func expandCreateSecurityGroupInput(d *schema.ResourceData) *computing.CreateSec
 func expandUpdateSecurityGroupInputForLogLimit(d *schema.ResourceData) *computing.UpdateSecurityGroupInput {
 	return &computing.UpdateSecurityGroupInput{
 		GroupName:           nifcloud.String(d.Id()),
-		GroupLogLimitUpdate: nifcloud.Int64(int64(d.Get("log_limit").(int))),
+		GroupLogLimitUpdate: nifcloud.Int32(int32(d.Get("log_limit").(int))),
 	}
 }
 
@@ -52,7 +53,7 @@ func expandDeleteSecurityGroupInput(d *schema.ResourceData) *computing.DeleteSec
 
 func expandRevokeSecurityGroupIngressInput(
 	d *schema.ResourceData,
-	ipPermissions []computing.RequestIpPermissionsOfRevokeSecurityGroupIngress,
+	ipPermissions []types.RequestIpPermissionsOfRevokeSecurityGroupIngress,
 ) *computing.RevokeSecurityGroupIngressInput {
 	return &computing.RevokeSecurityGroupIngressInput{
 		GroupName:     nifcloud.String(d.Id()),

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
+	"github.com/nifcloud/nifcloud-sdk-go/service/dns/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +26,7 @@ func TestExpandCreateHostedZoneInput(t *testing.T) {
 			args: rd,
 			want: &dns.CreateHostedZoneInput{
 				Name: nifcloud.String("test_name"),
-				RequestHostedZoneConfig: &dns.RequestHostedZoneConfig{
+				RequestHostedZoneConfig: &types.RequestHostedZoneConfig{
 					Comment: nifcloud.String("test_comment"),
 				},
 			},

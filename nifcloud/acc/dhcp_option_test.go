@@ -8,11 +8,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -28,7 +29,7 @@ func init() {
 }
 
 func TestAcc_DhcpOption(t *testing.T) {
-	var dhcpOption computing.DhcpOptionsSet
+	var dhcpOption types.DhcpOptionsSet
 
 	resourceName := "nifcloud_dhcp_option.basic"
 
@@ -71,7 +72,7 @@ func testAccDhcpOption(t *testing.T, fileName string) string {
 	return string(b)
 }
 
-func testAccCheckDhcpOptionExists(n string, dhcpOption *computing.DhcpOptionsSet) resource.TestCheckFunc {
+func testAccCheckDhcpOptionExists(n string, dhcpOption *types.DhcpOptionsSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -83,9 +84,9 @@ func testAccCheckDhcpOptionExists(n string, dhcpOption *computing.DhcpOptionsSet
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeDhcpOptionsRequest(&computing.DescribeDhcpOptionsInput{
+		res, err := svc.DescribeDhcpOptions(context.Background(), &computing.DescribeDhcpOptionsInput{
 			DhcpOptionsId: []string{saved.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
@@ -97,7 +98,7 @@ func testAccCheckDhcpOptionExists(n string, dhcpOption *computing.DhcpOptionsSet
 
 		foundDhcpOption := res.DhcpOptionsSet[0]
 
-		if nifcloud.StringValue(foundDhcpOption.DhcpOptionsId) != saved.Primary.ID {
+		if nifcloud.ToString(foundDhcpOption.DhcpOptionsId) != saved.Primary.ID {
 			return fmt.Errorf("dhcpOption does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -106,62 +107,62 @@ func testAccCheckDhcpOptionExists(n string, dhcpOption *computing.DhcpOptionsSet
 	}
 }
 
-func testAccCheckDhcpOptionValues(dhcpOption *computing.DhcpOptionsSet) resource.TestCheckFunc {
+func testAccCheckDhcpOptionValues(dhcpOption *types.DhcpOptionsSet) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(dhcpOption.DhcpOptionsId) == "" {
+		if nifcloud.ToString(dhcpOption.DhcpOptionsId) == "" {
 			return fmt.Errorf("bad dhcp_option_id state, expected not nil, got: nil")
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "default-router" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "default-router" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
 				return fmt.Errorf("bad default_router state, expected \"192.168.0.1\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "domain-name" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "example.com" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "domain-name" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "example.com" {
 				return fmt.Errorf("bad domain_name state, expected \"example.com\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "domain-name-server" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "domain-name-server" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
 				return fmt.Errorf("bad domain_name_servers state, expected \"192.168.0.1\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "domain-name-server" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[1].Value) != "192.168.0.2" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "domain-name-server" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[1].Value) != "192.168.0.2" {
 				return fmt.Errorf("bad domain_name_servers state, expected \"192.168.0.2\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[1].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "ntp_servers" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "ntp_servers" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
 				return fmt.Errorf("bad ntp_servers state, expected \"192.168.0.1\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "netbios_name_servers" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "netbios_name_servers" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "192.168.0.1" {
 				return fmt.Errorf("bad netbios_name_servers state, expected \"192.168.0.1\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "netbios_name_servers" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[1].Value) != "192.168.0.2" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "netbios_name_servers" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[1].Value) != "192.168.0.2" {
 				return fmt.Errorf("bad netbios_name_servers state, expected \"192.168.0.2\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[1].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "netbios_node_type" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "1" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "netbios_node_type" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "1" {
 				return fmt.Errorf("bad netbios_node_type state, expected \"1\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
 
-		if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].Key) == "lease_time" {
-			if nifcloud.StringValue(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "600" {
+		if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].Key) == "lease_time" {
+			if nifcloud.ToString(dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value) != "600" {
 				return fmt.Errorf("bad lease_time state, expected \"600\", got: %#v", dhcpOption.DhcpConfigurationSet[0].ValueSet[0].Value)
 			}
 		}
@@ -177,13 +178,13 @@ func testAccDhcpOptionResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeDhcpOptionsRequest(&computing.DescribeDhcpOptionsInput{
+		res, err := svc.DescribeDhcpOptions(context.Background(), &computing.DescribeDhcpOptionsInput{
 			DhcpOptionsId: []string{rs.Primary.ID},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DhcpOptionsId" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DhcpOptionsId" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeDhcpOptionsRequest: %s", err)
@@ -200,15 +201,15 @@ func testSweepDhcpOption(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeDhcpOptionsRequest(nil).Send(ctx)
+	res, err := svc.DescribeDhcpOptions(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepDhcpOptions []string
 	for _, k := range res.DhcpOptionsSet {
-		if strings.HasPrefix(nifcloud.StringValue(k.DhcpOptionsId), prefix) {
-			sweepDhcpOptions = append(sweepDhcpOptions, nifcloud.StringValue(k.DhcpOptionsId))
+		if strings.HasPrefix(nifcloud.ToString(k.DhcpOptionsId), prefix) {
+			sweepDhcpOptions = append(sweepDhcpOptions, nifcloud.ToString(k.DhcpOptionsId))
 		}
 	}
 
@@ -216,9 +217,9 @@ func testSweepDhcpOption(region string) error {
 	for _, n := range sweepDhcpOptions {
 		dhcpOptionID := n
 		eg.Go(func() error {
-			_, err := svc.DeleteDhcpOptionsRequest(&computing.DeleteDhcpOptionsInput{
+			_, err := svc.DeleteDhcpOptions(ctx, &computing.DeleteDhcpOptionsInput{
 				DhcpOptionsId: nifcloud.String(dhcpOptionID),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

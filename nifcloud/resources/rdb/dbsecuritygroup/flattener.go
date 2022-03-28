@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
 )
 
-func flatten(d *schema.ResourceData, res *rdb.DescribeDBSecurityGroupsResponse) error {
+func flatten(d *schema.ResourceData, res *rdb.DescribeDBSecurityGroupsOutput) error {
 	if res == nil || len(res.DBSecurityGroups) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBSecurityGroupsResponse) 
 
 	dbSecurityGroup := res.DBSecurityGroups[0]
 
-	if nifcloud.StringValue(dbSecurityGroup.DBSecurityGroupName) != d.Id() {
+	if nifcloud.ToString(dbSecurityGroup.DBSecurityGroupName) != d.Id() {
 		return fmt.Errorf("unable to find db security group within: %#v", res.DBSecurityGroups)
 	}
 

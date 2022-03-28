@@ -9,12 +9,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/acc/helper"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
@@ -28,7 +29,7 @@ func init() {
 }
 
 func TestAcc_LoadBalancerListener(t *testing.T) {
-	var loadBalancer computing.LoadBalancerDescriptions
+	var loadBalancer types.LoadBalancerDescriptions
 
 	instanceName := prefix + acctest.RandString(7)
 
@@ -116,29 +117,31 @@ func testAccLoadBalancerListener(t *testing.T, fileName, rName, instanceName, ss
 	)
 }
 
-func testAccCheckLoadBalancerListenerExists(lbName string, lbPort, instancePort int, loadBalancer *computing.LoadBalancerDescriptions) resource.TestCheckFunc {
+func testAccCheckLoadBalancerListenerExists(lbName string, lbPort, instancePort int, loadBalancer *types.LoadBalancerDescriptions) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		svc := testAccProvider.Meta().(*client.Client).Computing
-		res, err := svc.DescribeLoadBalancersRequest(&computing.DescribeLoadBalancersInput{
-			LoadBalancerNames: []computing.RequestLoadBalancerNames{
-				{
-					LoadBalancerName: nifcloud.String(lbName),
-					LoadBalancerPort: nifcloud.Int64(int64(lbPort)),
-					InstancePort:     nifcloud.Int64(int64(instancePort)),
+		res, err := svc.DescribeLoadBalancers(context.Background(), &computing.DescribeLoadBalancersInput{
+			LoadBalancerNames: &types.ListOfRequestLoadBalancerNames{
+				Member: []types.RequestLoadBalancerNames{
+					{
+						LoadBalancerName: nifcloud.String(lbName),
+						LoadBalancerPort: nifcloud.Int32(int32(lbPort)),
+						InstancePort:     nifcloud.Int32(int32(instancePort)),
+					},
 				},
 			},
-		}).Send(context.Background())
+		})
 
 		if err != nil {
 			return err
 		}
-		if res == nil || len(res.DescribeLoadBalancersOutput.LoadBalancerDescriptions) == 0 {
+		if res == nil || len(res.DescribeLoadBalancersResult.LoadBalancerDescriptions) == 0 {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", lbName)
 		}
 
-		foundLoadBalancer := res.DescribeLoadBalancersOutput.LoadBalancerDescriptions[0]
+		foundLoadBalancer := res.DescribeLoadBalancersResult.LoadBalancerDescriptions[0]
 
-		if nifcloud.StringValue(foundLoadBalancer.LoadBalancerName) != lbName {
+		if nifcloud.ToString(foundLoadBalancer.LoadBalancerName) != lbName {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", lbName)
 		}
 
@@ -147,151 +150,151 @@ func testAccCheckLoadBalancerListenerExists(lbName string, lbPort, instancePort 
 	}
 }
 
-func testAccCheckLoadBalancerListenerValues(loadBalancer *computing.LoadBalancerDescriptions, rName, cert, iName string) resource.TestCheckFunc {
+func testAccCheckLoadBalancerListenerValues(loadBalancer *types.LoadBalancerDescriptions, rName, cert, iName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		listener := loadBalancer.ListenerDescriptions[0].Listener
 		log.Print("TFloadBalancer")
 		log.Print(loadBalancer)
-		if nifcloud.StringValue(loadBalancer.LoadBalancerName) != rName {
+		if nifcloud.ToString(loadBalancer.LoadBalancerName) != rName {
 			return fmt.Errorf("bad load_balancer_name state,  expected \"%s\", got: %#v", rName, loadBalancer.LoadBalancerName)
 		}
 
-		if nifcloud.Int64Value(listener.BalancingType) != 1 {
+		if nifcloud.ToInt32(listener.BalancingType) != 1 {
 			return fmt.Errorf("bad balancing_type state, expected \"1\", got: %#v", listener.BalancingType)
 		}
 
-		if nifcloud.Int64Value(listener.InstancePort) != 8081 {
+		if nifcloud.ToInt32(listener.InstancePort) != 8081 {
 			return fmt.Errorf("bad instance_port state, expected \"443\", got: %#v", listener.InstancePort)
 		}
 
-		if nifcloud.Int64Value(listener.LoadBalancerPort) != 80 {
+		if nifcloud.ToInt32(listener.LoadBalancerPort) != 80 {
 			return fmt.Errorf("bad load_balancer_port state, expected \"80\", got: %#v", listener.LoadBalancerPort)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.HealthCheck.HealthyThreshold) != 1 {
+		if nifcloud.ToInt32(loadBalancer.HealthCheck.HealthyThreshold) != 1 {
 			return fmt.Errorf("bad healthy_threshold state, expected \"1\", got: %#v", loadBalancer.HealthCheck.UnhealthyThreshold)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.HealthCheck.UnhealthyThreshold) != 2 {
+		if nifcloud.ToInt32(loadBalancer.HealthCheck.UnhealthyThreshold) != 2 {
 			return fmt.Errorf("bad unhealthy_threshold state, expected \"2\", got: %#v", loadBalancer.HealthCheck.UnhealthyThreshold)
 		}
 
-		if nifcloud.StringValue(loadBalancer.HealthCheck.Target) != "TCP:80" {
+		if nifcloud.ToString(loadBalancer.HealthCheck.Target) != "TCP:80" {
 			return fmt.Errorf("bad health_check_target state, expected \"TCP:80\", got: %#v", loadBalancer.HealthCheck.Target)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.HealthCheck.Interval) != 10 {
+		if nifcloud.ToInt32(loadBalancer.HealthCheck.Interval) != 10 {
 			return fmt.Errorf("bad health_check_interval state, expected \"10\", got: %#v", loadBalancer.HealthCheck.Interval)
 		}
 
-		if nifcloud.StringValue(loadBalancer.Instances[0].InstanceId) != iName {
+		if nifcloud.ToString(loadBalancer.Instances[0].InstanceId) != iName {
 			return fmt.Errorf("bad instances state, expected \"%s\", got: %#v", rName, loadBalancer.Instances[0].InstanceId)
 		}
 
-		if nifcloud.BoolValue(loadBalancer.Option.SessionStickinessPolicy.Enabled) != true {
+		if nifcloud.ToBool(loadBalancer.Option.SessionStickinessPolicy.Enabled) != true {
 			return fmt.Errorf("bad session_stickiness_policy_enable state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.Enabled)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod) != 5 {
+		if nifcloud.ToInt32(loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod) != 5 {
 			return fmt.Errorf("bad session_stickiness_policy_expiration_period state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.BoolValue(loadBalancer.Option.SorryPage.Enabled) != true {
+		if nifcloud.ToBool(loadBalancer.Option.SorryPage.Enabled) != true {
 			return fmt.Errorf("bad sorry_page_enable state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.StringValue(listener.SSLCertificateId) == "" {
+		if nifcloud.ToString(listener.SSLCertificateId) == "" {
 			return fmt.Errorf("bad ssl_certificate_id state, expected \"not null\", got: %#v", listener.SSLCertificateId)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.Option.SorryPage.StatusCode) != 503 {
+		if nifcloud.ToInt32(loadBalancer.Option.SorryPage.StatusCode) != 503 {
 			return fmt.Errorf("bad sorry_page_status_code state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.StringValue(loadBalancer.PolicyType) != "standard" {
+		if nifcloud.ToString(loadBalancer.PolicyType) != "standard" {
 			return fmt.Errorf("bad policy_type state,  expected \"standard\", got: %#v", loadBalancer.PolicyType)
 		}
 
-		if nifcloud.StringValue(loadBalancer.Filter.FilterType) != "1" {
+		if nifcloud.ToString(loadBalancer.Filter.FilterType) != "1" {
 			return fmt.Errorf("bad filter_type state,  expected \"1\", got: %#v", loadBalancer.PolicyType)
 		}
 
-		if nifcloud.StringValue(loadBalancer.Filter.IPAddresses[0].IPAddress) != "192.168.1.1" {
+		if nifcloud.ToString(loadBalancer.Filter.IPAddresses[0].IPAddress) != "192.168.1.1" {
 			return fmt.Errorf("bad filter state,  expected \"192.168.1.1\", got: %#v", loadBalancer.PolicyType)
 		}
 		return nil
 	}
 }
 
-func testAccCheckLoadBalancerListenerValuesUpdated(loadBalancer *computing.LoadBalancerDescriptions, rName, cert, iName string) resource.TestCheckFunc {
+func testAccCheckLoadBalancerListenerValuesUpdated(loadBalancer *types.LoadBalancerDescriptions, rName, cert, iName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		listener := loadBalancer.ListenerDescriptions[0].Listener
 
-		if nifcloud.StringValue(loadBalancer.LoadBalancerName) != rName {
+		if nifcloud.ToString(loadBalancer.LoadBalancerName) != rName {
 			return fmt.Errorf("bad load_balancer_name state,  expected \"%s\", got: %#v", rName, loadBalancer.LoadBalancerName)
 		}
 
-		if nifcloud.Int64Value(listener.BalancingType) != 2 {
+		if nifcloud.ToInt32(listener.BalancingType) != 2 {
 			return fmt.Errorf("bad balancing_type state, expected \"2\", got: %#v", listener.BalancingType)
 		}
 
-		if nifcloud.Int64Value(listener.InstancePort) != 8083 {
+		if nifcloud.ToInt32(listener.InstancePort) != 8083 {
 			return fmt.Errorf("bad instance_port state, expected \"80\", got: %#v", listener.InstancePort)
 		}
 
-		if nifcloud.Int64Value(listener.LoadBalancerPort) != 80 {
+		if nifcloud.ToInt32(listener.LoadBalancerPort) != 80 {
 			return fmt.Errorf("bad load_balancer_port state, expected \"80\", got: %#v", listener.LoadBalancerPort)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.HealthCheck.HealthyThreshold) != 1 {
+		if nifcloud.ToInt32(loadBalancer.HealthCheck.HealthyThreshold) != 1 {
 			return fmt.Errorf("bad healthy_threshold state, expected \"1\", got: %#v", loadBalancer.HealthCheck.UnhealthyThreshold)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.HealthCheck.UnhealthyThreshold) != 3 {
+		if nifcloud.ToInt32(loadBalancer.HealthCheck.UnhealthyThreshold) != 3 {
 			return fmt.Errorf("bad unhealthy_threshold state, expected \"3\", got: %#v", loadBalancer.HealthCheck.UnhealthyThreshold)
 		}
 
-		if nifcloud.StringValue(loadBalancer.HealthCheck.Target) != "ICMP" {
+		if nifcloud.ToString(loadBalancer.HealthCheck.Target) != "ICMP" {
 			return fmt.Errorf("bad health_check_target state, expected \"ICMP\", got: %#v", loadBalancer.HealthCheck.Target)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.HealthCheck.Interval) != 11 {
+		if nifcloud.ToInt32(loadBalancer.HealthCheck.Interval) != 11 {
 			return fmt.Errorf("bad health_check_interval state, expected \"11\", got: %#v", loadBalancer.HealthCheck.Interval)
 		}
 
-		if nifcloud.StringValue(loadBalancer.Instances[0].InstanceId) != iName {
+		if nifcloud.ToString(loadBalancer.Instances[0].InstanceId) != iName {
 			return fmt.Errorf("bad instances state, expected \"%s\", got: %#v", rName, loadBalancer.Instances[0].InstanceId)
 		}
 
-		if nifcloud.BoolValue(loadBalancer.Option.SessionStickinessPolicy.Enabled) != true {
+		if nifcloud.ToBool(loadBalancer.Option.SessionStickinessPolicy.Enabled) != true {
 			return fmt.Errorf("bad session_stickiness_policy_enable state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.Enabled)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod) != 5 {
+		if nifcloud.ToInt32(loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod) != 5 {
 			return fmt.Errorf("bad session_stickiness_policy_expiration_period state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.BoolValue(loadBalancer.Option.SorryPage.Enabled) != true {
+		if nifcloud.ToBool(loadBalancer.Option.SorryPage.Enabled) != true {
 			return fmt.Errorf("bad session_stickiness_policy_enable state, expected \"true\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.StringValue(listener.SSLCertificateId) == "" {
+		if nifcloud.ToString(listener.SSLCertificateId) == "" {
 			return fmt.Errorf("bad ssl_certificate_id state, expected \"not null\", got: %#v", listener.SSLCertificateId)
 		}
 
-		if nifcloud.Int64Value(loadBalancer.Option.SorryPage.StatusCode) != 200 {
+		if nifcloud.ToInt32(loadBalancer.Option.SorryPage.StatusCode) != 200 {
 			return fmt.Errorf("bad sorry_page_status_code state, expected \"200\", got: %#v", loadBalancer.Option.SessionStickinessPolicy.ExpirationPeriod)
 		}
 
-		if nifcloud.StringValue(loadBalancer.PolicyType) != "standard" {
+		if nifcloud.ToString(loadBalancer.PolicyType) != "standard" {
 			return fmt.Errorf("bad policy_type state,  expected \"standard\", got: %#v", loadBalancer.PolicyType)
 		}
 
-		if nifcloud.StringValue(loadBalancer.Filter.FilterType) != "2" {
+		if nifcloud.ToString(loadBalancer.Filter.FilterType) != "2" {
 			return fmt.Errorf("bad filter_type state,  expected \"2\", got: %#v", loadBalancer.PolicyType)
 		}
 
-		if nifcloud.StringValue(loadBalancer.Filter.IPAddresses[0].IPAddress) != "192.168.1.2" {
+		if nifcloud.ToString(loadBalancer.Filter.IPAddresses[0].IPAddress) != "192.168.1.2" {
 			return fmt.Errorf("bad filter state,  expected \"192.168.1.2\", got: %#v", loadBalancer.PolicyType)
 		}
 		return nil
@@ -305,24 +308,24 @@ func testAccLoadBalancerListenerResourceDestroy(s *terraform.State) error {
 		if rs.Type != "nifcloud_load_balancer" {
 			continue
 		}
-		lbns := []computing.RequestLoadBalancerNames{
+		lbns := []types.RequestLoadBalancerNames{
 			{
 				LoadBalancerName: nifcloud.String(rs.Primary.ID),
 			},
 		}
-		res, err := svc.DescribeLoadBalancersRequest(&computing.DescribeLoadBalancersInput{
-			LoadBalancerNames: lbns,
-		}).Send(context.Background())
+		res, err := svc.DescribeLoadBalancers(context.Background(), &computing.DescribeLoadBalancersInput{
+			LoadBalancerNames: &types.ListOfRequestLoadBalancerNames{Member: lbns},
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.LoadBalancer" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.LoadBalancer" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeLoadBalancersRequest: %s", err)
 		}
 
-		if len(res.LoadBalancerDescriptions) > 0 {
+		if len(res.DescribeLoadBalancersResult.LoadBalancerDescriptions) > 0 {
 			return fmt.Errorf("load_balancer does not found in cloud: %s", rs.Primary.ID)
 		}
 	}
@@ -333,21 +336,21 @@ func testSweepLoadBalancerListener(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).Computing
 
-	res, err := svc.DescribeLoadBalancersRequest(nil).Send(ctx)
+	res, err := svc.DescribeLoadBalancers(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	type lb struct {
 		name         *string
-		lbPort       *int64
-		instancePort *int64
+		lbPort       *int32
+		instancePort *int32
 	}
 
 	var sweepLBs []lb
-	for _, b := range res.DescribeLoadBalancersOutput.LoadBalancerDescriptions {
+	for _, b := range res.DescribeLoadBalancersResult.LoadBalancerDescriptions {
 		for _, l := range b.ListenerDescriptions {
-			if strings.HasPrefix(nifcloud.StringValue(b.LoadBalancerName), prefix) {
+			if strings.HasPrefix(nifcloud.ToString(b.LoadBalancerName), prefix) {
 				sweepLBs = append(sweepLBs, lb{
 					name:         b.LoadBalancerName,
 					lbPort:       l.Listener.LoadBalancerPort,
@@ -361,11 +364,11 @@ func testSweepLoadBalancerListener(region string) error {
 	for _, elb := range sweepLBs {
 		elb := elb
 		eg.Go(func() error {
-			_, err := svc.DeleteLoadBalancerRequest(&computing.DeleteLoadBalancerInput{
+			_, err := svc.DeleteLoadBalancer(ctx, &computing.DeleteLoadBalancerInput{
 				LoadBalancerName: elb.name,
 				LoadBalancerPort: elb.lbPort,
 				InstancePort:     elb.instancePort,
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

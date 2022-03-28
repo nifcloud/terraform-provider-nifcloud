@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +33,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *describeResponses
+		res *describeOutputs
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -44,32 +45,24 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &describeResponses{
-					describeSSLCertificatesResponse: &computing.DescribeSslCertificatesResponse{
-						DescribeSslCertificatesOutput: &computing.DescribeSslCertificatesOutput{
-							CertsSet: []computing.CertsSet{
-								{
-									FqdnId:      nifcloud.String("test_fqdn_id"),
-									Fqdn:        nifcloud.String("test_fqdn"),
-									Description: nifcloud.String("test_description"),
-								},
+				res: &describeOutputs{
+					describeSSLCertificatesOutput: &computing.DescribeSslCertificatesOutput{
+						CertsSet: []types.CertsSet{
+							{
+								FqdnId:      nifcloud.String("test_fqdn_id"),
+								Fqdn:        nifcloud.String("test_fqdn"),
+								Description: nifcloud.String("test_description"),
 							},
 						},
 					},
-					downloadSSLCertificateResponseForCert: &computing.DownloadSslCertificateResponse{
-						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
-							FileData: nifcloud.String("test_certificate"),
-						},
+					downloadSSLCertificateOutputForCert: &computing.DownloadSslCertificateOutput{
+						FileData: nifcloud.String("test_certificate"),
 					},
-					downloadSSLCertificateResponseForKey: &computing.DownloadSslCertificateResponse{
-						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
-							FileData: nifcloud.String("test_key"),
-						},
+					downloadSSLCertificateOutputForKey: &computing.DownloadSslCertificateOutput{
+						FileData: nifcloud.String("test_key"),
 					},
-					downloadSSLCertificateResponseForCA: &computing.DownloadSslCertificateResponse{
-						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
-							FileData: nifcloud.String("test_ca"),
-						},
+					downloadSSLCertificateOutputForCA: &computing.DownloadSslCertificateOutput{
+						FileData: nifcloud.String("test_ca"),
 					},
 				},
 			},
@@ -79,27 +72,21 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response without ca",
 			args: args{
 				d: rdWithoutCA,
-				res: &describeResponses{
-					describeSSLCertificatesResponse: &computing.DescribeSslCertificatesResponse{
-						DescribeSslCertificatesOutput: &computing.DescribeSslCertificatesOutput{
-							CertsSet: []computing.CertsSet{
-								{
-									FqdnId:      nifcloud.String("test_fqdn_id"),
-									Fqdn:        nifcloud.String("test_fqdn"),
-									Description: nifcloud.String("test_description"),
-								},
+				res: &describeOutputs{
+					describeSSLCertificatesOutput: &computing.DescribeSslCertificatesOutput{
+						CertsSet: []types.CertsSet{
+							{
+								FqdnId:      nifcloud.String("test_fqdn_id"),
+								Fqdn:        nifcloud.String("test_fqdn"),
+								Description: nifcloud.String("test_description"),
 							},
 						},
 					},
-					downloadSSLCertificateResponseForCert: &computing.DownloadSslCertificateResponse{
-						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
-							FileData: nifcloud.String("test_certificate"),
-						},
+					downloadSSLCertificateOutputForCert: &computing.DownloadSslCertificateOutput{
+						FileData: nifcloud.String("test_certificate"),
 					},
-					downloadSSLCertificateResponseForKey: &computing.DownloadSslCertificateResponse{
-						DownloadSslCertificateOutput: &computing.DownloadSslCertificateOutput{
-							FileData: nifcloud.String("test_key"),
-						},
+					downloadSSLCertificateOutputForKey: &computing.DownloadSslCertificateOutput{
+						FileData: nifcloud.String("test_key"),
 					},
 				},
 			},
@@ -109,11 +96,9 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &describeResponses{
-					describeSSLCertificatesResponse: &computing.DescribeSslCertificatesResponse{
-						DescribeSslCertificatesOutput: &computing.DescribeSslCertificatesOutput{
-							CertsSet: []computing.CertsSet{},
-						},
+				res: &describeOutputs{
+					describeSSLCertificatesOutput: &computing.DescribeSslCertificatesOutput{
+						CertsSet: []types.CertsSet{},
 					},
 				},
 			},

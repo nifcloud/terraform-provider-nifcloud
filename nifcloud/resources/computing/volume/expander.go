@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 const (
@@ -31,24 +32,24 @@ const (
 var (
 	// volumeTypeMapping converts the volume identifier from volume type.
 	// More info: https://pfs.nifcloud.com/api/rest/CreateVolume.htm
-	volumeTypeMapping = map[string]computing.DiskTypeOfCreateVolumeRequest{
-		volumeTypeStandard:        computing.DiskTypeOfCreateVolumeRequest2,
-		volumeTypeHighSpeedA:      computing.DiskTypeOfCreateVolumeRequest3,
-		volumeTypeHighSpeedB:      computing.DiskTypeOfCreateVolumeRequest4,
-		volumeTypeFlash:           computing.DiskTypeOfCreateVolumeRequest5,
-		volumeTypeStandardFlashA:  computing.DiskTypeOfCreateVolumeRequest6,
-		volumeTypeStandardFlashB:  computing.DiskTypeOfCreateVolumeRequest7,
-		volumeTypeHighSpeedFlashA: computing.DiskTypeOfCreateVolumeRequest8,
-		volumeTypeHighSpeedFlashB: computing.DiskTypeOfCreateVolumeRequest9,
+	volumeTypeMapping = map[string]types.DiskTypeOfCreateVolumeRequest{
+		volumeTypeStandard:        types.DiskTypeOfCreateVolumeRequestStandardStorage,
+		volumeTypeHighSpeedA:      types.DiskTypeOfCreateVolumeRequestHighSpeedStorageA,
+		volumeTypeHighSpeedB:      types.DiskTypeOfCreateVolumeRequestHighSpeedStorageB,
+		volumeTypeFlash:           types.DiskTypeOfCreateVolumeRequestFlashDrive,
+		volumeTypeStandardFlashA:  types.DiskTypeOfCreateVolumeRequestStandardFlashStorageA,
+		volumeTypeStandardFlashB:  types.DiskTypeOfCreateVolumeRequestStandardFlashStorageB,
+		volumeTypeHighSpeedFlashA: types.DiskTypeOfCreateVolumeRequestHighSpeedFlashStorageA,
+		volumeTypeHighSpeedFlashB: types.DiskTypeOfCreateVolumeRequestHighSpeedFlashStorageB,
 	}
 )
 
 func expandCreateVolumeInput(d *schema.ResourceData) *computing.CreateVolumeInput {
 	input := &computing.CreateVolumeInput{
-		Size:           nifcloud.Int64(int64(d.Get("size").(int))),
+		Size:           nifcloud.Int32(int32(d.Get("size").(int))),
 		VolumeId:       nifcloud.String(d.Get("volume_id").(string)),
 		DiskType:       volumeTypeMapping[d.Get("disk_type").(string)],
-		AccountingType: computing.AccountingTypeOfCreateVolumeRequest(d.Get("accounting_type").(string)),
+		AccountingType: types.AccountingTypeOfCreateVolumeRequest(d.Get("accounting_type").(string)),
 		Description:    nifcloud.String(d.Get("description").(string)),
 	}
 
@@ -65,7 +66,7 @@ func expandCreateVolumeInput(d *schema.ResourceData) *computing.CreateVolumeInpu
 func expandModifyVolumeAttributeInputForAccountingType(d *schema.ResourceData) *computing.ModifyVolumeAttributeInput {
 	return &computing.ModifyVolumeAttributeInput{
 		VolumeId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfModifyVolumeAttributeRequestAccountingType,
+		Attribute: types.AttributeOfModifyVolumeAttributeRequestAccountingType,
 		Value:     nifcloud.String(d.Get("accounting_type").(string)),
 	}
 }
@@ -75,7 +76,7 @@ func expandModifyVolumeAttributeInputForVolumeName(d *schema.ResourceData) *comp
 
 	return &computing.ModifyVolumeAttributeInput{
 		VolumeId:  nifcloud.String(before.(string)),
-		Attribute: computing.AttributeOfModifyVolumeAttributeRequestVolumeName,
+		Attribute: types.AttributeOfModifyVolumeAttributeRequestVolumeName,
 		Value:     nifcloud.String(after.(string)),
 	}
 }
@@ -83,7 +84,7 @@ func expandModifyVolumeAttributeInputForVolumeName(d *schema.ResourceData) *comp
 func expandModifyVolumeAttributeInputForDescription(d *schema.ResourceData) *computing.ModifyVolumeAttributeInput {
 	return &computing.ModifyVolumeAttributeInput{
 		VolumeId:  nifcloud.String(d.Id()),
-		Attribute: computing.AttributeOfModifyVolumeAttributeRequestDescription,
+		Attribute: types.AttributeOfModifyVolumeAttributeRequestDescription,
 		Value:     nifcloud.String(d.Get("description").(string)),
 	}
 }
@@ -91,7 +92,7 @@ func expandModifyVolumeAttributeInputForDescription(d *schema.ResourceData) *com
 func expandExtendVolumeSizeInput(d *schema.ResourceData) *computing.ExtendVolumeSizeInput {
 	return &computing.ExtendVolumeSizeInput{
 		VolumeId:    nifcloud.String(d.Id()),
-		NiftyReboot: computing.NiftyRebootOfExtendVolumeSizeRequest(d.Get("reboot").(string)),
+		NiftyReboot: types.NiftyRebootOfExtendVolumeSizeRequest(d.Get("reboot").(string)),
 	}
 }
 

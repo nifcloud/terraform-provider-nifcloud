@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
+	"github.com/nifcloud/nifcloud-sdk-go/service/dns/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *dns.GetHostedZoneResponse
+		res *dns.GetHostedZoneOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -32,16 +33,14 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &dns.GetHostedZoneResponse{
-					GetHostedZoneOutput: &dns.GetHostedZoneOutput{
-						DelegationSet: &dns.DelegationSet{
-							NameServers: []string{"test_server1", "test_server2"},
-						},
-						HostedZone: &dns.HostedZone{
-							Name: nifcloud.String("test_name"),
-							Config: &dns.Config{
-								Comment: nifcloud.String("test_comment"),
-							},
+				res: &dns.GetHostedZoneOutput{
+					DelegationSet: &types.DelegationSet{
+						NameServers: []string{"test_server1", "test_server2"},
+					},
+					HostedZone: &types.HostedZone{
+						Name: nifcloud.String("test_name"),
+						Config: &types.Config{
+							Comment: nifcloud.String("test_comment"),
 						},
 					},
 				},
@@ -52,12 +51,10 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &dns.GetHostedZoneResponse{
-					GetHostedZoneOutput: &dns.GetHostedZoneOutput{
-						DelegationSet: &dns.DelegationSet{},
-						HostedZone: &dns.HostedZone{
-							Config: &dns.Config{},
-						},
+				res: &dns.GetHostedZoneOutput{
+					DelegationSet: &types.DelegationSet{},
+					HostedZone: &types.HostedZone{
+						Config: &types.Config{},
 					},
 				},
 			},

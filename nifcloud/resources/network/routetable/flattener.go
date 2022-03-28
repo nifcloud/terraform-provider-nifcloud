@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesOutput) error {
 	if res == nil || len(res.RouteTableSet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse)
 
 	routeTable := res.RouteTableSet[0]
 
-	if nifcloud.StringValue(routeTable.RouteTableId) != d.Id() {
+	if nifcloud.ToString(routeTable.RouteTableId) != d.Id() {
 		return fmt.Errorf("unable to find route table within: %#v", res.RouteTableSet)
 	}
 
@@ -27,7 +27,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse)
 	var routes []map[string]interface{}
 	for _, r := range routeTable.RouteSet {
 		// for vpn connection of IPsec VTI
-		if nifcloud.StringValue(r.Origin) == "EnableVgwRoutePropagation" {
+		if nifcloud.ToString(r.Origin) == "EnableVgwRoutePropagation" {
 			continue
 		}
 
@@ -40,7 +40,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse)
 		for _, e := range d.Get("route").(*schema.Set).List() {
 			elm := e.(map[string]interface{})
 
-			if elm["cidr_block"] == nifcloud.StringValue(r.DestinationCidrBlock) {
+			if elm["cidr_block"] == nifcloud.ToString(r.DestinationCidrBlock) {
 				findElm = elm
 				break
 			}
@@ -48,12 +48,12 @@ func flatten(d *schema.ResourceData, res *computing.DescribeRouteTablesResponse)
 
 		if findElm != nil {
 			if findElm["network_id"] != "" {
-				route["network_id"] = nifcloud.StringValue(r.NetworkId)
+				route["network_id"] = nifcloud.ToString(r.NetworkId)
 			} else {
-				route["network_name"] = nifcloud.StringValue(r.NetworkName)
+				route["network_name"] = nifcloud.ToString(r.NetworkName)
 			}
 		} else {
-			route["network_id"] = nifcloud.StringValue(r.NetworkId)
+			route["network_id"] = nifcloud.ToString(r.NetworkId)
 		}
 
 		routes = append(routes, route)

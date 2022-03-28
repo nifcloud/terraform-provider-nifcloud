@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateDhcpOptionsInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateDhcpOptionsRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateDhcpOptions(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating DhcpOptions: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.DhcpOptions.DhcpOptionsId))
+	d.SetId(nifcloud.ToString(res.DhcpOptions.DhcpOptionsId))
 
 	return read(ctx, d, meta)
 }

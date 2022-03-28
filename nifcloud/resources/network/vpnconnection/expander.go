@@ -4,32 +4,33 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandCreateVpnConnectionInput(d *schema.ResourceData) *computing.CreateVpnConnectionInput {
 	input := &computing.CreateVpnConnectionInput{
-		Type: computing.TypeOfCreateVpnConnectionRequest(d.Get("type").(string)),
-		NiftyIpsecConfiguration: &computing.RequestNiftyIpsecConfiguration{
-			EncryptionAlgorithm:                  computing.EncryptionAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection(d.Get("ipsec_config_encryption_algorithm").(string)),
-			HashAlgorithm:                        computing.HashAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection(d.Get("ipsec_config_hash_algorithm").(string)),
+		Type: types.TypeOfCreateVpnConnectionRequest(d.Get("type").(string)),
+		NiftyIpsecConfiguration: &types.RequestNiftyIpsecConfiguration{
+			EncryptionAlgorithm:                  types.EncryptionAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection(d.Get("ipsec_config_encryption_algorithm").(string)),
+			HashAlgorithm:                        types.HashAlgorithmOfNiftyIpsecConfigurationForCreateVpnConnection(d.Get("ipsec_config_hash_algorithm").(string)),
 			PreSharedKey:                         nifcloud.String(d.Get("ipsec_config_pre_shared_key").(string)),
-			InternetKeyExchange:                  computing.InternetKeyExchangeOfNiftyIpsecConfigurationForCreateVpnConnection(d.Get("ipsec_config_internet_key_exchange").(string)),
-			InternetKeyExchangeLifetime:          nifcloud.Int64(int64(d.Get("ipsec_config_internet_key_exchange_lifetime").(int))),
-			EncapsulatingSecurityPayloadLifetime: nifcloud.Int64(int64(d.Get("ipsec_config_encapsulating_security_payload_lifetime").(int))),
-			DiffieHellmanGroup:                   nifcloud.Int64(int64(d.Get("ipsec_config_diffie_hellman_group").(int))),
+			InternetKeyExchange:                  types.InternetKeyExchangeOfNiftyIpsecConfigurationForCreateVpnConnection(d.Get("ipsec_config_internet_key_exchange").(string)),
+			InternetKeyExchangeLifetime:          nifcloud.Int32(int32(d.Get("ipsec_config_internet_key_exchange_lifetime").(int))),
+			EncapsulatingSecurityPayloadLifetime: nifcloud.Int32(int32(d.Get("ipsec_config_encapsulating_security_payload_lifetime").(int))),
+			DiffieHellmanGroup:                   nifcloud.Int32(int32(d.Get("ipsec_config_diffie_hellman_group").(int))),
 		},
 		NiftyVpnConnectionDescription: nifcloud.String(d.Get("description").(string)),
 		Agreement:                     nifcloud.Bool(false),
 	}
 
 	if d.Get("type").(string) == "L2TPv3 / IPsec" {
-		tunnel := computing.RequestNiftyTunnel{}
+		tunnel := types.RequestNiftyTunnel{}
 
-		tunnel.Type = computing.TypeOfNiftyTunnelForCreateVpnConnection(d.Get("tunnel_type").(string))
+		tunnel.Type = types.TypeOfNiftyTunnelForCreateVpnConnection(d.Get("tunnel_type").(string))
 
 		if len(d.Get("tunnel_type").(string)) != 0 {
-			tunnel.Mode = computing.ModeOfNiftyTunnelForCreateVpnConnection(d.Get("tunnel_mode").(string))
-			tunnel.Encapsulation = computing.EncapsulationOfNiftyTunnelForCreateVpnConnection(d.Get("tunnel_encapsulation").(string))
+			tunnel.Mode = types.ModeOfNiftyTunnelForCreateVpnConnection(d.Get("tunnel_mode").(string))
+			tunnel.Encapsulation = types.EncapsulationOfNiftyTunnelForCreateVpnConnection(d.Get("tunnel_encapsulation").(string))
 
 			if d.Get("tunnel_mode").(string) == "Unmanaged" {
 				tunnel.TunnelId = nifcloud.String(d.Get("tunnel_id").(string))

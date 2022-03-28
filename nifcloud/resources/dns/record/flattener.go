@@ -6,23 +6,24 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
+	"github.com/nifcloud/nifcloud-sdk-go/service/dns/types"
 )
 
-func flatten(d *schema.ResourceData, res *dns.ListResourceRecordSetsResponse) error {
+func flatten(d *schema.ResourceData, res *dns.ListResourceRecordSetsOutput) error {
 	if res == nil || len(res.ResourceRecordSets) == 0 {
 		d.SetId("")
 		return nil
 	}
 
-	var resourceRecordSet dns.ResourceRecordSets
+	var resourceRecordSet types.ResourceRecordSets
 
 	for _, s := range res.ResourceRecordSets {
-		if nifcloud.StringValue(s.SetIdentifier) == d.Id() {
+		if nifcloud.ToString(s.SetIdentifier) == d.Id() {
 			resourceRecordSet = s
 		}
 	}
 
-	if nifcloud.StringValue(resourceRecordSet.SetIdentifier) != d.Id() {
+	if nifcloud.ToString(resourceRecordSet.SetIdentifier) != d.Id() {
 		return fmt.Errorf("unable to find dns record within: %#v", resourceRecordSet)
 	}
 
@@ -69,37 +70,37 @@ func flatten(d *schema.ResourceData, res *dns.ListResourceRecordSetsResponse) er
 	return nil
 }
 
-func flattenWeight(record *dns.ResourceRecordSets) []map[string]interface{} {
+func flattenWeight(record *types.ResourceRecordSets) []map[string]interface{} {
 	res := map[string]interface{}{}
 
 	if record != nil && record.Weight != nil {
-		res["weight"] = nifcloud.Int64Value(record.Weight)
+		res["weight"] = nifcloud.ToInt32(record.Weight)
 	}
 
 	return []map[string]interface{}{res}
 }
 
-func flattenFailover(record *dns.ResourceRecordSets) []map[string]interface{} {
+func flattenFailover(record *types.ResourceRecordSets) []map[string]interface{} {
 	res := map[string]interface{}{}
 
 	if record != nil && record.Failover != nil {
-		res["type"] = nifcloud.StringValue(record.Failover)
+		res["type"] = nifcloud.ToString(record.Failover)
 		res["health_check"] = flattenHealthCheck(record.XniftyHealthCheckConfig)
 	}
 
 	return []map[string]interface{}{res}
 }
 
-func flattenHealthCheck(healthCheck *dns.XniftyHealthCheckConfig) []map[string]interface{} {
+func flattenHealthCheck(healthCheck *types.XniftyHealthCheckConfig) []map[string]interface{} {
 	res := map[string]interface{}{}
 
 	if healthCheck != nil && healthCheck.Protocol != nil &&
 		healthCheck.IPAddress != nil && healthCheck.Port != nil {
-		res["protocol"] = nifcloud.StringValue(healthCheck.Protocol)
-		res["ip_address"] = nifcloud.StringValue(healthCheck.IPAddress)
-		res["port"] = nifcloud.Int64Value(healthCheck.Port)
-		res["resource_path"] = nifcloud.StringValue(healthCheck.ResourcePath)
-		res["resource_domain"] = nifcloud.StringValue(healthCheck.FullyQualifiedDomainName)
+		res["protocol"] = nifcloud.ToString(healthCheck.Protocol)
+		res["ip_address"] = nifcloud.ToString(healthCheck.IPAddress)
+		res["port"] = nifcloud.ToInt32(healthCheck.Port)
+		res["resource_path"] = nifcloud.ToString(healthCheck.ResourcePath)
+		res["resource_domain"] = nifcloud.ToString(healthCheck.FullyQualifiedDomainName)
 	}
 
 	return []map[string]interface{}{res}

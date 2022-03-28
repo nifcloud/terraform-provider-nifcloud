@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeKeyPairsResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeKeyPairsOutput) error {
 	if res == nil || len(res.KeySet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeKeyPairsResponse) er
 
 	keyPair := res.KeySet[0]
 
-	if nifcloud.StringValue(keyPair.KeyName) != d.Id() {
+	if nifcloud.ToString(keyPair.KeyName) != d.Id() {
 		return fmt.Errorf("unable to find key pair within: %#v", res.KeySet)
 	}
 

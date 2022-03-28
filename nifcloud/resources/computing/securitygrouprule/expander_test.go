@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,17 +34,17 @@ func TestExpandAuthorizeSecurityGroupIngressInputList(t *testing.T) {
 			want: []*computing.AuthorizeSecurityGroupIngressInput{
 				{
 					GroupName: nifcloud.String("test_security_group_name"),
-					IpPermissions: []computing.RequestIpPermissions{
+					IpPermissions: []types.RequestIpPermissions{
 						{
-							IpProtocol:  computing.IpProtocolOfIpPermissionsForAuthorizeSecurityGroupIngressTcp,
-							InOut:       computing.InOutOfIpPermissionsForAuthorizeSecurityGroupIngressIn,
+							IpProtocol:  types.IpProtocolOfIpPermissionsForAuthorizeSecurityGroupIngressTcp,
+							InOut:       types.InOutOfIpPermissionsForAuthorizeSecurityGroupIngressIncoming,
 							Description: nifcloud.String("test_description"),
-							FromPort:    nifcloud.Int64(1),
-							ToPort:      nifcloud.Int64(65535),
-							ListOfRequestIpRanges: []computing.RequestIpRanges{
+							FromPort:    nifcloud.Int32(1),
+							ToPort:      nifcloud.Int32(65535),
+							ListOfRequestIpRanges: []types.RequestIpRanges{
 								{CidrIp: nifcloud.String("0.0.0.0/0")},
 							},
-							ListOfRequestGroups: []computing.RequestGroups{
+							ListOfRequestGroups: []types.RequestGroups{
 								{GroupName: nifcloud.String("test_source_security_group_name")},
 							},
 						},
@@ -84,16 +85,16 @@ func TestExpandRevokeSecurityGroupIngressInputList(t *testing.T) {
 			want: []*computing.RevokeSecurityGroupIngressInput{
 				{
 					GroupName: nifcloud.String("test_security_group_name"),
-					IpPermissions: []computing.RequestIpPermissionsOfRevokeSecurityGroupIngress{
+					IpPermissions: []types.RequestIpPermissionsOfRevokeSecurityGroupIngress{
 						{
-							IpProtocol: computing.IpProtocolOfIpPermissionsForRevokeSecurityGroupIngressTcp,
-							InOut:      computing.InOutOfIpPermissionsForRevokeSecurityGroupIngressIn,
-							FromPort:   nifcloud.Int64(1),
-							ToPort:     nifcloud.Int64(65535),
-							ListOfRequestIpRanges: []computing.RequestIpRanges{
+							IpProtocol: types.IpProtocolOfIpPermissionsForRevokeSecurityGroupIngressTcp,
+							InOut:      types.InOutOfIpPermissionsForRevokeSecurityGroupIngressIncoming,
+							FromPort:   nifcloud.Int32(1),
+							ToPort:     nifcloud.Int32(65535),
+							ListOfRequestIpRanges: []types.RequestIpRanges{
 								{CidrIp: nifcloud.String("0.0.0.0/0")},
 							},
-							ListOfRequestGroups: []computing.RequestGroups{
+							ListOfRequestGroups: []types.RequestGroups{
 								{GroupName: nifcloud.String("test_source_security_group_name")},
 							},
 						},

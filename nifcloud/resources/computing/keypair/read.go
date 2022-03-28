@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
@@ -15,14 +15,12 @@ import (
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
 
-	req := svc.DescribeKeyPairsRequest(&computing.DescribeKeyPairsInput{
+	res, err := svc.DescribeKeyPairs(ctx, &computing.DescribeKeyPairsInput{
 		KeyName: []string{d.Id()},
 	})
-
-	res, err := req.Send(ctx)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.KeyPair" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.KeyPair" {
 			d.SetId("")
 			return nil
 		}

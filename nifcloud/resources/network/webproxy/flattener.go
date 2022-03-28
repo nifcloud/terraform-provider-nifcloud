@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.NiftyDescribeWebProxiesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.NiftyDescribeWebProxiesOutput) error {
 	if res == nil || len(res.WebProxy) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeWebProxiesRespo
 
 	webProxy := res.WebProxy[0]
 
-	if nifcloud.StringValue(webProxy.RouterId) != d.Id() {
+	if nifcloud.ToString(webProxy.RouterId) != d.Id() {
 		return fmt.Errorf("unable to find web proxy within: %#v", res.WebProxy)
 	}
 

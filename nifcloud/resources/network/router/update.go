@@ -20,8 +20,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("accounting_type") {
 		input := expandNiftyModifyRouterAttributeInputForAccountingType(d)
 
-		req := svc.NiftyModifyRouterAttributeRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.NiftyModifyRouterAttribute(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating router accounting_type: %s", err))
 		}
 
@@ -33,8 +33,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("description") {
 		input := expandNiftyModifyRouterAttributeInputForDescription(d)
 
-		req := svc.NiftyModifyRouterAttributeRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.NiftyModifyRouterAttribute(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating router description: %s", err))
 		}
 
@@ -46,9 +46,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("name") {
 		input := expandNiftyModifyRouterAttributeInputForRouterName(d)
 
-		req := svc.NiftyModifyRouterAttributeRequest(input)
+		_, err := svc.NiftyModifyRouterAttribute(ctx, input)
 
-		if _, err := req.Send(ctx); err != nil {
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating router name %s", err))
 		}
 
@@ -60,9 +60,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	if d.HasChange("type") {
 		input := expandNiftyModifyRouterAttributeInputForType(d)
 
-		req := svc.NiftyModifyRouterAttributeRequest(input)
+		_, err := svc.NiftyModifyRouterAttribute(ctx, input)
 
-		if _, err := req.Send(ctx); err != nil {
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating router type: %s", err))
 		}
 
@@ -93,8 +93,8 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 			}
 		}
 
-		req := svc.NiftyUpdateRouterNetworkInterfacesRequest(input)
-		if _, err := req.Send(ctx); err != nil {
+		_, err := svc.NiftyUpdateRouterNetworkInterfaces(ctx, input)
+		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed updating router network_interface: %s", err))
 		}
 
@@ -109,15 +109,15 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if before != "" && after == "" {
 			input := expandNiftyDeregisterRoutersFromSecurityGroupInput(d)
 
-			req := svc.NiftyDeregisterRoutersFromSecurityGroupRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyDeregisterRoutersFromSecurityGroup(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed deregistering router security_group: %s", err))
 			}
 		} else {
 			input := expandNiftyModifyRouterAttributeInputForSecurityGroup(d)
 
-			req := svc.NiftyModifyRouterAttributeRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyModifyRouterAttribute(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating router security_group: %s", err))
 			}
 		}
@@ -132,22 +132,22 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if before != "" && after == "" {
 			input := expandNiftyDisassociateNatTableInput(d)
 
-			req := svc.NiftyDisassociateNatTableRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyDisassociateNatTable(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed disassociating NAT table: %s", err))
 			}
 		} else if before == "" && after != "" {
 			input := expandNiftyAssociateNatTableInput(d)
 
-			req := svc.NiftyAssociateNatTableRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyAssociateNatTable(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed associating NAT table: %s", err))
 			}
 		} else {
 			input := expandNiftyReplaceNatTableAssociationInput(d)
 
-			req := svc.NiftyReplaceNatTableAssociationRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.NiftyReplaceNatTableAssociation(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating router nat_table_id: %s", err))
 			}
 		}
@@ -162,22 +162,22 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		if before != "" && after == "" {
 			input := expandDisassociateRouteTableInput(d)
 
-			req := svc.DisassociateRouteTableRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.DisassociateRouteTable(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed disassociating route table: %s", err))
 			}
 		} else if before == "" && after != "" {
 			input := expandAssociateRouteTableInput(d)
 
-			req := svc.AssociateRouteTableRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.AssociateRouteTable(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed associating route table: %s", err))
 			}
 		} else {
 			input := expandReplaceRouteTableAssociation(d)
 
-			req := svc.ReplaceRouteTableAssociationRequest(input)
-			if _, err := req.Send(ctx); err != nil {
+			_, err := svc.ReplaceRouteTableAssociation(ctx, input)
+			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed updating router route_table_id: %s", err))
 			}
 		}
@@ -193,8 +193,9 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 func waitForRouterAvailable(ctx context.Context, d *schema.ResourceData, svc *computing.Client) diag.Diagnostics {
 	// lintignore:R018
 	time.Sleep(waiterInitialDelay * time.Second)
+	deadline, _ := ctx.Deadline()
 
-	if err := svc.WaitUntilRouterAvailable(ctx, expandNiftyDescribeRoutersInput(d)); err != nil {
+	if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, expandNiftyDescribeRoutersInput(d), time.Until(deadline)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
 	}
 

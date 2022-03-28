@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysOutput) error {
 
 	if res == nil || len(res.VpnGatewaySet) == 0 {
 		d.SetId("")
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 	}
 	vpnGateway := res.VpnGatewaySet[0]
 
-	if nifcloud.StringValue(vpnGateway.VpnGatewayId) != d.Id() {
+	if nifcloud.ToString(vpnGateway.VpnGatewayId) != d.Id() {
 		return fmt.Errorf("unable to find vpngateway within: %#v", res.VpnGatewaySet)
 	}
 
@@ -45,7 +45,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeVpnGatewaysResponse)
 	}
 
 	for _, n := range vpnGateway.NetworkInterfaceSet {
-		switch nifcloud.StringValue(n.NetworkId) {
+		switch nifcloud.ToString(n.NetworkId) {
 		case "net-COMMON_GLOBAL":
 			if err := d.Set("public_ip_address", n.IpAddress); err != nil {
 				return err

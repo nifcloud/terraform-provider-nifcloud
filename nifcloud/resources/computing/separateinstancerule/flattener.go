@@ -4,9 +4,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
-func flatten(d *schema.ResourceData, res *computing.NiftyDescribeSeparateInstanceRulesResponse) error {
+func flatten(d *schema.ResourceData, res *computing.NiftyDescribeSeparateInstanceRulesOutput) error {
 	if res == nil || len(res.SeparateInstanceRulesInfo) == 0 {
 		d.SetId("")
 		return nil
@@ -42,20 +43,20 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeSeparateInstanc
 	return nil
 }
 
-func flattenInstanceID(instancesSet []computing.InstancesSetOfNiftyDescribeSeparateInstanceRules) []string {
+func flattenInstanceID(instancesSet []types.InstancesSetOfNiftyDescribeSeparateInstanceRules) []string {
 	ids := make([]string, len(instancesSet))
 
 	for i, InstanceSetList := range instancesSet {
-		ids[i] = nifcloud.StringValue(InstanceSetList.InstanceId)
+		ids[i] = nifcloud.ToString(InstanceSetList.InstanceId)
 	}
 	return ids
 }
 
-func flattenInstanceUniqueID(instancesSet []computing.InstancesSetOfNiftyDescribeSeparateInstanceRules) []string {
+func flattenInstanceUniqueID(instancesSet []types.InstancesSetOfNiftyDescribeSeparateInstanceRules) []string {
 	ids := make([]string, len(instancesSet))
 
 	for i, InstanceSetList := range instancesSet {
-		ids[i] = nifcloud.StringValue(InstanceSetList.InstanceUniqueId)
+		ids[i] = nifcloud.ToString(InstanceSetList.InstanceUniqueId)
 	}
 	return ids
 }

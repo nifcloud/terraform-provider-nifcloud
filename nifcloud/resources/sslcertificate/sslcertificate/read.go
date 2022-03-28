@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -16,13 +16,12 @@ import (
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
 
-	res := describeResponses{}
+	res := describeOutputs{}
 
 	eg, errCtx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
 		var err error
-		req := svc.DescribeSslCertificatesRequest(expandDescribeSSLCertificatesInput(d))
-		res.describeSSLCertificatesResponse, err = req.Send(errCtx)
+		res.describeSSLCertificatesOutput, err = svc.DescribeSslCertificates(errCtx, expandDescribeSSLCertificatesInput(d))
 		if err != nil {
 			return fmt.Errorf("failed reading SSLCertificate: %s", err.Error())
 		}
@@ -31,8 +30,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	eg.Go(func() error {
 		var err error
-		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCert(d))
-		res.downloadSSLCertificateResponseForCert, err = req.Send(errCtx)
+		res.downloadSSLCertificateOutputForCert, err = svc.DownloadSslCertificate(errCtx, expandDownloadSSLCertificateInputForCert(d))
 		if err != nil {
 			return checkNotFoundError(err)
 		}
@@ -41,8 +39,7 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 
 	eg.Go(func() error {
 		var err error
-		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForKey(d))
-		res.downloadSSLCertificateResponseForKey, err = req.Send(errCtx)
+		res.downloadSSLCertificateOutputForKey, err = svc.DownloadSslCertificate(errCtx, expandDownloadSSLCertificateInputForKey(d))
 		if err != nil {
 			return checkNotFoundError(err)
 		}
@@ -53,12 +50,11 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 		return diag.FromErr(err)
 	}
 
-	if res.describeSSLCertificatesResponse != nil &&
-		len(res.describeSSLCertificatesResponse.CertsSet) == 1 &&
-		nifcloud.BoolValue(res.describeSSLCertificatesResponse.CertsSet[0].CaState) {
+	if res.describeSSLCertificatesOutput != nil &&
+		len(res.describeSSLCertificatesOutput.CertsSet) == 1 &&
+		nifcloud.ToBool(res.describeSSLCertificatesOutput.CertsSet[0].CaState) {
 		var err error
-		req := svc.DownloadSslCertificateRequest(expandDownloadSSLCertificateInputForCA(d))
-		res.downloadSSLCertificateResponseForCA, err = req.Send(ctx)
+		res.downloadSSLCertificateOutputForCA, err = svc.DownloadSslCertificate(ctx, expandDownloadSSLCertificateInputForCA(d))
 		if err != nil {
 			return diag.FromErr(checkNotFoundError(err))
 		}
@@ -72,8 +68,8 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 }
 
 func checkNotFoundError(err error) error {
-	var awserr awserr.Error
-	if errors.As(err, &awserr) && awserr.Code() == "Client.InvalidParameterNotFound.SslCertificate" {
+	var awserr smithy.APIError
+	if errors.As(err, &awserr) && awserr.ErrorCode() == "Client.InvalidParameterNotFound.SslCertificate" {
 		return nil
 	}
 	return fmt.Errorf("failed downloading certificate: %s", err.Error())

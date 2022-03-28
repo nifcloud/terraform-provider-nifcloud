@@ -8,12 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,7 +30,7 @@ func init() {
 }
 
 func TestAcc_DBParameterGroup(t *testing.T) {
-	var group rdb.DBParameterGroupsOfDescribeDBParameterGroups
+	var group types.DBParameterGroupsOfDescribeDBParameterGroups
 
 	resourceName := "nifcloud_db_parameter_group.basic"
 	randName := prefix + acctest.RandString(10)
@@ -89,7 +90,7 @@ func testAccDBParameterGroup(t *testing.T, fileName, rName string) string {
 	return fmt.Sprintf(string(b), rName)
 }
 
-func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroupsOfDescribeDBParameterGroups) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupExists(n string, group *types.DBParameterGroupsOfDescribeDBParameterGroups) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		saved, ok := s.RootModule().Resources[n]
 		if !ok {
@@ -101,9 +102,9 @@ func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroupsOf
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBParameterGroupsRequest(&rdb.DescribeDBParameterGroupsInput{
+		res, err := svc.DescribeDBParameterGroups(context.Background(), &rdb.DescribeDBParameterGroupsInput{
 			DBParameterGroupName: nifcloud.String(saved.Primary.ID),
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -114,7 +115,7 @@ func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroupsOf
 
 		foundGroup := res.DBParameterGroups[0]
 
-		if nifcloud.StringValue(foundGroup.DBParameterGroupName) != saved.Primary.ID {
+		if nifcloud.ToString(foundGroup.DBParameterGroupName) != saved.Primary.ID {
 			return fmt.Errorf("db parameter group does not found in cloud: %s", saved.Primary.ID)
 		}
 
@@ -124,25 +125,25 @@ func testAccCheckDBParameterGroupExists(n string, group *rdb.DBParameterGroupsOf
 	}
 }
 
-func testAccCheckDBParameterGroupValues(group *rdb.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupValues(group *types.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(group.DBParameterGroupName) != rName {
-			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.StringValue(group.DBParameterGroupName))
+		if nifcloud.ToString(group.DBParameterGroupName) != rName {
+			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.ToString(group.DBParameterGroupName))
 		}
 
-		if nifcloud.StringValue(group.DBParameterGroupFamily) != "mysql5.6" {
-			return fmt.Errorf("bad db parameter group family state, expected \"mysql5.6\", got: %#v", nifcloud.StringValue(group.DBParameterGroupFamily))
+		if nifcloud.ToString(group.DBParameterGroupFamily) != "mysql5.6" {
+			return fmt.Errorf("bad db parameter group family state, expected \"mysql5.6\", got: %#v", nifcloud.ToString(group.DBParameterGroupFamily))
 		}
 
-		if nifcloud.StringValue(group.Description) != "tfacc-memo" {
-			return fmt.Errorf("bad description state, expected \"tfacc-memo\", got: %#v", nifcloud.StringValue(group.Description))
+		if nifcloud.ToString(group.Description) != "tfacc-memo" {
+			return fmt.Errorf("bad description state, expected \"tfacc-memo\", got: %#v", nifcloud.ToString(group.Description))
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBParametersRequest(&rdb.DescribeDBParametersInput{
+		res, err := svc.DescribeDBParameters(context.Background(), &rdb.DescribeDBParametersInput{
 			DBParameterGroupName: group.DBParameterGroupName,
-			Source:               nifcloud.String("user"),
-		}).Send(context.Background())
+			Source:               types.SourceOfDescribeDBParametersRequestUser,
+		})
 		if err != nil {
 			return fmt.Errorf("failed describe DBParameterGroup: %s", err)
 		}
@@ -161,25 +162,25 @@ func testAccCheckDBParameterGroupValues(group *rdb.DBParameterGroupsOfDescribeDB
 	}
 }
 
-func testAccCheckDBParameterGroupValuesUpdatedOnlyParameters(group *rdb.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupValuesUpdatedOnlyParameters(group *types.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(group.DBParameterGroupName) != rName {
-			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.StringValue(group.DBParameterGroupName))
+		if nifcloud.ToString(group.DBParameterGroupName) != rName {
+			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.ToString(group.DBParameterGroupName))
 		}
 
-		if nifcloud.StringValue(group.DBParameterGroupFamily) != "mysql5.6" {
-			return fmt.Errorf("bad db parameter group family state, expected \"mysql5.6\", got: %#v", nifcloud.StringValue(group.DBParameterGroupFamily))
+		if nifcloud.ToString(group.DBParameterGroupFamily) != "mysql5.6" {
+			return fmt.Errorf("bad db parameter group family state, expected \"mysql5.6\", got: %#v", nifcloud.ToString(group.DBParameterGroupFamily))
 		}
 
-		if nifcloud.StringValue(group.Description) != "tfacc-memo" {
-			return fmt.Errorf("bad description state, expected \"tfacc-memo\", got: %#v", nifcloud.StringValue(group.Description))
+		if nifcloud.ToString(group.Description) != "tfacc-memo" {
+			return fmt.Errorf("bad description state, expected \"tfacc-memo\", got: %#v", nifcloud.ToString(group.Description))
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBParametersRequest(&rdb.DescribeDBParametersInput{
+		res, err := svc.DescribeDBParameters(context.Background(), &rdb.DescribeDBParametersInput{
 			DBParameterGroupName: group.DBParameterGroupName,
-			Source:               nifcloud.String("user"),
-		}).Send(context.Background())
+			Source:               types.SourceOfDescribeDBParametersRequestUser,
+		})
 		if err != nil {
 			return fmt.Errorf("failed describe DBParameterGroup: %s", err)
 		}
@@ -198,25 +199,25 @@ func testAccCheckDBParameterGroupValuesUpdatedOnlyParameters(group *rdb.DBParame
 	}
 }
 
-func testAccCheckDBParameterGroupValuesUpdatedAll(group *rdb.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
+func testAccCheckDBParameterGroupValuesUpdatedAll(group *types.DBParameterGroupsOfDescribeDBParameterGroups, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.StringValue(group.DBParameterGroupName) != rName+"upd" {
+		if nifcloud.ToString(group.DBParameterGroupName) != rName+"upd" {
 			return fmt.Errorf("bad db parameter group name state, expected \"%s\", got: %#v", rName+"upd", group.DBParameterGroupName)
 		}
 
-		if nifcloud.StringValue(group.DBParameterGroupFamily) != "mysql5.7" {
+		if nifcloud.ToString(group.DBParameterGroupFamily) != "mysql5.7" {
 			return fmt.Errorf("bad db parameter group family state,  expected \"mysql5.7\", got: %#v", group.DBParameterGroupFamily)
 		}
 
-		if nifcloud.StringValue(group.Description) != "tfacc-memo-upd" {
+		if nifcloud.ToString(group.Description) != "tfacc-memo-upd" {
 			return fmt.Errorf("bad description state, expected \"tfacc-memo-upd\", got: %#v", group.Description)
 		}
 
 		svc := testAccProvider.Meta().(*client.Client).RDB
-		res, err := svc.DescribeDBParametersRequest(&rdb.DescribeDBParametersInput{
+		res, err := svc.DescribeDBParameters(context.Background(), &rdb.DescribeDBParametersInput{
 			DBParameterGroupName: group.DBParameterGroupName,
-			Source:               nifcloud.String("user"),
-		}).Send(context.Background())
+			Source:               types.SourceOfDescribeDBParametersRequestUser,
+		})
 		if err != nil {
 			return fmt.Errorf("failed describe DBParameterGroup: %s", err)
 		}
@@ -234,14 +235,14 @@ func testAccCheckDBParameterGroupValuesUpdatedAll(group *rdb.DBParameterGroupsOf
 	}
 }
 
-func checkParameter(params []rdb.Parameters, expected map[string]string) error {
+func checkParameter(params []types.Parameters, expected map[string]string) error {
 	for _, p := range params {
 		if val, ok := expected[*p.ParameterName]; ok {
-			if nifcloud.StringValue(p.ParameterValue) != val {
-				return fmt.Errorf("bad parameter state, expected \"%s\", got: %#v", val, nifcloud.StringValue(p.ParameterValue))
+			if nifcloud.ToString(p.ParameterValue) != val {
+				return fmt.Errorf("bad parameter state, expected \"%s\", got: %#v", val, nifcloud.ToString(p.ParameterValue))
 			}
 		} else {
-			return fmt.Errorf("bad parameter state, %s is unexpected parameter", nifcloud.StringValue(p.ParameterName))
+			return fmt.Errorf("bad parameter state, %s is unexpected parameter", nifcloud.ToString(p.ParameterName))
 		}
 	}
 
@@ -256,13 +257,13 @@ func testAccDBParameterGroupResourceDestroy(s *terraform.State) error {
 			continue
 		}
 
-		res, err := svc.DescribeDBParameterGroupsRequest(&rdb.DescribeDBParameterGroupsInput{
+		res, err := svc.DescribeDBParameterGroups(context.Background(), &rdb.DescribeDBParameterGroupsInput{
 			DBParameterGroupName: nifcloud.String(rs.Primary.ID),
-		}).Send(context.Background())
+		})
 
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.DBParameterGroup" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.DBParameterGroup" {
 				return nil
 			}
 			return fmt.Errorf("failed DescribeDBParameterGroups: %s", err)
@@ -279,15 +280,15 @@ func testSweepDBParameterGroup(region string) error {
 	ctx := context.Background()
 	svc := sharedClientForRegion(region).RDB
 
-	res, err := svc.DescribeDBParameterGroupsRequest(nil).Send(ctx)
+	res, err := svc.DescribeDBParameterGroups(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	var sweepDBParameterGroups []string
 	for _, g := range res.DBParameterGroups {
-		if strings.HasPrefix(nifcloud.StringValue(g.DBParameterGroupName), prefix) {
-			sweepDBParameterGroups = append(sweepDBParameterGroups, nifcloud.StringValue(g.DBParameterGroupName))
+		if strings.HasPrefix(nifcloud.ToString(g.DBParameterGroupName), prefix) {
+			sweepDBParameterGroups = append(sweepDBParameterGroups, nifcloud.ToString(g.DBParameterGroupName))
 		}
 	}
 
@@ -295,9 +296,9 @@ func testSweepDBParameterGroup(region string) error {
 	for _, n := range sweepDBParameterGroups {
 		group := n
 		eg.Go(func() error {
-			_, err := svc.DeleteDBParameterGroupRequest(&rdb.DeleteDBParameterGroupInput{
+			_, err := svc.DeleteDBParameterGroup(ctx, &rdb.DeleteDBParameterGroupInput{
 				DBParameterGroupName: nifcloud.String(group),
-			}).Send(ctx)
+			})
 			return err
 		})
 	}

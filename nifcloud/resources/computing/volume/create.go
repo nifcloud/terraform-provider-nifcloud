@@ -14,14 +14,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateVolumeInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateVolumeRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.CreateVolume(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating volume: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.VolumeId))
+	d.SetId(nifcloud.ToString(res.VolumeId))
 
 	return read(ctx, d, meta)
 }

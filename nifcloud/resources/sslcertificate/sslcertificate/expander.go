@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandUploadSSLCertificateInput(d *schema.ResourceData) *computing.UploadSslCertificateInput {
@@ -23,28 +24,28 @@ func expandDescribeSSLCertificatesInput(d *schema.ResourceData) *computing.Descr
 func expandDownloadSSLCertificateInputForKey(d *schema.ResourceData) *computing.DownloadSslCertificateInput {
 	return &computing.DownloadSslCertificateInput{
 		FqdnId:   nifcloud.String(d.Id()),
-		FileType: computing.FileTypeOfDownloadSslCertificateRequest1,
+		FileType: types.FileTypeOfDownloadSslCertificateRequestPrivateKey,
 	}
 }
 
 func expandDownloadSSLCertificateInputForCA(d *schema.ResourceData) *computing.DownloadSslCertificateInput {
 	return &computing.DownloadSslCertificateInput{
 		FqdnId:   nifcloud.String(d.Id()),
-		FileType: computing.FileTypeOfDownloadSslCertificateRequest2,
+		FileType: types.FileTypeOfDownloadSslCertificateRequestCa,
 	}
 }
 
 func expandDownloadSSLCertificateInputForCert(d *schema.ResourceData) *computing.DownloadSslCertificateInput {
 	return &computing.DownloadSslCertificateInput{
 		FqdnId:   nifcloud.String(d.Id()),
-		FileType: computing.FileTypeOfDownloadSslCertificateRequest3,
+		FileType: types.FileTypeOfDownloadSslCertificateRequestCertificate,
 	}
 }
 
 func expandModifySSLCertificateAttributeInput(d *schema.ResourceData) *computing.ModifySslCertificateAttributeInput {
 	return &computing.ModifySslCertificateAttributeInput{
 		FqdnId: nifcloud.String(d.Id()),
-		Description: &computing.RequestDescription{
+		Description: &types.RequestDescription{
 			Value: nifcloud.String(d.Get("description").(string)),
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +30,7 @@ func TestExpandCreateNetworkInterfaceInput(t *testing.T) {
 				NiftyNetworkId: nifcloud.String("test_network_id"),
 				IpAddress:      nifcloud.String("test_ip_address"),
 				Description:    nifcloud.String("test_description"),
-				Placement: &computing.RequestPlacementOfCreateNetworkInterface{
+				Placement: &types.RequestPlacementOfCreateNetworkInterface{
 					AvailabilityZone: nifcloud.String("test_availability_zone"),
 				},
 			},

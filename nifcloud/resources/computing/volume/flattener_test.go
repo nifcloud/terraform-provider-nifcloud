@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeVolumesResponse
+		res *computing.DescribeVolumesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -36,20 +37,18 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeVolumesResponse{
-					DescribeVolumesOutput: &computing.DescribeVolumesOutput{
-						VolumeSet: []computing.VolumeSet{
-							{
-								Size:           nifcloud.String("100"),
-								VolumeId:       nifcloud.String("test_volume_id"),
-								DiskType:       nifcloud.String("High-Speed Storage A"),
-								AccountingType: nifcloud.String("1"),
-								Description:    nifcloud.String("test_description"),
-								AttachmentSet: []computing.AttachmentSet{
-									{
-										InstanceId:       nifcloud.String("test_instance_id"),
-										InstanceUniqueId: nifcloud.String("test_instance_unique_id"),
-									},
+				res: &computing.DescribeVolumesOutput{
+					VolumeSet: []types.VolumeSet{
+						{
+							Size:           nifcloud.String("100"),
+							VolumeId:       nifcloud.String("test_volume_id"),
+							DiskType:       nifcloud.String("High-Speed Storage A"),
+							AccountingType: nifcloud.String("1"),
+							Description:    nifcloud.String("test_description"),
+							AttachmentSet: []types.AttachmentSet{
+								{
+									InstanceId:       nifcloud.String("test_instance_id"),
+									InstanceUniqueId: nifcloud.String("test_instance_unique_id"),
 								},
 							},
 						},
@@ -62,10 +61,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeVolumesResponse{
-					DescribeVolumesOutput: &computing.DescribeVolumesOutput{
-						VolumeSet: []computing.VolumeSet{},
-					},
+				res: &computing.DescribeVolumesOutput{
+					VolumeSet: []types.VolumeSet{},
 				},
 			},
 			want: wantNotFoundRd,

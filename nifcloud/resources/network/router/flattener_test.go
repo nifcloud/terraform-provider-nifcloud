@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +43,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribeRoutersResponse
+		res *computing.NiftyDescribeRoutersOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -54,40 +55,38 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribeRoutersResponse{
-					NiftyDescribeRoutersOutput: &computing.NiftyDescribeRoutersOutput{
-						RouterSet: []computing.RouterSetOfNiftyDescribeRouters{
-							{
-								AvailabilityZone: nifcloud.String("test_availability_zone"),
-								Description:      nifcloud.String("test_description"),
-								GroupSet: []computing.GroupSet{
-									{
-										GroupId: nifcloud.String("test_security_group"),
-									},
+				res: &computing.NiftyDescribeRoutersOutput{
+					RouterSet: []types.RouterSetOfNiftyDescribeRouters{
+						{
+							AvailabilityZone: nifcloud.String("test_availability_zone"),
+							Description:      nifcloud.String("test_description"),
+							GroupSet: []types.GroupSet{
+								{
+									GroupId: nifcloud.String("test_security_group"),
 								},
-								NatTableAssociationId: nifcloud.String("test_nat_table_association_id"),
-								NatTableId:            nifcloud.String("test_nat_table_id"),
-								NetworkInterfaceSet: []computing.NetworkInterfaceSetOfNiftyDescribeRouters{
-									{
-										Dhcp:          nifcloud.Bool(true),
-										DhcpConfigId:  nifcloud.String("test_dhcp_config_id"),
-										DhcpOptionsId: nifcloud.String("test_dhcp_options_id"),
-										IpAddress:     nifcloud.String("test_ip_address"),
-										NetworkId:     nifcloud.String("test_network_id"),
-										NetworkName:   nifcloud.String("test_network_name"),
-									},
-									{
-										IpAddress: nifcloud.String("test_global_ip_address"),
-										NetworkId: nifcloud.String("net-COMMON_GLOBAL"),
-									},
-								},
-								NextMonthAccountingType: nifcloud.String("test_accounting_type"),
-								RouteTableAssociationId: nifcloud.String("test_route_table_association_id"),
-								RouteTableId:            nifcloud.String("test_route_table_id"),
-								RouterId:                nifcloud.String("test_router_id"),
-								RouterName:              nifcloud.String("test_router_name"),
-								Type:                    nifcloud.String("test_type"),
 							},
+							NatTableAssociationId: nifcloud.String("test_nat_table_association_id"),
+							NatTableId:            nifcloud.String("test_nat_table_id"),
+							NetworkInterfaceSet: []types.NetworkInterfaceSetOfNiftyDescribeRouters{
+								{
+									Dhcp:          nifcloud.Bool(true),
+									DhcpConfigId:  nifcloud.String("test_dhcp_config_id"),
+									DhcpOptionsId: nifcloud.String("test_dhcp_options_id"),
+									IpAddress:     nifcloud.String("test_ip_address"),
+									NetworkId:     nifcloud.String("test_network_id"),
+									NetworkName:   nifcloud.String("test_network_name"),
+								},
+								{
+									IpAddress: nifcloud.String("test_global_ip_address"),
+									NetworkId: nifcloud.String("net-COMMON_GLOBAL"),
+								},
+							},
+							NextMonthAccountingType: nifcloud.String("test_accounting_type"),
+							RouteTableAssociationId: nifcloud.String("test_route_table_association_id"),
+							RouteTableId:            nifcloud.String("test_route_table_id"),
+							RouterId:                nifcloud.String("test_router_id"),
+							RouterName:              nifcloud.String("test_router_name"),
+							Type:                    nifcloud.String("test_type"),
 						},
 					},
 				},
@@ -98,10 +97,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribeRoutersResponse{
-					NiftyDescribeRoutersOutput: &computing.NiftyDescribeRoutersOutput{
-						RouterSet: []computing.RouterSetOfNiftyDescribeRouters{},
-					},
+				res: &computing.NiftyDescribeRoutersOutput{
+					RouterSet: []types.RouterSetOfNiftyDescribeRouters{},
 				},
 			},
 			want: wantNotFoundRd,

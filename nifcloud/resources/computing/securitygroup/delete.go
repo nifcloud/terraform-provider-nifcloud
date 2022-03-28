@@ -4,19 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDeleteSecurityGroupInput(d)
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if v := d.Get("revoke_rules_on_delete").(bool); v {
 		err := forceRevokeSecurityGroupRules(ctx, svc, d)
@@ -25,16 +28,16 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 
-	req := svc.DeleteSecurityGroupRequest(input)
-	err := resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
-		_, err := req.Send(ctx)
+	_, err := svc.DeleteSecurityGroup(ctx, input)
+	err = resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroup" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroup" {
 				return nil
 			}
 
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.Inoperable.SecurityGroup.InUse" {
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.Inoperable.SecurityGroup.InUse" {
 				// If it is a dependency violation, we want to retry
 				return resource.RetryableError(err)
 			}
@@ -46,7 +49,7 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		return diag.FromErr(fmt.Errorf("failed deleting: %s", err))
 	}
 
-	err = svc.WaitUntilSecurityGroupDeleted(ctx, expandDescribeSecurityGroupsInput(d))
+	err = computing.NewSecurityGroupDeletedWaiter(svc).Wait(ctx, expandDescribeSecurityGroupsInput(d), time.Until(deadline))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting for wait until deleted security group error: %s", err))
 	}
@@ -57,9 +60,8 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 func forceRevokeSecurityGroupRules(ctx context.Context, svc *computing.Client, d *schema.ResourceData) error {
 	describeSecurityGroupsinput := expandDescribeSecurityGroupsInput(d)
-	req := svc.DescribeSecurityGroupsRequest(describeSecurityGroupsinput)
-
-	res, err := req.Send(ctx)
+	deadline, _ := ctx.Deadline()
+	res, err := svc.DescribeSecurityGroups(ctx, describeSecurityGroupsinput)
 	if err != nil {
 		return err
 	}
@@ -71,47 +73,47 @@ func forceRevokeSecurityGroupRules(ctx context.Context, svc *computing.Client, d
 	securityGroup := res.SecurityGroupInfo[0]
 
 	if len(securityGroup.IpPermissions) > 0 {
-		ipPermissions := []computing.RequestIpPermissionsOfRevokeSecurityGroupIngress{}
+		ipPermissions := []types.RequestIpPermissionsOfRevokeSecurityGroupIngress{}
 		for _, i := range securityGroup.IpPermissions {
-			ipPermission := computing.RequestIpPermissionsOfRevokeSecurityGroupIngress{
-				IpProtocol: computing.IpProtocolOfIpPermissionsForRevokeSecurityGroupIngress(nifcloud.StringValue(i.IpProtocol)),
+			ipPermission := types.RequestIpPermissionsOfRevokeSecurityGroupIngress{
+				IpProtocol: types.IpProtocolOfIpPermissionsForRevokeSecurityGroupIngress(nifcloud.ToString(i.IpProtocol)),
 				FromPort:   i.FromPort,
 				ToPort:     i.ToPort,
-				InOut:      computing.InOutOfIpPermissionsForRevokeSecurityGroupIngress(nifcloud.StringValue(i.InOut)),
+				InOut:      types.InOutOfIpPermissionsForRevokeSecurityGroupIngress(nifcloud.ToString(i.InOut)),
 			}
 			for _, ipRange := range i.IpRanges {
 				ipPermission.ListOfRequestIpRanges = append(
 					ipPermission.ListOfRequestIpRanges,
-					computing.RequestIpRanges{CidrIp: ipRange.CidrIp},
+					types.RequestIpRanges{CidrIp: ipRange.CidrIp},
 				)
 			}
 			for _, group := range i.Groups {
 				ipPermission.ListOfRequestGroups = append(
 					ipPermission.ListOfRequestGroups,
-					computing.RequestGroups{GroupName: group.GroupName},
+					types.RequestGroups{GroupName: group.GroupName},
 				)
 			}
 			ipPermissions = append(ipPermissions, ipPermission)
 		}
 
-		err = svc.WaitUntilSecurityGroupApplied(ctx, describeSecurityGroupsinput)
+		err = computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, describeSecurityGroupsinput, time.Until(deadline))
 		if err != nil {
 			return err
 		}
 
 		input := expandRevokeSecurityGroupIngressInput(d, ipPermissions)
-		_, err := svc.RevokeSecurityGroupIngressRequest(input).Send(ctx)
+		_, err := svc.RevokeSecurityGroupIngress(ctx, input)
 		if err != nil {
-			var awsErr awserr.Error
-			if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.SecurityGroupIngress" {
+			var awsErr smithy.APIError
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroupIngress" {
 				return nil
 			}
 			return fmt.Errorf(
 				"Error revoking security group %s rules: %s",
-				nifcloud.StringValue(securityGroup.GroupName), err)
+				nifcloud.ToString(securityGroup.GroupName), err)
 		}
 
-		err = svc.WaitUntilSecurityGroupApplied(ctx, describeSecurityGroupsinput)
+		err = computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, describeSecurityGroupsinput, time.Until(deadline))
 		if err != nil {
 			return err
 		}

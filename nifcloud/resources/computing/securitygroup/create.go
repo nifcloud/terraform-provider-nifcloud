@@ -3,6 +3,7 @@ package securitygroup
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -12,11 +13,11 @@ import (
 
 func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandCreateSecurityGroupInput(d)
+	deadline, _ := ctx.Deadline()
 
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateSecurityGroupRequest(input)
+	_, err := svc.CreateSecurityGroup(ctx, input)
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating SecurityGroup: %s", err))
 	}
@@ -24,12 +25,12 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	groupName := d.Get("group_name").(string)
 	d.SetId(groupName)
 
-	err = svc.WaitUntilSecurityGroupApplied(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{groupName}})
+	err = computing.NewSecurityGroupAppliedWaiter(svc).Wait(ctx, &computing.DescribeSecurityGroupsInput{GroupName: []string{groupName}}, time.Until(deadline))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed wait until securityGroup applied: %s", err))
 	}
 
-	_, err = svc.UpdateSecurityGroupRequest(expandUpdateSecurityGroupInputForLogLimit(d)).Send(ctx)
+	_, err = svc.UpdateSecurityGroup(ctx, expandUpdateSecurityGroupInputForLogLimit(d))
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed updating SecurityGroup: %s", err))
 	}

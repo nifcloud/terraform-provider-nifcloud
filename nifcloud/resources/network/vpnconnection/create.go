@@ -14,14 +14,13 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandCreateVpnConnectionInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.CreateVpnConnectionRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.CreateVpnConnection(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating vpn connection: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.CreateVpnConnectionOutput.VpnConnection.VpnConnectionId))
+	d.SetId(nifcloud.ToString(res.VpnConnection.VpnConnectionId))
 
 	return read(ctx, d, meta)
 }

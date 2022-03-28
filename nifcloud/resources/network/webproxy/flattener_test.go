@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,7 +27,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.NiftyDescribeWebProxiesResponse
+		res *computing.NiftyDescribeWebProxiesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -38,25 +39,23 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.NiftyDescribeWebProxiesResponse{
-					NiftyDescribeWebProxiesOutput: &computing.NiftyDescribeWebProxiesOutput{
-						WebProxy: []computing.WebProxyOfNiftyDescribeWebProxies{
-							{
-								RouterId:    nifcloud.String("test_router_id"),
-								RouterName:  nifcloud.String("test_router_name"),
-								Description: nifcloud.String("test_description"),
-								ListenPort:  nifcloud.String("test_listen_port"),
-								ListenInterface: &computing.ListenInterface{
-									NetworkName: nifcloud.String("test_listen_interface_network_name"),
-									NetworkId:   nifcloud.String("test_listen_interface_network_id"),
-								},
-								BypassInterface: &computing.BypassInterface{
-									NetworkName: nifcloud.String("test_bypass_interface_network_name"),
-									NetworkId:   nifcloud.String("test_bypass_interface_network_id"),
-								},
-								Option: &computing.OptionOfNiftyDescribeWebProxies{
-									NameServer: nifcloud.String("test_name_server"),
-								},
+				res: &computing.NiftyDescribeWebProxiesOutput{
+					WebProxy: []types.WebProxyOfNiftyDescribeWebProxies{
+						{
+							RouterId:    nifcloud.String("test_router_id"),
+							RouterName:  nifcloud.String("test_router_name"),
+							Description: nifcloud.String("test_description"),
+							ListenPort:  nifcloud.String("test_listen_port"),
+							ListenInterface: &types.ListenInterface{
+								NetworkName: nifcloud.String("test_listen_interface_network_name"),
+								NetworkId:   nifcloud.String("test_listen_interface_network_id"),
+							},
+							BypassInterface: &types.BypassInterface{
+								NetworkName: nifcloud.String("test_bypass_interface_network_name"),
+								NetworkId:   nifcloud.String("test_bypass_interface_network_id"),
+							},
+							Option: &types.OptionOfNiftyDescribeWebProxies{
+								NameServer: nifcloud.String("test_name_server"),
 							},
 						},
 					},
@@ -68,10 +67,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.NiftyDescribeWebProxiesResponse{
-					NiftyDescribeWebProxiesOutput: &computing.NiftyDescribeWebProxiesOutput{
-						WebProxy: []computing.WebProxyOfNiftyDescribeWebProxies{},
-					},
+				res: &computing.NiftyDescribeWebProxiesOutput{
+					WebProxy: []types.WebProxyOfNiftyDescribeWebProxies{},
 				},
 			},
 			want: wantNotFoundRd,

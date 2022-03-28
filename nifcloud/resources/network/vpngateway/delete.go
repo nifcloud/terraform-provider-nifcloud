@@ -4,20 +4,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	describeVpnGatewaysInput := expandDescribeVpnGatewaysInput(d)
-	if _, err := svc.DescribeVpnGatewaysRequest(describeVpnGatewaysInput).Send(ctx); err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.VpnGatewayId" {
+	if _, err := svc.DescribeVpnGateways(ctx, describeVpnGatewaysInput); err != nil {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.VpnGatewayId" {
 			d.SetId("")
 			return nil
 		}
@@ -25,11 +28,11 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	deleteVpnGatewayInput := expandDeleteVpnGatewayInput(d)
-	if _, err := svc.DeleteVpnGatewayRequest(deleteVpnGatewayInput).Send(ctx); err != nil {
+	if _, err := svc.DeleteVpnGateway(ctx, deleteVpnGatewayInput); err != nil {
 		return diag.FromErr(fmt.Errorf("failed deleting vpngateway: %s", err))
 	}
 
-	if err := svc.WaitUntilVpnGatewayDeleted(ctx, describeVpnGatewaysInput); err != nil {
+	if err := computing.NewVpnGatewayDeletedWaiter(svc).Wait(ctx, describeVpnGatewaysInput, time.Until(deadline)); err != nil {
 		return diag.FromErr(fmt.Errorf("failed waiting for vpngateway deleted: %s", err))
 	}
 

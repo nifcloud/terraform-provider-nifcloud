@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,10 +41,10 @@ func TestExpandNiftyCreateRouterInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &computing.NiftyCreateRouterInput{
-				AccountingType:   computing.AccountingTypeOfNiftyCreateRouterRequest("test_accounting_type"),
+				AccountingType:   types.AccountingTypeOfNiftyCreateRouterRequest("test_accounting_type"),
 				AvailabilityZone: nifcloud.String("test_availability_zone"),
 				Description:      nifcloud.String("test_description"),
-				NetworkInterface: []computing.RequestNetworkInterfaceOfNiftyCreateRouter{
+				NetworkInterface: []types.RequestNetworkInterfaceOfNiftyCreateRouter{
 					{
 						Dhcp:          nifcloud.Bool(true),
 						DhcpConfigId:  nifcloud.String("test_dhcp_config_id"),
@@ -55,7 +56,7 @@ func TestExpandNiftyCreateRouterInput(t *testing.T) {
 				},
 				RouterName:    nifcloud.String("test_router_name"),
 				SecurityGroup: []string{"test_security_group"},
-				Type:          computing.TypeOfNiftyCreateRouterRequest("test_type"),
+				Type:          types.TypeOfNiftyCreateRouterRequest("test_type"),
 			},
 		},
 	}
@@ -168,7 +169,7 @@ func TestExpandNiftyModifyRouterAttributeInputForRouterName(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestRouterName,
+				Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestRouterName,
 				Value:     nifcloud.String("test_router_name"),
 			},
 		},
@@ -198,7 +199,7 @@ func TestExpandNiftyModifyRouterAttributeInputForAccountingType(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestAccountingType,
+				Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestAccountingType,
 				Value:     nifcloud.String("test_accounting_type"),
 			},
 		},
@@ -228,7 +229,7 @@ func TestExpandNiftyModifyRouterAttributeInputForDescription(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestDescription,
+				Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestDescription,
 				Value:     nifcloud.String("test_description"),
 			},
 		},
@@ -258,7 +259,7 @@ func TestExpandNiftyModifyRouterAttributeInputForType(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestType,
+				Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestType,
 				Value:     nifcloud.String("test_type"),
 			},
 		},
@@ -288,7 +289,7 @@ func TestExpandNiftyModifyRouterAttributeInputForSecurityGroup(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyModifyRouterAttributeInput{
 				RouterId:  nifcloud.String("test_router_id"),
-				Attribute: computing.AttributeOfNiftyModifyRouterAttributeRequestGroupId,
+				Attribute: types.AttributeOfNiftyModifyRouterAttributeRequestGroupId,
 				Value:     nifcloud.String("test_security_group"),
 			},
 		},
@@ -333,7 +334,7 @@ func TestExpandNiftyDeregisterRoutersFromSecurityGroupInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyDeregisterRoutersFromSecurityGroupInput{
 				GroupName: nifcloud.String("test_security_group"),
-				RouterSet: []computing.RequestRouterSet{
+				RouterSet: []types.RequestRouterSet{
 					{
 						RouterId: nifcloud.String("test_router_id"),
 					},
@@ -373,7 +374,7 @@ func TestExpandNiftyUpdateRouterNetworkInterfacesInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyUpdateRouterNetworkInterfacesInput{
 				RouterId: nifcloud.String("test_router_id"),
-				NetworkInterface: []computing.RequestNetworkInterfaceOfNiftyUpdateRouterNetworkInterfaces{
+				NetworkInterface: []types.RequestNetworkInterfaceOfNiftyUpdateRouterNetworkInterfaces{
 					{
 						Dhcp:          nifcloud.Bool(true),
 						DhcpConfigId:  nifcloud.String("test_dhcp_config_id"),

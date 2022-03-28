@@ -4,30 +4,31 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandDescribeVolumesInput(d)
 	svc := meta.(*client.Client).Computing
+	deadline, _ := ctx.Deadline()
 
 	if d.IsNewResource() {
-		err := svc.WaitUntilVolumeInUse(ctx, input)
+		err := computing.NewVolumeInUseWaiter(svc).Wait(ctx, input, time.Until(deadline))
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for volume to become ready: %s", err))
 		}
 	}
 
-	req := svc.DescribeVolumesRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.DescribeVolumes(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.Volume" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.Volume" {
 			d.SetId("")
 			return nil
 		}

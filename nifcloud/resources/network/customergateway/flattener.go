@@ -8,7 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 )
 
-func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResponse) error {
+func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysOutput) error {
 	if res == nil || len(res.CustomerGatewaySet) == 0 {
 		d.SetId("")
 		return nil
@@ -16,7 +16,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 
 	customerGateway := res.CustomerGatewaySet[0]
 
-	if nifcloud.StringValue(customerGateway.CustomerGatewayId) != d.Id() {
+	if nifcloud.ToString(customerGateway.CustomerGatewayId) != d.Id() {
 		return fmt.Errorf("unable to find customer gateway within: %#v", res.CustomerGatewaySet)
 	}
 
@@ -48,7 +48,7 @@ func flatten(d *schema.ResourceData, res *computing.DescribeCustomerGatewaysResp
 	if raw, ok := d.GetOk("type"); ok {
 		connectionType = raw.(string)
 	} else {
-		if nifcloud.StringValue(customerGateway.NiftyLanSideCidrBlock) == "" {
+		if nifcloud.ToString(customerGateway.NiftyLanSideCidrBlock) == "" {
 			connectionType = "L2TPv3 / IPsec"
 		} else {
 			connectionType = "IPsec"

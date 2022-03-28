@@ -4,34 +4,35 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 )
 
 func expandAuthorizeSecurityGroupIngressInputList(d *schema.ResourceData) []*computing.AuthorizeSecurityGroupIngressInput {
 	protocol := d.Get("protocol").(string)
-	ipPermission := computing.RequestIpPermissions{
-		IpProtocol:  computing.IpProtocolOfIpPermissionsForAuthorizeSecurityGroupIngress(protocol),
-		InOut:       computing.InOutOfIpPermissionsForAuthorizeSecurityGroupIngress(d.Get("type").(string)),
+	ipPermission := types.RequestIpPermissions{
+		IpProtocol:  types.IpProtocolOfIpPermissionsForAuthorizeSecurityGroupIngress(protocol),
+		InOut:       types.InOutOfIpPermissionsForAuthorizeSecurityGroupIngress(d.Get("type").(string)),
 		Description: nifcloud.String(d.Get("description").(string)),
 	}
 
 	if protocol == "TCP" || protocol == "UDP" {
-		ipPermission.FromPort = nifcloud.Int64(int64(d.Get("from_port").(int)))
+		ipPermission.FromPort = nifcloud.Int32(int32(d.Get("from_port").(int)))
 		if raw, ok := d.GetOk("to_port"); ok {
-			ipPermission.ToPort = nifcloud.Int64(int64(raw.(int)))
+			ipPermission.ToPort = nifcloud.Int32(int32(raw.(int)))
 		}
 	}
 
 	if raw, ok := d.GetOk("cidr_ip"); ok {
 		ipPermission.ListOfRequestIpRanges = append(
 			ipPermission.ListOfRequestIpRanges,
-			computing.RequestIpRanges{CidrIp: nifcloud.String(raw.(string))},
+			types.RequestIpRanges{CidrIp: nifcloud.String(raw.(string))},
 		)
 	}
 
 	if raw, ok := d.GetOk("source_security_group_name"); ok {
 		ipPermission.ListOfRequestGroups = append(
 			ipPermission.ListOfRequestGroups,
-			computing.RequestGroups{GroupName: nifcloud.String(raw.(string))},
+			types.RequestGroups{GroupName: nifcloud.String(raw.(string))},
 		)
 	}
 
@@ -41,7 +42,7 @@ func expandAuthorizeSecurityGroupIngressInputList(d *schema.ResourceData) []*com
 	for i, name := range groupNames {
 		inputList[i] = &computing.AuthorizeSecurityGroupIngressInput{
 			GroupName:     nifcloud.String(name.(string)),
-			IpPermissions: []computing.RequestIpPermissions{ipPermission},
+			IpPermissions: []types.RequestIpPermissions{ipPermission},
 		}
 	}
 	return inputList
@@ -62,29 +63,29 @@ func expandDescribeSecurityGroupsInput(d *schema.ResourceData) *computing.Descri
 
 func expandRevokeSecurityGroupIngressInputList(d *schema.ResourceData) []*computing.RevokeSecurityGroupIngressInput {
 	protocol := d.Get("protocol").(string)
-	ipPermission := computing.RequestIpPermissionsOfRevokeSecurityGroupIngress{
-		IpProtocol: computing.IpProtocolOfIpPermissionsForRevokeSecurityGroupIngress(protocol),
-		InOut:      computing.InOutOfIpPermissionsForRevokeSecurityGroupIngress(d.Get("type").(string)),
+	ipPermission := types.RequestIpPermissionsOfRevokeSecurityGroupIngress{
+		IpProtocol: types.IpProtocolOfIpPermissionsForRevokeSecurityGroupIngress(protocol),
+		InOut:      types.InOutOfIpPermissionsForRevokeSecurityGroupIngress(d.Get("type").(string)),
 	}
 
 	if protocol == "TCP" || protocol == "UDP" {
-		ipPermission.FromPort = nifcloud.Int64(int64(d.Get("from_port").(int)))
+		ipPermission.FromPort = nifcloud.Int32(int32(d.Get("from_port").(int)))
 		if raw, ok := d.GetOk("to_port"); ok {
-			ipPermission.ToPort = nifcloud.Int64(int64(raw.(int)))
+			ipPermission.ToPort = nifcloud.Int32(int32(raw.(int)))
 		}
 	}
 
 	if raw, ok := d.GetOk("cidr_ip"); ok {
 		ipPermission.ListOfRequestIpRanges = append(
 			ipPermission.ListOfRequestIpRanges,
-			computing.RequestIpRanges{CidrIp: nifcloud.String(raw.(string))},
+			types.RequestIpRanges{CidrIp: nifcloud.String(raw.(string))},
 		)
 	}
 
 	if raw, ok := d.GetOk("source_security_group_name"); ok {
 		ipPermission.ListOfRequestGroups = append(
 			ipPermission.ListOfRequestGroups,
-			computing.RequestGroups{GroupName: nifcloud.String(raw.(string))},
+			types.RequestGroups{GroupName: nifcloud.String(raw.(string))},
 		)
 	}
 	groupNames := d.Get("security_group_names").([]interface{})
@@ -93,7 +94,7 @@ func expandRevokeSecurityGroupIngressInputList(d *schema.ResourceData) []*comput
 	for i, name := range groupNames {
 		inputList[i] = &computing.RevokeSecurityGroupIngressInput{
 			GroupName:     nifcloud.String(name.(string)),
-			IpPermissions: []computing.RequestIpPermissionsOfRevokeSecurityGroupIngress{ipPermission},
+			IpPermissions: []types.RequestIpPermissionsOfRevokeSecurityGroupIngress{ipPermission},
 		}
 	}
 	return inputList

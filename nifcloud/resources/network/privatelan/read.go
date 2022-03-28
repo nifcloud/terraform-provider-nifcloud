@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
@@ -14,14 +14,14 @@ import (
 
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyDescribePrivateLansRequest(&computing.NiftyDescribePrivateLansInput{
+
+	res, err := svc.NiftyDescribePrivateLans(ctx, &computing.NiftyDescribePrivateLansInput{
 		NetworkId: []string{d.Id()},
 	})
 
-	res, err := req.Send(ctx)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "Client.InvalidParameterNotFound.NetworkId" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.NetworkId" {
 			d.SetId("")
 			return nil
 		}

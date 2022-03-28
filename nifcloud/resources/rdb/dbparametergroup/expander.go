@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/rdb/types"
 )
 
 func expandCreateDBParameterGroupInput(d *schema.ResourceData) *rdb.CreateDBParameterGroupInput {
@@ -14,14 +15,14 @@ func expandCreateDBParameterGroupInput(d *schema.ResourceData) *rdb.CreateDBPara
 	}
 }
 
-func expandModifyDBParameterGroupInput(d *schema.ResourceData, parameters []rdb.RequestParameters) *rdb.ModifyDBParameterGroupInput {
+func expandModifyDBParameterGroupInput(d *schema.ResourceData, parameters []types.RequestParameters) *rdb.ModifyDBParameterGroupInput {
 	return &rdb.ModifyDBParameterGroupInput{
 		DBParameterGroupName: nifcloud.String(d.Id()),
 		Parameters:           parameters,
 	}
 }
 
-func expandResetDBParameterGroupInput(d *schema.ResourceData, parameters []rdb.RequestParametersOfResetDBParameterGroup) *rdb.ResetDBParameterGroupInput {
+func expandResetDBParameterGroupInput(d *schema.ResourceData, parameters []types.RequestParametersOfResetDBParameterGroup) *rdb.ResetDBParameterGroupInput {
 	return &rdb.ResetDBParameterGroupInput{
 		DBParameterGroupName: nifcloud.String(d.Id()),
 		Parameters:           parameters,
@@ -43,7 +44,7 @@ func expandDescribeDBParametersInput(d *schema.ResourceData, marker string) *rdb
 		input.Marker = nifcloud.String(marker)
 	}
 
-	input.Source = nifcloud.String("user")
+	input.Source = types.SourceOfDescribeDBParametersRequestUser
 
 	return input
 }
@@ -54,8 +55,8 @@ func expandDeleteDBParameterGroupInput(d *schema.ResourceData) *rdb.DeleteDBPara
 	}
 }
 
-func expandParameters(configured []interface{}) []rdb.Parameters {
-	var parameters []rdb.Parameters
+func expandParameters(configured []interface{}) []types.Parameters {
+	var parameters []types.Parameters
 
 	for _, raw := range configured {
 		rawParam := raw.(map[string]interface{})
@@ -64,7 +65,7 @@ func expandParameters(configured []interface{}) []rdb.Parameters {
 			continue
 		}
 
-		param := rdb.Parameters{
+		param := types.Parameters{
 			ParameterName:  nifcloud.String(rawParam["name"].(string)),
 			ParameterValue: nifcloud.String(rawParam["value"].(string)),
 			ApplyMethod:    nifcloud.String(rawParam["apply_method"].(string)),
@@ -75,8 +76,8 @@ func expandParameters(configured []interface{}) []rdb.Parameters {
 	return parameters
 }
 
-func expandModifyDBParameterGroupParameters(configured []interface{}) []rdb.RequestParameters {
-	var parameters []rdb.RequestParameters
+func expandModifyDBParameterGroupParameters(configured []interface{}) []types.RequestParameters {
+	var parameters []types.RequestParameters
 
 	for _, raw := range configured {
 		rawParam := raw.(map[string]interface{})
@@ -85,10 +86,10 @@ func expandModifyDBParameterGroupParameters(configured []interface{}) []rdb.Requ
 			continue
 		}
 
-		param := rdb.RequestParameters{
+		param := types.RequestParameters{
 			ParameterName:  nifcloud.String(rawParam["name"].(string)),
 			ParameterValue: nifcloud.String(rawParam["value"].(string)),
-			ApplyMethod:    nifcloud.String(rawParam["apply_method"].(string)),
+			ApplyMethod:    types.ApplyMethodOfParametersForModifyDBParameterGroup(rawParam["apply_method"].(string)),
 		}
 		parameters = append(parameters, param)
 	}
@@ -96,8 +97,8 @@ func expandModifyDBParameterGroupParameters(configured []interface{}) []rdb.Requ
 	return parameters
 }
 
-func expandResetDBParameterGroupParameters(configured []interface{}) []rdb.RequestParametersOfResetDBParameterGroup {
-	var parameters []rdb.RequestParametersOfResetDBParameterGroup
+func expandResetDBParameterGroupParameters(configured []interface{}) []types.RequestParametersOfResetDBParameterGroup {
+	var parameters []types.RequestParametersOfResetDBParameterGroup
 
 	for _, raw := range configured {
 		rawParam := raw.(map[string]interface{})
@@ -106,9 +107,9 @@ func expandResetDBParameterGroupParameters(configured []interface{}) []rdb.Reque
 			continue
 		}
 
-		param := rdb.RequestParametersOfResetDBParameterGroup{
+		param := types.RequestParametersOfResetDBParameterGroup{
 			ParameterName: nifcloud.String(rawParam["name"].(string)),
-			ApplyMethod:   nifcloud.String(rawParam["apply_method"].(string)),
+			ApplyMethod:   types.ApplyMethodOfParametersForResetDBParameterGroup(rawParam["apply_method"].(string)),
 		}
 		parameters = append(parameters, param)
 	}

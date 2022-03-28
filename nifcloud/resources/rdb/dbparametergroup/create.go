@@ -14,14 +14,13 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	svc := meta.(*client.Client).RDB
 
 	input := expandCreateDBParameterGroupInput(d)
-	req := svc.CreateDBParameterGroupRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.CreateDBParameterGroup(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating DBParameterGroup: %s", err))
 	}
 
-	d.SetId(nifcloud.StringValue(res.DBParameterGroup.DBParameterGroupName))
+	d.SetId(nifcloud.ToString(res.DBParameterGroup.DBParameterGroupName))
 
 	return update(ctx, d, meta)
 }

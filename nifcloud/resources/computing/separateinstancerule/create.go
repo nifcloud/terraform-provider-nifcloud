@@ -16,9 +16,8 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandNiftyCreateSeparateInstanceRuleInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.NiftyCreateSeparateInstanceRuleRequest(input)
+	_, err := svc.NiftyCreateSeparateInstanceRule(ctx, input)
 
-	_, err := req.Send(ctx)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating SeparateInstanceRule: %s", err))
 	}

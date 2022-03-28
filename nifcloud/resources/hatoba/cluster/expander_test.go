@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
+	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,25 +41,25 @@ func TestExpandCreateClusterInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &hatoba.CreateClusterInput{
-				Cluster: &hatoba.RequestCluster{
+				Cluster: &types.RequestCluster{
 					Name:                   nifcloud.String("test_name"),
 					Description:            nifcloud.String("test_description"),
 					ListOfRequestLocations: []string{"test_location"},
-					KubernetesVersion:      nifcloud.String("test_kubernetes_version"),
+					KubernetesVersion:      types.KubernetesVersionOfclusterForCreateCluster("test_kubernetes_version"),
 					FirewallGroup:          nifcloud.String("test_firewall_group"),
-					RequestAddonsConfig: &hatoba.RequestAddonsConfig{
-						RequestHttpLoadBalancing: &hatoba.RequestHttpLoadBalancing{
+					RequestAddonsConfig: &types.RequestAddonsConfig{
+						RequestHttpLoadBalancing: &types.RequestHttpLoadBalancing{
 							Disabled: nifcloud.Bool(true),
 						},
 					},
-					RequestNetworkConfig: &hatoba.RequestNetworkConfig{
+					RequestNetworkConfig: &types.RequestNetworkConfig{
 						NetworkId: nifcloud.String("test_network_id"),
 					},
-					ListOfRequestNodePools: []hatoba.RequestNodePools{
+					ListOfRequestNodePools: []types.RequestNodePools{
 						{
 							Name:         nifcloud.String("test_node_pool_name"),
-							InstanceType: nifcloud.String("test_instance_type"),
-							NodeCount:    nifcloud.Int64(3),
+							InstanceType: types.InstanceTypeOfclusterForCreateCluster("test_instance_type"),
+							NodeCount:    nifcloud.Int32(3),
 						},
 					},
 				},
@@ -123,12 +124,12 @@ func TestExpandUpdateClusterInput(t *testing.T) {
 			args: rd,
 			want: &hatoba.UpdateClusterInput{
 				ClusterName: nifcloud.String("test_name"),
-				Cluster: &hatoba.RequestClusterOfUpdateCluster{
+				Cluster: &types.RequestClusterOfUpdateCluster{
 					Name:              nifcloud.String("test_new_name"),
 					Description:       nifcloud.String("test_description"),
-					KubernetesVersion: nifcloud.String("test_kubernetes_version"),
-					RequestAddonsConfig: &hatoba.RequestAddonsConfig{
-						RequestHttpLoadBalancing: &hatoba.RequestHttpLoadBalancing{
+					KubernetesVersion: types.KubernetesVersionOfclusterForUpdateCluster("test_kubernetes_version"),
+					RequestAddonsConfig: &types.RequestAddonsConfig{
+						RequestHttpLoadBalancing: &types.RequestHttpLoadBalancing{
 							Disabled: nifcloud.Bool(false),
 						},
 					},
@@ -166,10 +167,10 @@ func TestExpandCreateNodePoolInput(t *testing.T) {
 			args: rd,
 			want: &hatoba.CreateNodePoolInput{
 				ClusterName: nifcloud.String("test_name"),
-				NodePool: &hatoba.RequestNodePool{
+				NodePool: &types.RequestNodePool{
 					Name:         nifcloud.String("test_node_pool_name"),
-					InstanceType: nifcloud.String("test_instance_type"),
-					NodeCount:    nifcloud.Int64(5),
+					InstanceType: types.InstanceTypeOfnodePoolForCreateNodePool("test_instance_type"),
+					NodeCount:    nifcloud.Int32(5),
 				},
 			},
 		},
@@ -230,7 +231,7 @@ func TestExpandSetNodePoolSizeInput(t *testing.T) {
 			want: &hatoba.SetNodePoolSizeInput{
 				ClusterName:  nifcloud.String("test_name"),
 				NodePoolName: nifcloud.String("test_node_pool_name"),
-				NodeCount:    nifcloud.Int64(1),
+				NodeCount:    nifcloud.Int32(1),
 			},
 		},
 	}

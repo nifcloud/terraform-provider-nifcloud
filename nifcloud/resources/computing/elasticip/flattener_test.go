@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *computing.DescribeAddressesResponse
+		res *computing.DescribeAddressesOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -32,14 +33,12 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &computing.DescribeAddressesResponse{
-					DescribeAddressesOutput: &computing.DescribeAddressesOutput{
-						AddressesSet: []computing.AddressesSet{
-							{
-								PrivateIpAddress: nifcloud.String("192.168.0.1"),
-								AvailabilityZone: nifcloud.String("east-21"),
-								Description:      nifcloud.String("test_description"),
-							},
+				res: &computing.DescribeAddressesOutput{
+					AddressesSet: []types.AddressesSet{
+						{
+							PrivateIpAddress: nifcloud.String("192.168.0.1"),
+							AvailabilityZone: nifcloud.String("east-21"),
+							Description:      nifcloud.String("test_description"),
 						},
 					},
 				},
@@ -50,10 +49,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &computing.DescribeAddressesResponse{
-					DescribeAddressesOutput: &computing.DescribeAddressesOutput{
-						AddressesSet: []computing.AddressesSet{},
-					},
+				res: &computing.DescribeAddressesOutput{
+					AddressesSet: []types.AddressesSet{},
 				},
 			},
 			want: wantNotFoundRd,

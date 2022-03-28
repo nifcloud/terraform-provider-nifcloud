@@ -16,8 +16,7 @@ func waitUntilDBSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resource
 
 	err := resource.RetryContext(ctx, timeout, func() *resource.RetryError {
 		input := expandDescribeDBSecurityGroupsInput(d)
-		req := svc.DescribeDBSecurityGroupsRequest(input)
-		res, err := req.Send(ctx)
+		res, err := svc.DescribeDBSecurityGroups(ctx, input)
 		if err != nil {
 			return resource.NonRetryableError(err)
 		}
@@ -25,16 +24,16 @@ func waitUntilDBSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resource
 		targetExists := false
 		if rule["cidr_ip"] != "" {
 			target := rule["cidr_ip"].(string)
-			for _, ip := range res.DescribeDBSecurityGroupsOutput.DBSecurityGroups[0].IPRanges {
-				if nifcloud.StringValue(ip.CIDRIP) == target && nifcloud.StringValue(ip.Status) == "revoking" {
+			for _, ip := range res.DBSecurityGroups[0].IPRanges {
+				if nifcloud.ToString(ip.CIDRIP) == target && nifcloud.ToString(ip.Status) == "revoking" {
 					targetExists = true
 					break
 				}
 			}
 		} else {
 			target := rule["security_group_name"].(string)
-			for _, group := range res.DescribeDBSecurityGroupsOutput.DBSecurityGroups[0].EC2SecurityGroups {
-				if nifcloud.StringValue(group.EC2SecurityGroupName) == target && nifcloud.StringValue(group.Status) == "revoking" {
+			for _, group := range res.DBSecurityGroups[0].EC2SecurityGroups {
+				if nifcloud.ToString(group.EC2SecurityGroupName) == target && nifcloud.ToString(group.Status) == "revoking" {
 					targetExists = true
 					break
 				}

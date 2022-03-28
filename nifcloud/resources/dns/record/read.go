@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -15,12 +15,11 @@ import (
 func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	input := expandListResourceRecordSets(d)
 	svc := meta.(*client.Client).DNS
-	req := svc.ListResourceRecordSetsRequest(input)
 
-	res, err := req.Send(ctx)
+	res, err := svc.ListResourceRecordSets(ctx, input)
 	if err != nil {
-		var awsErr awserr.Error
-		if errors.As(err, &awsErr) && awsErr.Code() == "NoSuchHostedZone" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "NoSuchHostedZone" {
 			d.SetId("")
 			return nil
 		}
@@ -30,8 +29,8 @@ func read(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Di
 	if d.IsNewResource() {
 		for _, s := range res.ResourceRecordSets {
 			for _, r := range s.ResourceRecords {
-				if nifcloud.StringValue(r.Value) == d.Get("record").(string) {
-					d.SetId(nifcloud.StringValue(s.SetIdentifier))
+				if nifcloud.ToString(r.Value) == d.Get("record").(string) {
+					d.SetId(nifcloud.ToString(s.SetIdentifier))
 				}
 			}
 		}

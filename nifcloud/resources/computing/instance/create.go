@@ -14,9 +14,7 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	input := expandRunInstancesInput(d)
 
 	svc := meta.(*client.Client).Computing
-	req := svc.RunInstancesRequest(input)
-
-	res, err := req.Send(ctx)
+	res, err := svc.RunInstances(ctx, input)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("failed creating Instance: %s", err))
 	}
@@ -26,7 +24,7 @@ func create(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	instance := res.InstancesSet[0]
-	d.SetId(nifcloud.StringValue(instance.InstanceId))
+	d.SetId(nifcloud.ToString(instance.InstanceId))
 
 	return update(ctx, d, meta)
 }

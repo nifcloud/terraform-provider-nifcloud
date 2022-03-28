@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
+	"github.com/nifcloud/nifcloud-sdk-go/service/dns/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +40,7 @@ func TestFlatten(t *testing.T) {
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
-		res *dns.ListResourceRecordSetsResponse
+		res *dns.ListResourceRecordSetsOutput
 		d   *schema.ResourceData
 	}
 	tests := []struct {
@@ -51,28 +52,26 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response",
 			args: args{
 				d: rd,
-				res: &dns.ListResourceRecordSetsResponse{
-					ListResourceRecordSetsOutput: &dns.ListResourceRecordSetsOutput{
-						ResourceRecordSets: []dns.ResourceRecordSets{
-							{
-								Failover:          nifcloud.String("PRIMARY"),
-								Name:              nifcloud.String("test_name"),
-								SetIdentifier:     nifcloud.String("test_set_identifier"),
-								TTL:               nifcloud.Int64(60),
-								Type:              nifcloud.String("A"),
-								Weight:            nifcloud.Int64(60),
-								XniftyComment:     nifcloud.String("test_comment"),
-								XniftyDefaultHost: nifcloud.String("test_default_host"),
-								ResourceRecords: []dns.ResourceRecords{{
-									Value: nifcloud.String("192.0.2.1"),
-								}},
-								XniftyHealthCheckConfig: &dns.XniftyHealthCheckConfig{
-									FullyQualifiedDomainName: nifcloud.String("test_resource_domain"),
-									IPAddress:                nifcloud.String("192.0.2.1"),
-									Port:                     nifcloud.Int64(8080),
-									Protocol:                 nifcloud.String("HTTP"),
-									ResourcePath:             nifcloud.String("test_resource_path"),
-								},
+				res: &dns.ListResourceRecordSetsOutput{
+					ResourceRecordSets: []types.ResourceRecordSets{
+						{
+							Failover:          nifcloud.String("PRIMARY"),
+							Name:              nifcloud.String("test_name"),
+							SetIdentifier:     nifcloud.String("test_set_identifier"),
+							TTL:               nifcloud.Int32(60),
+							Type:              nifcloud.String("A"),
+							Weight:            nifcloud.Int32(60),
+							XniftyComment:     nifcloud.String("test_comment"),
+							XniftyDefaultHost: nifcloud.String("test_default_host"),
+							ResourceRecords: []types.ResourceRecords{{
+								Value: nifcloud.String("192.0.2.1"),
+							}},
+							XniftyHealthCheckConfig: &types.XniftyHealthCheckConfig{
+								FullyQualifiedDomainName: nifcloud.String("test_resource_domain"),
+								IPAddress:                nifcloud.String("192.0.2.1"),
+								Port:                     nifcloud.Int32(8080),
+								Protocol:                 nifcloud.String("HTTP"),
+								ResourcePath:             nifcloud.String("test_resource_path"),
 							},
 						},
 					},
@@ -84,10 +83,8 @@ func TestFlatten(t *testing.T) {
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
 				d: wantNotFoundRd,
-				res: &dns.ListResourceRecordSetsResponse{
-					ListResourceRecordSetsOutput: &dns.ListResourceRecordSetsOutput{
-						ResourceRecordSets: []dns.ResourceRecordSets{},
-					},
+				res: &dns.ListResourceRecordSetsOutput{
+					ResourceRecordSets: []types.ResourceRecordSets{},
 				},
 			},
 			want: wantNotFoundRd,
