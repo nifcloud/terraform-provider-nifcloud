@@ -1,5 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_ess_email_dkim"
+subcategory: "ESS"
 description: |-
   Provides an ESS domain DKIM generation resource.
 ---

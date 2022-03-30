@@ -1,5 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_ess_email_identity"
+subcategory: "ESS"
 description: |-
   Provides an ESS email identity resource
 ---
