@@ -1,5 +1,19 @@
 # Changelog
 
+## [v1.6.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.6.0) (2022-03-30)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.5.1...v1.6.0)
+
+**Merged pull requests:**
+
+- doc\) Add subcategory ESS [\#106](https://github.com/nifcloud/terraform-provider-nifcloud/pull/106) ([fuku2014](https://github.com/fuku2014))
+- add ess [\#105](https://github.com/nifcloud/terraform-provider-nifcloud/pull/105) ([fuku2014](https://github.com/fuku2014))
+- Feature/update sdk [\#104](https://github.com/nifcloud/terraform-provider-nifcloud/pull/104) ([fuku2014](https://github.com/fuku2014))
+- Add nifcloud\_dns\_record resource [\#103](https://github.com/nifcloud/terraform-provider-nifcloud/pull/103) ([tunakyonn](https://github.com/tunakyonn))
+- resource/nifcloud\_route\_table Fix to exclude EnableVgwRoutePropagation [\#102](https://github.com/nifcloud/terraform-provider-nifcloud/pull/102) ([fuku2014](https://github.com/fuku2014))
+- Add nifcloud\_dns\_zone resource [\#101](https://github.com/nifcloud/terraform-provider-nifcloud/pull/101) ([tunakyonn](https://github.com/tunakyonn))
+- Fix document of db instance [\#100](https://github.com/nifcloud/terraform-provider-nifcloud/pull/100) ([SogoKato](https://github.com/SogoKato))
+
 ## [v1.5.1](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.5.1) (2021-10-21)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.5.0...v1.5.1)
