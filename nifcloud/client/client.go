@@ -8,6 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/service/hatoba"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
 	"github.com/nifcloud/nifcloud-sdk-go/service/rdb"
+	"github.com/nifcloud/nifcloud-sdk-go/service/storage"
 )
 
 // Client nifcloud client
@@ -18,10 +19,11 @@ type Client struct {
 	Hatoba    *hatoba.Client
 	DNS       *dns.Client
 	ESS       *ess.Client
+	Storage   *storage.Client
 }
 
 // New return Client
-func New(cfg nifcloud.Config) *Client {
+func New(cfg nifcloud.Config, storageCfg nifcloud.Config) *Client {
 	return &Client{
 		Computing: computing.NewFromConfig(cfg),
 		RDB:       rdb.NewFromConfig(cfg),
@@ -29,5 +31,6 @@ func New(cfg nifcloud.Config) *Client {
 		Hatoba:    hatoba.NewFromConfig(cfg),
 		DNS:       dns.NewFromConfig(cfg),
 		ESS:       ess.NewFromConfig(cfg),
+		Storage:   storage.NewFromConfig(storageCfg),
 	}
 }
