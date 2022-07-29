@@ -24,6 +24,15 @@ func sharedClientForRegion(region string) *client.Client {
 		return aws.NopRetryer{}
 	}
 
-	client := client.New(cfg)
+	storageCfg := nifcloud.NewConfig(
+		os.Getenv("NIFCLOUD_STORAGE_ACCESS_KEY_ID"),
+		os.Getenv("NIFCLOUD_STORAGE_SECRET_ACCESS_KEY"),
+		region,
+	)
+	storageCfg.Retryer = func() aws.Retryer {
+		return aws.NopRetryer{}
+	}
+
+	client := client.New(cfg, storageCfg)
 	return client
 }
