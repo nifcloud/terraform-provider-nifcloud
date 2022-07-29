@@ -1,0 +1,10 @@
+{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "urn:sgws:s3:::example/index.html"
+    }
+  ]
+}
