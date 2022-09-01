@@ -43,3 +43,6 @@ The NIFCLOUD provider requires a few basic parameters:
 - `region` - (Required) This is the NIFCLOUD region. It must be provided, but it can also be sourced from the `NIFCLOUD_DEFAULT_REGION` environment variable.
 - `access_key` - (Required) This is the NIFCLOUD access key. It must be provided, but it can also be sourced from the `NIFCLOUD_ACCESS_KEY_ID` environment variable.
 - `secret_key` - (Required) This is the NIFCLOUD secret key. It must be provided, but it can also be sourced from the `NIFCLOUD_SECRET_ACCESS_KEY` environment variable.
+- `storage_region` - (Optional) This is the NIFCLOUD region for Object Storage Service. It must be provided if you are using Object Storage Service, but it can also be sourced from the `NIFCLOUD_STORAGE_REGION` environment variable.
+- `storage_access_key` - (Optional) This is the NIFCLOUD access key for Object Storage Service. It must be provided if you are using Object Storage Service, but it can also be sourced from the `NIFCLOUD_STORAGE_ACCESS_KEY_ID` environment variable.
+- `storage_secret_key` - (Optional) This is the NIFCLOUD secret key for Object Storage Service. It must be provided if you are using Object Storage Service, but it can also be sourced from the `NIFCLOUD_STORAGE_SECRET_ACCESS_KEY` environment variable.

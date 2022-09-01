@@ -38,6 +38,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/rdb/dbparametergroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/rdb/dbsecuritygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/sslcertificate/sslcertificate"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/storage/bucket"
 )
 
 // Provider returns a schema.Provider.
@@ -64,6 +65,26 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("NIFCLOUD_DEFAULT_REGION", nil),
+			},
+			"storage_access_key": {
+				Description: "This is the NIFCLOUD access key for Object Storage Service. It must be provided if you are using Object Storage service, but it can also be sourced from the `NIFCLOUD_STORAGE_ACCESS_KEY_ID` env var.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				DefaultFunc: schema.EnvDefaultFunc("NIFCLOUD_STORAGE_ACCESS_KEY_ID", nil),
+			},
+			"storage_secret_key": {
+				Description: "This is the NIFCLOUD secret key for Object Storage Service. It must be provided if you are using Object Storage service, but it can also be sourced from the `NIFCLOUD_STORAGE_SECRET_ACCESS_KEY` env var.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				DefaultFunc: schema.EnvDefaultFunc("NIFCLOUD_STORAGE_SECRET_ACCESS_KEY", nil),
+			},
+			"storage_region": {
+				Description: "This is the NIFCLOUD region for Object Storage Service. It must be provided if you are using Object Storage service, but it can also be sourced from the `NIFCLOUD_STORAGE_REGION` env var.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("NIFCLOUD_STORAGE_REGION", nil),
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
@@ -105,6 +126,7 @@ func Provider() *schema.Provider {
 			"nifcloud_hatoba_firewall_group":  firewallgroup.New(),
 			"nifcloud_hatoba_cluster":         cluster.New(),
 			"nifcloud_separate_instance_rule": separateinstancerule.New(),
+			"nifcloud_storage_bucket":         bucket.New(),
 		},
 	}
 }
