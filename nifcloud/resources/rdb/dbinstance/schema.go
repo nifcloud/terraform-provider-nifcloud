@@ -99,7 +99,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"storage_type": {
 			Type:        schema.TypeInt,
-			Description: "One of `0` (HDD), or `1` (Flash drive). The default is `0`",
+			Description: "One of `0` (High-Speed Storage), `1` (Flash Drive), `2` (Standard Flash Storage), or `3` (High-Speed Flash Storage). The default is `0`",
 			Optional:    true,
 			Default:     0,
 			ForceNew:    true,

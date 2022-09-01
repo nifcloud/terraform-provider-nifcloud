@@ -90,7 +90,7 @@ The following arguments are supported:
 * `skip_final_snapshot` - (Optional) Determines whether a final DB snapshot is created before the DB instance is deleted. Defaults to `true` no DBSnapshot is created
 * `slave_private_address` - (Optional) Private IP address for slave DB.
 * `snapshot_identifier` - (Optional) Specifies whether or not to create this database from a snapshot.
-* `storage_type` - (Optional) One of `0` (HDD), or `1` (Flash drive). The default is `0`
+* `storage_type` - (Optional) One of `0` (High-Speed Storage), `1` (Flash Drive), `2` (Standard Flash Storage), or `3` (High-Speed Flash Storage). The default is `0`
 * `username` - (Optional) Username for the master DB user.
 * `virtual_private_address` - (Optional) Private IP address for virtual load balancer.
 
