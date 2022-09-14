@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.7.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.7.0) (2022-09-01)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.6.0...v1.7.0)
+
+**Merged pull requests:**
+
+- Update RDB storage types [\#108](https://github.com/nifcloud/terraform-provider-nifcloud/pull/108) ([tily](https://github.com/tily))
+- Feature/add storage bucket [\#107](https://github.com/nifcloud/terraform-provider-nifcloud/pull/107) ([aokumasan](https://github.com/aokumasan))
+
 ## [v1.6.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.6.0) (2022-03-30)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.5.1...v1.6.0)
