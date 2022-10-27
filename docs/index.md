@@ -12,7 +12,7 @@ The NIFCLOUD provider is used to interact with the resources supported by
 NIFCLOUD. The provider needs to be configured with the NIFCLOUD credentials before
 it can be used.
 
-You can set environment variable `NIFCLLOUD_ACCESS_KEY_ID` and `NIFCLOUD_SECRET_ACCESS_KEY`
+You can set environment variable `NIFCLOUD_ACCESS_KEY_ID` and `NIFCLOUD_SECRET_ACCESS_KEY`
 
 Use the navigation to the left to read about the available resources.
 
