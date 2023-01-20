@@ -83,7 +83,7 @@ resource "nifcloud_router" "example" {
 }
 
 data "nifcloud_image" "ubuntu" {
-  image_name = "Ubuntu Server 20.04 LTS"
+  image_name = "Ubuntu Server 22.04 LTS"
 }
 ```
 
