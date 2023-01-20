@@ -58,5 +58,5 @@ resource "nifcloud_instance" "basic2" {
 }
 
 data "nifcloud_image" "ubuntu" {
-  image_name = "Ubuntu Server 20.04 LTS"
+  image_name = "Ubuntu Server 22.04 LTS"
 }
