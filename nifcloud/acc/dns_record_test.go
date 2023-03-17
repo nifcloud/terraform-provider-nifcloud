@@ -27,6 +27,38 @@ func init() {
 	})
 }
 
+func TestAcc_DnsRecord_AtSignAsName(t *testing.T) {
+	var record types.ResourceRecordSets
+
+	resourceName := "nifcloud_dns_record.basic"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactory,
+		CheckDestroy:      testAccDnsRecordResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDnsRecord(t, "testdata/dns_record_name.tf"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDnsRecordExists(resourceName, &record),
+					resource.TestCheckResourceAttr(resourceName, "zone_id", dnsZoneName),
+					resource.TestCheckResourceAttr(resourceName, "name", "@"),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "60"),
+					resource.TestCheckResourceAttr(resourceName, "record", "192.0.2.1"),
+					resource.TestCheckResourceAttr(resourceName, "comment", "tfacc-memo"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: testAccDnsRecordImportStateIDFunc(resourceName),
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAcc_DnsRecord_Weight(t *testing.T) {
 	var record types.ResourceRecordSets
 
