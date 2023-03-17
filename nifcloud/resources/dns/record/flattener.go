@@ -31,7 +31,7 @@ func flatten(d *schema.ResourceData, res *dns.ListResourceRecordSetsOutput) erro
 		return err
 	}
 
-	if err := d.Set("name", resourceRecordSet.Name); err != nil {
+	if err := d.Set("name", flattenName(d, &resourceRecordSet)); err != nil {
 		return err
 	}
 
@@ -68,6 +68,13 @@ func flatten(d *schema.ResourceData, res *dns.ListResourceRecordSetsOutput) erro
 	}
 
 	return nil
+}
+
+func flattenName(d *schema.ResourceData, record *types.ResourceRecordSets) interface{} {
+	if *record.Name == d.Get("zone_id") {
+		return "@"
+	}
+	return record.Name
 }
 
 func flattenWeight(record *types.ResourceRecordSets) []map[string]interface{} {
