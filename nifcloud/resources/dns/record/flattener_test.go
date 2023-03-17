@@ -18,7 +18,7 @@ func TestFlatten(t *testing.T) {
 		"resource_path":   "test_resource_path",
 		"resource_domain": "test_resource_domain",
 	}
-	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+	raw := map[string]interface{}{
 		"zone_id": "test_zone_id",
 		"name":    "test_name",
 		"type":    "A",
@@ -34,9 +34,13 @@ func TestFlatten(t *testing.T) {
 		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
-	})
+	}
+	rd := schema.TestResourceDataRaw(t, newSchema(), raw)
 	rd.SetId("test_set_identifier")
+	wantRd := schema.TestResourceDataRaw(t, newSchema(), raw)
+	wantRd.SetId("test_set_identifier")
 
+	notFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
@@ -77,12 +81,12 @@ func TestFlatten(t *testing.T) {
 					},
 				},
 			},
-			want: rd,
+			want: wantRd,
 		},
 		{
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
-				d: wantNotFoundRd,
+				d: notFoundRd,
 				res: &dns.ListResourceRecordSetsOutput{
 					ResourceRecordSets: []types.ResourceRecordSets{},
 				},
@@ -111,7 +115,6 @@ func TestFlatten(t *testing.T) {
 				tt.args.d.SetId("some")
 				gotState = tt.args.d.State()
 			}
-
 			assert.Equal(t, wantState.Attributes, gotState.Attributes)
 		})
 	}
