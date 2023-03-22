@@ -18,7 +18,7 @@ func TestFlatten(t *testing.T) {
 		"resource_path":   "test_resource_path",
 		"resource_domain": "test_resource_domain",
 	}
-	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+	raw := map[string]interface{}{
 		"zone_id": "test_zone_id",
 		"name":    "test_name",
 		"type":    "A",
@@ -34,9 +34,35 @@ func TestFlatten(t *testing.T) {
 		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
-	})
+	}
+	rd := schema.TestResourceDataRaw(t, newSchema(), raw)
 	rd.SetId("test_set_identifier")
+	wantRd := schema.TestResourceDataRaw(t, newSchema(), raw)
+	wantRd.SetId("test_set_identifier")
 
+	rawWithAtSignAsName := map[string]interface{}{
+		"zone_id": "test_zone_id",
+		"name":    "@",
+		"type":    "A",
+		"record":  "192.0.2.1",
+		"ttl":     60,
+		"weighted_routing_policy": []interface{}{map[string]interface{}{
+			"weight": 60,
+		}},
+		"failover_routing_policy": []interface{}{map[string]interface{}{
+			"type":         "PRIMARY",
+			"health_check": []interface{}{healthCheck},
+		}},
+		"default_host":   "test_default_host",
+		"comment":        "test_comment",
+		"set_identifier": "test_set_identifier",
+	}
+	rdWithAtSignAsName := schema.TestResourceDataRaw(t, newSchema(), rawWithAtSignAsName)
+	rdWithAtSignAsName.SetId("test_set_identifier")
+	wantRdWithAtSignAsName := schema.TestResourceDataRaw(t, newSchema(), rawWithAtSignAsName)
+	wantRdWithAtSignAsName.SetId("test_set_identifier")
+
+	notFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
 	type args struct {
@@ -77,12 +103,43 @@ func TestFlatten(t *testing.T) {
 					},
 				},
 			},
-			want: rd,
+			want: wantRd,
+		},
+		{
+			name: "flattens the response whose name value is equal to the zone_id",
+			args: args{
+				d: rdWithAtSignAsName,
+				res: &dns.ListResourceRecordSetsOutput{
+					ResourceRecordSets: []types.ResourceRecordSets{
+						{
+							Failover:          nifcloud.String("PRIMARY"),
+							Name:              nifcloud.String("test_zone_id"),
+							SetIdentifier:     nifcloud.String("test_set_identifier"),
+							TTL:               nifcloud.Int32(60),
+							Type:              nifcloud.String("A"),
+							Weight:            nifcloud.Int32(60),
+							XniftyComment:     nifcloud.String("test_comment"),
+							XniftyDefaultHost: nifcloud.String("test_default_host"),
+							ResourceRecords: []types.ResourceRecords{{
+								Value: nifcloud.String("192.0.2.1"),
+							}},
+							XniftyHealthCheckConfig: &types.XniftyHealthCheckConfig{
+								FullyQualifiedDomainName: nifcloud.String("test_resource_domain"),
+								IPAddress:                nifcloud.String("192.0.2.1"),
+								Port:                     nifcloud.Int32(8080),
+								Protocol:                 nifcloud.String("HTTP"),
+								ResourcePath:             nifcloud.String("test_resource_path"),
+							},
+						},
+					},
+				},
+			},
+			want: wantRdWithAtSignAsName,
 		},
 		{
 			name: "flattens the response even when the resource has been removed externally",
 			args: args{
-				d: wantNotFoundRd,
+				d: notFoundRd,
 				res: &dns.ListResourceRecordSetsOutput{
 					ResourceRecordSets: []types.ResourceRecordSets{},
 				},
@@ -111,7 +168,6 @@ func TestFlatten(t *testing.T) {
 				tt.args.d.SetId("some")
 				gotState = tt.args.d.State()
 			}
-
 			assert.Equal(t, wantState.Attributes, gotState.Attributes)
 		})
 	}

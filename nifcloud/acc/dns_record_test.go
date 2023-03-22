@@ -27,6 +27,39 @@ func init() {
 	})
 }
 
+func TestAcc_DnsRecord_AtSignAsName(t *testing.T) {
+	var record types.ResourceRecordSets
+
+	resourceName := "nifcloud_dns_record.basic"
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactory,
+		CheckDestroy:      testAccDnsRecordResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDnsRecord(t, "testdata/dns_record_name.tf"),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDnsRecordExists(resourceName, &record),
+					testAccCheckDnsRecordNameValues(&record),
+					resource.TestCheckResourceAttr(resourceName, "zone_id", dnsZoneName),
+					resource.TestCheckResourceAttr(resourceName, "name", "@"),
+					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckResourceAttr(resourceName, "ttl", "60"),
+					resource.TestCheckResourceAttr(resourceName, "record", "192.0.2.1"),
+					resource.TestCheckResourceAttr(resourceName, "comment", "tfacc-memo"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateIdFunc: testAccDnsRecordImportStateIDFunc(resourceName),
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestAcc_DnsRecord_Weight(t *testing.T) {
 	var record types.ResourceRecordSets
 
@@ -142,6 +175,32 @@ func testAccCheckDnsRecordExists(n string, dnsRecord *types.ResourceRecordSets) 
 		}
 
 		*dnsRecord = foundDnsRecord
+		return nil
+	}
+}
+
+func testAccCheckDnsRecordNameValues(dnsRecord *types.ResourceRecordSets) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if nifcloud.ToString(dnsRecord.Name) != dnsZoneName {
+			return fmt.Errorf("bad name state, expected %s, got: %#v", dnsZoneName, dnsRecord.Name)
+		}
+
+		if nifcloud.ToString(dnsRecord.Type) != "A" {
+			return fmt.Errorf("bad type state, expected \"A\", got: %#v", dnsRecord.Type)
+		}
+
+		if nifcloud.ToInt32(dnsRecord.TTL) != 60 {
+			return fmt.Errorf("bad ttl state, expected 60, got: %#v", dnsRecord.TTL)
+		}
+
+		if nifcloud.ToString(dnsRecord.ResourceRecords[0].Value) != "192.0.2.1" {
+			return fmt.Errorf("bad resource_records.0.value state, expected \"192.0.2.1\", got: %#v", dnsRecord.ResourceRecords[0].Value)
+		}
+
+		if nifcloud.ToString(dnsRecord.XniftyComment) != "tfacc-memo" {
+			return fmt.Errorf("bad x_nifty_comment state, expected \"tfacc-memo\", got: %#v", dnsRecord.XniftyComment)
+		}
+
 		return nil
 	}
 }
