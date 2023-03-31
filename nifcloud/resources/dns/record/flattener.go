@@ -74,6 +74,9 @@ func flattenName(d *schema.ResourceData, record *types.ResourceRecordSets) inter
 	if *record.Name == d.Get("zone_id") {
 		return "@"
 	}
+	if *record.Name == fmt.Sprintf("%s.%s", d.Get("name"), d.Get("zone_id")) {
+		return d.Get("name")
+	}
 	return record.Name
 }
 
