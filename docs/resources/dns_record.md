@@ -80,8 +80,8 @@ In addition to the arguments listed above, the following computed attributes are
 
 ## Import
 
-nifcloud_dns_record can be imported using the `set_identifier`, `zone_id`.
-separated by underscores ( _ ). All parts are required.
+nifcloud_dns_record can be imported using the `set_identifier`, `zone_id` and `name`.
+separated by underscores ( _ ). All parts are required. `name` should be matched with the value of `name` in tf files.
 
 ```
 $ terraform import nifcloud_dns_record.example XXXXXXXXX_example.test
