@@ -75,12 +75,12 @@ func TestAcc_DnsRecord_ShorthandName(t *testing.T) {
 				Config: testAccDnsRecord(t, "testdata/dns_record_shorthand_name.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckDnsRecordExists(resourceName, &record),
-					testAccCheckDnsRecordNameValues(&record),
+					testAccCheckDnsRecordNameValuesWhenRequestedWithShorthandName(&record),
 					resource.TestCheckResourceAttr(resourceName, "zone_id", dnsZoneName),
 					resource.TestCheckResourceAttr(resourceName, "name", dnsRecordShorthandName),
-					resource.TestCheckResourceAttr(resourceName, "type", "A"),
+					resource.TestCheckResourceAttr(resourceName, "type", "TXT"),
 					resource.TestCheckResourceAttr(resourceName, "ttl", "60"),
-					resource.TestCheckResourceAttr(resourceName, "record", "192.0.2.1"),
+					resource.TestCheckResourceAttr(resourceName, "record", "tfacc"),
 					resource.TestCheckResourceAttr(resourceName, "comment", "tfacc-memo"),
 				),
 			},
@@ -239,22 +239,23 @@ func testAccCheckDnsRecordZoneIdAsNameValues(dnsRecord *types.ResourceRecordSets
 	}
 }
 
-func testAccCheckDnsRecordNameValues(dnsRecord *types.ResourceRecordSets) resource.TestCheckFunc {
+func testAccCheckDnsRecordNameValuesWhenRequestedWithShorthandName(dnsRecord *types.ResourceRecordSets) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if nifcloud.ToString(dnsRecord.Name) != dnsRecordName {
-			return fmt.Errorf("bad name state, expected %s, got: %#v", dnsRecordName, dnsRecord.Name)
+		expectedDnsRecordName := fmt.Sprintf("%s.%s", dnsRecordShorthandName, dnsZoneName)
+		if nifcloud.ToString(dnsRecord.Name) != expectedDnsRecordName {
+			return fmt.Errorf("bad name state, expected %s, got: %#v", expectedDnsRecordName, dnsRecord.Name)
 		}
 
-		if nifcloud.ToString(dnsRecord.Type) != "A" {
-			return fmt.Errorf("bad type state, expected \"A\", got: %#v", dnsRecord.Type)
+		if nifcloud.ToString(dnsRecord.Type) != "TXT" {
+			return fmt.Errorf("bad type state, expected \"TXT\", got: %#v", dnsRecord.Type)
 		}
 
 		if nifcloud.ToInt32(dnsRecord.TTL) != 60 {
 			return fmt.Errorf("bad ttl state, expected 60, got: %#v", dnsRecord.TTL)
 		}
 
-		if nifcloud.ToString(dnsRecord.ResourceRecords[0].Value) != "192.0.2.1" {
-			return fmt.Errorf("bad resource_records.0.value state, expected \"192.0.2.1\", got: %#v", dnsRecord.ResourceRecords[0].Value)
+		if nifcloud.ToString(dnsRecord.ResourceRecords[0].Value) != "tfacc" {
+			return fmt.Errorf("bad resource_records.0.value state, expected \"tfacc\", got: %#v", dnsRecord.ResourceRecords[0].Value)
 		}
 
 		if nifcloud.ToString(dnsRecord.XniftyComment) != "tfacc-memo" {

@@ -40,7 +40,7 @@ func validateDnsRecordImportString(importStr string) ([]string, error) {
 func populateDnsRecordFromImport(d *schema.ResourceData, importParts []string) error {
 	setIdentifier := importParts[0]
 	zoneID := importParts[1]
-	name := importParts[2]
+	name := strings.Join(importParts[2:], "_")
 
 	if err := d.Set("set_identifier", setIdentifier); err != nil {
 		return err

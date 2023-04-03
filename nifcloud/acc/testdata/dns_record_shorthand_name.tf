@@ -1,9 +1,9 @@
 resource "nifcloud_dns_record" "basic" {
   zone_id        = nifcloud_dns_zone.basic.id
   name           = var.dns_record_shorthand_name
-  type           = "A"
+  type           = "TXT"
   ttl            = 60
-  record         = "192.0.2.1"
+  record         = "tfacc"
   comment        = "tfacc-memo"
 }
 
