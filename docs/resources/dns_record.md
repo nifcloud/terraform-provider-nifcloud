@@ -84,5 +84,5 @@ nifcloud_dns_record can be imported using the `set_identifier`, `zone_id` and `n
 separated by underscores ( _ ). All parts are required. `name` should be matched with the value of `name` in tf files.
 
 ```
-$ terraform import nifcloud_dns_record.example XXXXXXXXX_example.test
+$ terraform import nifcloud_dns_record.example XXXXXXXXX_example.test_@
 ```
