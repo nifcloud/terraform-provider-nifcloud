@@ -20,12 +20,30 @@ terraform {
   }
 }
 
-resource "nifcloud_dns_record" "example" {
+resource "nifcloud_dns_record" "example1" {
   zone_id = nifcloud_dns_zone.example.id
-  name    = "test.example.test"
+  name    = "test1"
   type    = "A"
   ttl     = 300
   record  = "192.168.0.1"
+  comment = "memo"
+}
+
+resource "nifcloud_dns_record" "example2" {
+  zone_id = nifcloud_dns_zone.example.id
+  name    = "test2.example.test"
+  type    = "A"
+  ttl     = 300
+  record  = "192.168.0.2"
+  comment = "memo"
+}
+
+resource "nifcloud_dns_record" "example3" {
+  zone_id = nifcloud_dns_zone.example.id
+  name    = "@"
+  type    = "A"
+  ttl     = 300
+  record  = "192.168.0.3"
   comment = "memo"
 }
 
@@ -80,9 +98,9 @@ In addition to the arguments listed above, the following computed attributes are
 
 ## Import
 
-nifcloud_dns_record can be imported using the `set_identifier`, `zone_id`.
-separated by underscores ( _ ). All parts are required.
+nifcloud_dns_record can be imported using the `set_identifier`, `zone_id` and `name`.
+separated by underscores ( _ ). All parts are required. `name` should be matched with the value of `name` in tf files.
 
 ```
-$ terraform import nifcloud_dns_record.example XXXXXXXXX_example.test
+$ terraform import nifcloud_dns_record.example XXXXXXXXX_example.test_test.example.test
 ```
