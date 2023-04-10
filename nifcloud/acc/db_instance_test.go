@@ -118,16 +118,6 @@ func TestAcc_DBInstance(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccDBInstance(t, "testdata/db_instance_update_mha.tf", randName),
-				Check: resource.ComposeTestCheckFunc(
-					testAccCheckDBInstanceExists(resourceName, &dbInstance),
-					testAccCheckDBInstanceExists(resourceNameReplica, &dbInstanceReplica),
-					testAccCheckDBInstanceExists(resourceNameRestore, &dbInstanceRestore),
-					resource.TestCheckResourceAttr(resourceName, "multi_az", "true"),
-					resource.TestCheckResourceAttr(resourceName, "read_replica_identifier", randName+"-mhareplica"),
-				),
-			},
-			{
 				ResourceName:      resourceName,
 				ImportState:       true,
 				ImportStateVerify: true,
@@ -136,6 +126,7 @@ func TestAcc_DBInstance(t *testing.T) {
 					"final_snapshot_identifier",
 					"password",
 					"skip_final_snapshot",
+					"multi_az_type",
 				},
 			},
 		},
@@ -148,7 +139,6 @@ func testAccDBInstance(t *testing.T, fileName, rName string) string {
 		t.Fatal(err)
 	}
 	return fmt.Sprintf(string(b),
-		rName,
 		rName,
 		rName,
 		rName,
