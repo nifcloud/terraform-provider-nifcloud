@@ -21,7 +21,7 @@ func TestAccDatasourceImage_basic(t *testing.T) {
 				Config: testAccImageDataSource(t, "testdata/data_image.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckImageDataSourceID(datasourceName),
-					resource.TestCheckResourceAttr(datasourceName, "image_id", "221"),
+					resource.TestCheckResourceAttr(datasourceName, "image_id", "283"),
 					resource.TestCheckResourceAttr(datasourceName, "image_name", "Ubuntu Server 22.04 LTS"),
 					resource.TestCheckResourceAttr(datasourceName, "owner", "niftycloud"),
 				),

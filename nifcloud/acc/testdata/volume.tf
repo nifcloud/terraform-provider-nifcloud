@@ -13,14 +13,14 @@ resource "nifcloud_volume" "basic" {
 }
 
 resource "nifcloud_instance" "basic" {
-  instance_id             = "%s"
-  description             = "memo"
-  availability_zone       = "east-21"
-  accounting_type         = "2"
-  image_id                = data.nifcloud_image.ubuntu.id
-  instance_type           = "mini"
-  key_name                = nifcloud_key_pair.basic.key_name
-  security_group          = nifcloud_security_group.basic.group_name
+  instance_id       = "%s"
+  description       = "memo"
+  availability_zone = "east-21"
+  accounting_type   = "2"
+  image_id          = data.nifcloud_image.ubuntu.id
+  instance_type     = "small"
+  key_name          = nifcloud_key_pair.basic.key_name
+  security_group    = nifcloud_security_group.basic.group_name
 
   network_interface {
     network_id = "net-COMMON_PRIVATE"

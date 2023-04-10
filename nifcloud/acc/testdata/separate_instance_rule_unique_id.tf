@@ -25,7 +25,7 @@ resource "nifcloud_instance" "basic1" {
   image_id          = data.nifcloud_image.ubuntu.id
   key_name          = nifcloud_key_pair.basic.key_name
   security_group    = nifcloud_security_group.basic.group_name
-  instance_type     = "mini"
+  instance_type     = "small"
   accounting_type   = "2"
 
   network_interface {
@@ -44,7 +44,7 @@ resource "nifcloud_instance" "basic2" {
   image_id          = data.nifcloud_image.ubuntu.id
   key_name          = nifcloud_key_pair.basic.key_name
   security_group    = nifcloud_security_group.basic.group_name
-  instance_type     = "mini"
+  instance_type     = "small"
   accounting_type   = "2"
 
   network_interface {
