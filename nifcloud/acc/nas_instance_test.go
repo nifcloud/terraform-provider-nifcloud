@@ -123,12 +123,7 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "nas_security_group_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "master_username", "tfacc"),
 					resource.TestCheckResourceAttr(resourceName, "master_user_password", "tfaccpass"),
-					resource.TestCheckResourceAttr(resourceName, "authentication_type", "1"),
-					resource.TestCheckResourceAttr(resourceName, "directory_service_domain_name", "tfacc.local"),
-					resource.TestCheckResourceAttr(resourceName, "directory_service_administrator_name", "Administrator"),
-					resource.TestCheckResourceAttr(resourceName, "directory_service_administrator_password", "tfaccpass+555"),
-					resource.TestCheckResourceAttr(resourceName, "domain_controllers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "domain_controllers.0.hostname", "ad01"),
+					resource.TestCheckResourceAttr(resourceName, "authentication_type", "0"),
 					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
 					resource.TestCheckResourceAttrSet(resourceName, "private_ip_address"),
 				),
@@ -138,8 +133,6 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
-					"directory_service_administrator_name",
-					"directory_service_administrator_password",
 					"master_user_password",
 				},
 			},
@@ -164,16 +157,7 @@ func testAccNASInstanceForCIFS(t *testing.T, fileName, rName string) string {
 		t.Fatal(err)
 	}
 
-	userData, err := ioutil.ReadFile("testdata/scripts/provision_ad_server.sh")
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	return fmt.Sprintf(string(b),
-		rName,
-		rName,
-		rName,
-		string(userData),
 		rName,
 		rName,
 	)
@@ -385,20 +369,8 @@ func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *types.NASInstances
 			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.ToString(nasInstance.MasterUsername))
 		}
 
-		if nifcloud.ToInt32(nasInstance.AuthenticationType) != 1 {
-			return fmt.Errorf("bad authentication_type state, expected 1, got: %#v", nifcloud.ToInt32(nasInstance.AuthenticationType))
-		}
-
-		if nifcloud.ToString(nasInstance.DirectoryServiceDomainName) != "tfacc.local" {
-			return fmt.Errorf("bad directory_service_domain_name state, expected \"tfacc.local\" got: %#v", nifcloud.ToString(nasInstance.DirectoryServiceDomainName))
-		}
-
-		if len(nasInstance.DomainControllers) != 1 {
-			return fmt.Errorf("bad domain_controllers state, expected length is 1, got: %d", len(nasInstance.DomainControllers))
-		}
-
-		if nifcloud.ToString(nasInstance.DomainControllers[0].Hostname) != "ad01" {
-			return fmt.Errorf("bad domain_controllers.0.hostname state, expected \"ad01\" got: %#v", nifcloud.ToString(nasInstance.DomainControllers[0].Hostname))
+		if nifcloud.ToInt32(nasInstance.AuthenticationType) != 0 {
+			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.ToInt32(nasInstance.AuthenticationType))
 		}
 
 		return nil
