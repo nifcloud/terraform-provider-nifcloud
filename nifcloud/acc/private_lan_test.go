@@ -173,10 +173,11 @@ func testSweepPrivateLan(region string) error {
 
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, n := range res.PrivateLanSet {
-		if strings.HasPrefix(nifcloud.ToString(n.Description), prefix) {
+		privateLan := n
+		if strings.HasPrefix(nifcloud.ToString(privateLan.Description), prefix) {
 			eg.Go(func() error {
 				_, err := svc.NiftyDeletePrivateLan(ctx, &computing.NiftyDeletePrivateLanInput{
-					NetworkId: n.NetworkId,
+					NetworkId: privateLan.NetworkId,
 				})
 				return err
 			})
