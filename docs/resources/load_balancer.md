@@ -71,7 +71,8 @@ In addition to the arguments listed above, the following computed attributes are
 
 ## Import
 
-nifcloud_load_balancer can be imported using the `parameter corresponding to LBNAME_LBPORT_INSTANCEPORT`, e.g.
+nifcloud_load_balancer can be imported using the `load_balancer_name`, `load_balancer_port` , `instance_port`.
+separated by underscores ( `_` ). All parts are required.
 
 ```
 $ terraform import nifcloud_load_balancer.example example_8000_8000
