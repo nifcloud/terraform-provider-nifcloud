@@ -26,7 +26,6 @@ resource "nifcloud_db_instance" "basic" {
   skip_final_snapshot            = false
   db_security_group_name         = nifcloud_db_security_group.upd.id
   parameter_group_name           = nifcloud_db_parameter_group.upd.id
-  read_replica_identifier        = "%s-mhareplica"
   apply_immediately              = true
 }
 

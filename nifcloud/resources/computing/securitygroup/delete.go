@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
@@ -29,7 +29,7 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	}
 
 	_, err := svc.DeleteSecurityGroup(ctx, input)
-	err = resource.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+	err = retry.RetryContext(ctx, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
 
 		if err != nil {
 			var awsErr smithy.APIError
@@ -39,9 +39,9 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.Inoperable.SecurityGroup.InUse" {
 				// If it is a dependency violation, we want to retry
-				return resource.RetryableError(err)
+				return retry.RetryableError(err)
 			}
-			return resource.NonRetryableError(err)
+			return retry.NonRetryableError(err)
 		}
 		return nil
 	})

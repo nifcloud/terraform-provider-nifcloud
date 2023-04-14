@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/smithy-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
@@ -46,13 +46,13 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 			_, err = svc.RevokeSecurityGroupIngress(ctx, input)
 
-			err = resource.RetryContext(ctxt, d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+			err = retry.RetryContext(ctxt, d.Timeout(schema.TimeoutDelete), func() *retry.RetryError {
 				if err != nil {
 					var awsErr smithy.APIError
 					if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.SecurityGroupIngress" {
 						return nil
 					}
-					return resource.RetryableError(err)
+					return retry.RetryableError(err)
 				}
 				return nil
 			})

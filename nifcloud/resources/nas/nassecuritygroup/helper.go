@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
@@ -14,11 +14,11 @@ import (
 func waitUntilNASSecurityGroupRuleRevoked(ctx context.Context, d *schema.ResourceData, svc *nas.Client, rule map[string]interface{}) error {
 	const timeout = 200 * time.Second
 
-	err := resource.RetryContext(ctx, timeout, func() *resource.RetryError {
+	err := retry.RetryContext(ctx, timeout, func() *retry.RetryError {
 		input := expandDescribeNASSecurityGroupsInput(d)
 		res, err := svc.DescribeNASSecurityGroups(ctx, input)
 		if err != nil {
-			return resource.NonRetryableError(err)
+			return retry.NonRetryableError(err)
 		}
 
 		targetExists := false
@@ -44,7 +44,7 @@ func waitUntilNASSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resourc
 			return nil
 		}
 
-		return resource.RetryableError(fmt.Errorf("Ecpected rule to revoked but was in state revoking"))
+		return retry.RetryableError(fmt.Errorf("Ecpected rule to revoked but was in state revoking"))
 	})
 
 	return err

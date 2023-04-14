@@ -52,7 +52,7 @@ func TestAcc_Instance(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "accounting_type", "2"),
 					resource.TestCheckResourceAttr(resourceName, "disable_api_termination", "true"),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "221"),
-					resource.TestCheckResourceAttr(resourceName, "instance_type", "mini"),
+					resource.TestCheckResourceAttr(resourceName, "instance_type", "small"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1.network_id", "net-COMMON_GLOBAL"),
 					resource.TestCheckResourceAttrSet(resourceName, "network_interface.1.ip_address"),
@@ -217,8 +217,8 @@ func testAccCheckInstanceValues(instance *types.InstancesSet, rName string) reso
 			return fmt.Errorf("bad instance_id state,  expected \"%s\", got: %#v", rName, instance.InstanceId)
 		}
 
-		if nifcloud.ToString(instance.InstanceType) != "mini" {
-			return fmt.Errorf("bad instance_type state,  expected \"mini\", got: %#v", instance.InstanceType)
+		if nifcloud.ToString(instance.InstanceType) != "small" {
+			return fmt.Errorf("bad instance_type state,  expected \"small\", got: %#v", instance.InstanceType)
 		}
 
 		if nifcloud.ToString(instance.KeyName) != rName {

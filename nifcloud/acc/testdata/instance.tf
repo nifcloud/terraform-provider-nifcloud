@@ -9,7 +9,7 @@ resource "nifcloud_instance" "basic" {
   accounting_type         = "2"
   disable_api_termination = true
   image_id                = "221"
-  instance_type           = "mini"
+  instance_type           = "small"
   key_name                = nifcloud_key_pair.basic.key_name
   security_group          = nifcloud_security_group.basic.group_name
   user_data               = "#!/bin/bash"
