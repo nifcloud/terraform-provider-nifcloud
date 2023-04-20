@@ -1,5 +1,21 @@
 # Changelog
 
+## [v1.8.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.8.0) (2023-04-14)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.7.0...v1.8.0)
+
+**Closed issues:**
+
+- nifcloud\_dns\_record: Can not recognized @ record [\#111](https://github.com/nifcloud/terraform-provider-nifcloud/issues/111)
+
+**Merged pull requests:**
+
+- Feature/update nifcloud [\#115](https://github.com/nifcloud/terraform-provider-nifcloud/pull/115) ([fuku2014](https://github.com/fuku2014))
+- Support dns record name shorthand [\#113](https://github.com/nifcloud/terraform-provider-nifcloud/pull/113) ([SogoKato](https://github.com/SogoKato))
+- Change behaviour of dns record flattener [\#112](https://github.com/nifcloud/terraform-provider-nifcloud/pull/112) ([SogoKato](https://github.com/SogoKato))
+- Update examples for change Ubuntu verison [\#110](https://github.com/nifcloud/terraform-provider-nifcloud/pull/110) ([fuku2014](https://github.com/fuku2014))
+- Fix doc typo nifcloud [\#109](https://github.com/nifcloud/terraform-provider-nifcloud/pull/109) ([tanopanta](https://github.com/tanopanta))
+
 ## [v1.7.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.7.0) (2022-09-01)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.6.0...v1.7.0)
