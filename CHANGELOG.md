@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.8.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.8.0) (2023-04-14)
+## [v1.8.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.8.0) (2023-04-20)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.7.0...v1.8.0)
 
@@ -11,6 +11,7 @@
 **Merged pull requests:**
 
 - Feature/update nifcloud [\#115](https://github.com/nifcloud/terraform-provider-nifcloud/pull/115) ([fuku2014](https://github.com/fuku2014))
+- Fix doc of load\_balancer\#import [\#114](https://github.com/nifcloud/terraform-provider-nifcloud/pull/114) ([ystkfujii](https://github.com/ystkfujii))
 - Support dns record name shorthand [\#113](https://github.com/nifcloud/terraform-provider-nifcloud/pull/113) ([SogoKato](https://github.com/SogoKato))
 - Change behaviour of dns record flattener [\#112](https://github.com/nifcloud/terraform-provider-nifcloud/pull/112) ([SogoKato](https://github.com/SogoKato))
 - Update examples for change Ubuntu verison [\#110](https://github.com/nifcloud/terraform-provider-nifcloud/pull/110) ([fuku2014](https://github.com/fuku2014))
