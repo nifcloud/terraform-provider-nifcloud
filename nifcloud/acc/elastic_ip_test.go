@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -70,7 +70,7 @@ func TestAcc_ElasticIP(t *testing.T) {
 }
 
 func testAccElasticIP(t *testing.T, fileName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

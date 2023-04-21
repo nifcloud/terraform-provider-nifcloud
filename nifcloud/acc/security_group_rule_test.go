@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -119,7 +119,7 @@ func TestAcc_SecurityGroupRule_Source(t *testing.T) {
 }
 
 func testAccSecurityGroupRule(t *testing.T, fileName, groupName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

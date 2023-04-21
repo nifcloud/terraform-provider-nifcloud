@@ -3,7 +3,7 @@ package acc
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -55,7 +55,7 @@ func TestAcc_ESSEmail(t *testing.T) {
 }
 
 func testAccESSEmail(t *testing.T, fileName, email string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -78,7 +78,7 @@ func TestAcc_WebProxy(t *testing.T) {
 }
 
 func testAccWebProxy(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

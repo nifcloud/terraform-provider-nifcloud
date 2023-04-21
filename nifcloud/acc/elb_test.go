@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -142,7 +142,7 @@ func TestAcc_ELB(t *testing.T) {
 }
 
 func testAccELB(t *testing.T, fileName, rName, certificate, key, ca string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

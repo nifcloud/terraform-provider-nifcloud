@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/aws/smithy-go"
@@ -84,7 +84,7 @@ func TestAcc_NatTable(t *testing.T) {
 }
 
 func testAccNatTable(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

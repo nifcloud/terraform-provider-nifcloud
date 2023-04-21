@@ -3,7 +3,7 @@ package acc
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
@@ -47,7 +47,7 @@ func TestAcc_ESSDomainDkim(t *testing.T) {
 }
 
 func testAccESSDomainDkim(t *testing.T, fileName, domain string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

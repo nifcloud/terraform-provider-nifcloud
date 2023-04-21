@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -174,7 +173,7 @@ func TestAcc_DnsRecord_Failover(t *testing.T) {
 }
 
 func testAccDnsRecord(t *testing.T, fileName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"sort"
 	"strings"
 	"testing"
@@ -73,7 +73,7 @@ func TestAcc_NASSecurityGroup(t *testing.T) {
 }
 
 func testAccNASSecurityGroup(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}
