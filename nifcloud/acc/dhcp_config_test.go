@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/aws/smithy-go"
@@ -69,7 +69,7 @@ func TestAcc_DhcpConfig(t *testing.T) {
 }
 
 func testAccDhcpConfig(t *testing.T, fileName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

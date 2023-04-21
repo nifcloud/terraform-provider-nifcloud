@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -123,7 +123,7 @@ func TestAcc_VpnConnection_Id_No_Tunnel(t *testing.T) {
 }
 
 func testAccVpnConnection(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

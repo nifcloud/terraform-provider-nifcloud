@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -74,7 +74,7 @@ func TestAcc_PrivateLan(t *testing.T) {
 }
 
 func testAccPrivateLan(t *testing.T, fileName string, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -139,7 +139,7 @@ func TestAcc_Instance_windows(t *testing.T) {
 }
 
 func testAccInstance(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +151,7 @@ func testAccInstance(t *testing.T, fileName, rName string) string {
 }
 
 func testAccInstanceWindows(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

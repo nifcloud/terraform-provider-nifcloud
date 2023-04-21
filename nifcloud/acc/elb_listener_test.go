@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -95,7 +95,7 @@ func TestAcc_ELBListener(t *testing.T) {
 }
 
 func testAccELBListener(t *testing.T, fileName, rName, certificate, key, ca string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}

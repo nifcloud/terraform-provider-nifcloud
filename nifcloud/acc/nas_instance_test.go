@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -141,7 +141,7 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 }
 
 func testAccNASInstanceForNFS(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -152,7 +152,7 @@ func testAccNASInstanceForNFS(t *testing.T, fileName, rName string) string {
 }
 
 func testAccNASInstanceForCIFS(t *testing.T, fileName, rName string) string {
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
 	}
