@@ -47,7 +47,7 @@ test:
 	@ go test ./$(PROVIDER)/... -timeout 120s -p 4 -race -cover -coverprofile=coverage.out
 .PHONY: testacc
 testacc:
-	@ TF_ACC=1 go test ./$(PROVIDER)/acc/... -v -count 1 -parallel 7 -timeout 360m -run Test -coverprofile=coverage.out -coverpkg=./...
+	@ TF_ACC=1 go test ./$(PROVIDER)/acc/... -v -count 1 -parallel 4 -timeout 360m -run Test -coverprofile=coverage.out -coverpkg=./...
 .PHONY: sweep
 sweep:
 	@ echo "-> WARNING: This will destroy infrastructure. Use only in development accounts."
