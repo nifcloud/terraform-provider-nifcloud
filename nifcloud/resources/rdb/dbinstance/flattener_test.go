@@ -30,7 +30,7 @@ func TestFlatten(t *testing.T) {
 		"backup_window":                  "test_backup_window",
 		"maintenance_window":             "test_maintenance_window",
 		"multi_az":                       true,
-		"multi_az_type":                  1,
+		"multi_az_type":                  0,
 		"port":                           1,
 		"publicly_accessible":            true,
 		"db_security_group_name":         "test_db_security_group_name",
@@ -45,7 +45,6 @@ func TestFlatten(t *testing.T) {
 		"master_private_address":         "test_master_private_address",
 		"slave_private_address":          "test_slave_private_address",
 		"read_replica_private_address":   "test_read_replica_private_address",
-		"read_replica_identifier":        "test_read_replica_identifier",
 		"apply_immediately":              true,
 	})
 	rd.SetId("test_identifier")
@@ -90,7 +89,7 @@ func TestFlatten(t *testing.T) {
 							MultiAZ:                               nifcloud.Bool(true),
 							NextMonthAccountingType:               nifcloud.String("1"),
 							NiftyMasterPrivateAddress:             nifcloud.String("test_master_private_address"),
-							NiftyMultiAZType:                      nifcloud.String("1"),
+							NiftyMultiAZType:                      nifcloud.String("0"),
 							NiftyNetworkId:                        nifcloud.String("test_network_id"),
 							NiftySlavePrivateAddress:              nifcloud.String("test_slave_private_address"),
 							NiftyStorageType:                      nifcloud.Int32(1),

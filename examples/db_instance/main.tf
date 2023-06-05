@@ -28,11 +28,10 @@ resource "nifcloud_db_instance" "example" {
   backup_window                  = "00:00-09:00"
   maintenance_window             = "sun:22:00-sun:22:30"
   multi_az                       = true
-  multi_az_type                  = 1
+  multi_az_type                  = 0
   port                           = 3306
   publicly_accessible            = true
   final_snapshot_identifier      = "example"
   skip_final_snapshot            = false
-  read_replica_identifier        = "example-read"
   apply_immediately              = true
 }

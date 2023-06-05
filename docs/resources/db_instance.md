@@ -47,7 +47,6 @@ resource "nifcloud_db_instance" "example" {
   publicly_accessible            = true
   final_snapshot_identifier      = "example"
   skip_final_snapshot            = false
-  read_replica_identifier        = "example-read"
   apply_immediately              = true
 }
 
@@ -69,7 +68,7 @@ The following arguments are supported:
 * `custom_binlog_retention_period` - (Optional) The flag of set binary log retention period. Only MySQL can be specified
 * `db_name` - (Optional) The name of the database to create when the DB instance is created. If this parameter is not specified, no database is created.
 * `db_security_group_name` - (Optional) The security group name to associate with; which can be managed using the nifcloud_db_security_group resource.
-* `engine` - (Optional) The database engine. `MySQL` or `postgres` or `MariaDB`
+* `engine` - (Optional) The database engine. `MySQL` or `postgres`
 * `engine_version` - (Optional) The database engine version.
 * `final_snapshot_identifier` - (Optional) The name of your final DB snapshot when this DB instance is deleted. Must be provided if `skip_final_snapshot` is set to false.
 * `identifier` - (Required) The name of the DB instance.
@@ -77,13 +76,12 @@ The following arguments are supported:
 * `maintenance_window` - (Optional) The weekly time range (in UTC) the instance maintenance window. Example: `Sun:05:00-Sun:06:00`
 * `master_private_address` - (Optional) Private IP address for master DB.
 * `multi_az` - (Optional) If the DB instance is multi AZ enabled.
-* `multi_az_type` - (Optional) The type of multi AZ. (0: Data priority, 1: Performance priority) default `0`
+* `multi_az_type` - (Optional) The type of multi AZ. (0: Data priority) default `0`
 * `network_id` - (Optional) The id of private lan.
 * `parameter_group_name` - (Optional) Name of the DB parameter group to associate; which can be managed using the nifcloud_db_parameter_group resource.
 * `password` - (Optional) Password for the master DB user.
 * `port` - (Optional) The database port.
 * `publicly_accessible` - (Optional) Bool to control if instance is publicly accessible. Default is `true`
-* `read_replica_identifier` - (Optional) The DB instance name for read replica.
 * `read_replica_private_address` - (Optional) Private IP address for read replica.
 * `replicate_source_db` - (Optional) Specifies that this resource is a Replicate database, and to use this value as the source database.
 * `restore_to_point_in_time` - (Optional) A configuration block for restoring a DB instance to an arbitrary point in time See [this](#restore-to-point-in-time).
