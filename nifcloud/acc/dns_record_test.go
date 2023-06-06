@@ -393,12 +393,11 @@ func testSweepDnsRecord(region string) error {
 						RequestChange: &types.RequestChange{
 							Action: types.ActionOfChangeResourceRecordSetsRequestForChangeResourceRecordSetsDelete,
 							RequestResourceRecordSet: &types.RequestResourceRecordSet{
-								Name:              resourceRecordSet.Name,
-								SetIdentifier:     resourceRecordSet.SetIdentifier,
-								TTL:               resourceRecordSet.TTL,
-								Type:              types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets(nifcloud.ToString(resourceRecordSet.Type)),
-								XniftyComment:     resourceRecordSet.XniftyComment,
-								XniftyDefaultHost: resourceRecordSet.XniftyDefaultHost,
+								Name:          resourceRecordSet.Name,
+								SetIdentifier: resourceRecordSet.SetIdentifier,
+								TTL:           resourceRecordSet.TTL,
+								Type:          types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets(nifcloud.ToString(resourceRecordSet.Type)),
+								XniftyComment: resourceRecordSet.XniftyComment,
 								ListOfRequestResourceRecords: []types.RequestResourceRecords{{
 									RequestResourceRecord: &types.RequestResourceRecord{
 										Value: resourceRecordSet.ResourceRecords[0].Value,

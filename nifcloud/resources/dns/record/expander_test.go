@@ -31,7 +31,6 @@ func TestExpandCreateChangeResourceRecordSetsInput(t *testing.T) {
 			"type":         "PRIMARY",
 			"health_check": []interface{}{healthCheck},
 		}},
-		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
 	})
@@ -51,14 +50,13 @@ func TestExpandCreateChangeResourceRecordSetsInput(t *testing.T) {
 						RequestChange: &types.RequestChange{
 							Action: types.ActionOfChangeResourceRecordSetsRequestForChangeResourceRecordSetsCreate,
 							RequestResourceRecordSet: &types.RequestResourceRecordSet{
-								Failover:          types.FailoverOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("PRIMARY"),
-								Name:              nifcloud.String("test_name"),
-								SetIdentifier:     nifcloud.String("test_set_identifier"),
-								TTL:               nifcloud.Int32(60),
-								Type:              types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("A"),
-								Weight:            nifcloud.Int32(60),
-								XniftyComment:     nifcloud.String("test_comment"),
-								XniftyDefaultHost: nifcloud.String("test_default_host"),
+								Failover:      types.FailoverOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("PRIMARY"),
+								Name:          nifcloud.String("test_name"),
+								SetIdentifier: nifcloud.String("test_set_identifier"),
+								TTL:           nifcloud.Int32(60),
+								Type:          types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("A"),
+								Weight:        nifcloud.Int32(60),
+								XniftyComment: nifcloud.String("test_comment"),
 								ListOfRequestResourceRecords: []types.RequestResourceRecords{{
 									RequestResourceRecord: &types.RequestResourceRecord{
 										Value: nifcloud.String("192.0.2.1"),
@@ -141,7 +139,6 @@ func TestExpandDeleteChangeResourceRecordSetsInput(t *testing.T) {
 			"type":         "PRIMARY",
 			"health_check": []interface{}{healthCheck},
 		}},
-		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
 	})
@@ -161,14 +158,13 @@ func TestExpandDeleteChangeResourceRecordSetsInput(t *testing.T) {
 						RequestChange: &types.RequestChange{
 							Action: types.ActionOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("DELETE"),
 							RequestResourceRecordSet: &types.RequestResourceRecordSet{
-								Failover:          types.FailoverOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("PRIMARY"),
-								Name:              nifcloud.String("test_name"),
-								SetIdentifier:     nifcloud.String("test_set_identifier"),
-								TTL:               nifcloud.Int32(60),
-								Type:              types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("A"),
-								Weight:            nifcloud.Int32(60),
-								XniftyComment:     nifcloud.String("test_comment"),
-								XniftyDefaultHost: nifcloud.String("test_default_host"),
+								Failover:      types.FailoverOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("PRIMARY"),
+								Name:          nifcloud.String("test_name"),
+								SetIdentifier: nifcloud.String("test_set_identifier"),
+								TTL:           nifcloud.Int32(60),
+								Type:          types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("A"),
+								Weight:        nifcloud.Int32(60),
+								XniftyComment: nifcloud.String("test_comment"),
 								ListOfRequestResourceRecords: []types.RequestResourceRecords{{
 									RequestResourceRecord: &types.RequestResourceRecord{
 										Value: nifcloud.String("192.0.2.1"),
@@ -217,7 +213,6 @@ func TestExpandRequestResourceRecordSetInput(t *testing.T) {
 			"type":         "PRIMARY",
 			"health_check": []interface{}{healthCheck},
 		}},
-		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
 	})
@@ -231,14 +226,13 @@ func TestExpandRequestResourceRecordSetInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &types.RequestResourceRecordSet{
-				Failover:          types.FailoverOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("PRIMARY"),
-				Name:              nifcloud.String("test_name"),
-				SetIdentifier:     nifcloud.String("test_set_identifier"),
-				TTL:               nifcloud.Int32(60),
-				Type:              types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("A"),
-				Weight:            nifcloud.Int32(60),
-				XniftyComment:     nifcloud.String("test_comment"),
-				XniftyDefaultHost: nifcloud.String("test_default_host"),
+				Failover:      types.FailoverOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("PRIMARY"),
+				Name:          nifcloud.String("test_name"),
+				SetIdentifier: nifcloud.String("test_set_identifier"),
+				TTL:           nifcloud.Int32(60),
+				Type:          types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets("A"),
+				Weight:        nifcloud.Int32(60),
+				XniftyComment: nifcloud.String("test_comment"),
 				ListOfRequestResourceRecords: []types.RequestResourceRecords{{
 					RequestResourceRecord: &types.RequestResourceRecord{
 						Value: nifcloud.String("192.0.2.1"),
