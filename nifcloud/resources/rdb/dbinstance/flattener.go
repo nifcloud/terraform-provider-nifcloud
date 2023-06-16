@@ -94,19 +94,6 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesOutput) error {
 		if err := d.Set("multi_az_type", multiAZType); err != nil {
 			return err
 		}
-
-		// for performance priority
-		if multiAZType == 1 && len(dbInstance.ReadReplicaDBInstanceIdentifiers) > 0 {
-			rrIdentifier := dbInstance.ReadReplicaDBInstanceIdentifiers[0]
-			for _, rr := range dbInstance.ReadReplicaDBInstanceIdentifiers {
-				if d.Get("read_replica_identifier").(string) == rr {
-					rrIdentifier = rr
-				}
-			}
-			if err := d.Set("read_replica_identifier", rrIdentifier); err != nil {
-				return err
-			}
-		}
 	}
 
 	if err := d.Set("port", dbInstance.Endpoint.Port); err != nil {

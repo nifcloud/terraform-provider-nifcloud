@@ -99,16 +99,9 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 	rdForNFS.SetId("test_identifier")
 
 	rdForCIFS := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"protocol":                                 "cifs",
-		"allocated_storage":                        100,
-		"authentication_type":                      1,
-		"directory_service_administrator_name":     "test_directory_service_administrator_name",
-		"directory_service_administrator_password": "test_directory_service_administrator_password",
-		"directory_service_domain_name":            "test_directory_service_domain_name",
-		"domain_controllers": []interface{}{map[string]interface{}{
-			"hostname":   "test_hostname",
-			"ip_address": "test_ip_address",
-		}},
+		"protocol":                       "cifs",
+		"allocated_storage":              100,
+		"authentication_type":            1,
 		"private_ip_address":             "192.168.0.1",
 		"private_ip_address_subnet_mask": "/24",
 		"master_user_password":           "test_master_user_password",
@@ -143,17 +136,8 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 			name: "expands the resource data for cifs",
 			args: rdForCIFS,
 			want: &nas.ModifyNASInstanceInput{
-				AllocatedStorage:                      nifcloud.Int32(100),
-				AuthenticationType:                    nifcloud.Int32(1),
-				DirectoryServiceAdministratorName:     nifcloud.String("test_directory_service_administrator_name"),
-				DirectoryServiceAdministratorPassword: nifcloud.String("test_directory_service_administrator_password"),
-				DirectoryServiceDomainName:            nifcloud.String("test_directory_service_domain_name"),
-				DomainControllers: []types.RequestDomainControllers{
-					{
-						Hostname:  nifcloud.String("test_hostname"),
-						IPAddress: nifcloud.String("test_ip_address"),
-					},
-				},
+				AllocatedStorage:         nifcloud.Int32(100),
+				AuthenticationType:       nifcloud.Int32(1),
 				MasterPrivateAddress:     nifcloud.String("192.168.0.1/24"),
 				MasterUserPassword:       nifcloud.String("test_master_user_password"),
 				NASInstanceDescription:   nifcloud.String("test_description"),
@@ -175,10 +159,7 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 }
 
 func TestExpandDeleteNASInstanceInput(t *testing.T) {
-	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"directory_service_administrator_name":     "test_directory_service_administrator_name",
-		"directory_service_administrator_password": "test_directory_service_administrator_password",
-	})
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 	rd.SetId("test_identifier")
 
 	tests := []struct {
@@ -190,9 +171,7 @@ func TestExpandDeleteNASInstanceInput(t *testing.T) {
 			name: "expands the resource data",
 			args: rd,
 			want: &nas.DeleteNASInstanceInput{
-				NASInstanceIdentifier:                 nifcloud.String("test_identifier"),
-				DirectoryServiceAdministratorName:     nifcloud.String("test_directory_service_administrator_name"),
-				DirectoryServiceAdministratorPassword: nifcloud.String("test_directory_service_administrator_password"),
+				NASInstanceIdentifier: nifcloud.String("test_identifier"),
 			},
 		},
 	}

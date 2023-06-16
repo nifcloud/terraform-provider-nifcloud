@@ -605,8 +605,8 @@ github.com/nakabonne/nestif v0.3.1/go.mod h1:9EtoZochLn5iUprVDmDjqGKPofoUEBL8U4N
 github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 h1:4kuARK6Y6FxaNu/BnU2OAaLF86eTVhP2hjTB6iMvItA=
 github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354/go.mod h1:KSVJerMDfblTH7p5MZaTt+8zaT2iEk3AkVb9PQdZuE8=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/nifcloud/nifcloud-sdk-go v1.19.1 h1:B75xApZmuKwkrSPh8VQB7SsWIRNM6IGCjrEtjtaYNPE=
-github.com/nifcloud/nifcloud-sdk-go v1.19.1/go.mod h1:OlT+2biDJKG7FfXJNpTK+KZaBTEpoRYIyRC/meumbzg=
+github.com/nifcloud/nifcloud-sdk-go v1.20.0 h1:TBK2g7wCpGIubb333D7FgpeKazDwV+kdQsx4coco0KU=
+github.com/nifcloud/nifcloud-sdk-go v1.20.0/go.mod h1:OlT+2biDJKG7FfXJNpTK+KZaBTEpoRYIyRC/meumbzg=
 github.com/nishanths/exhaustive v0.9.5 h1:TzssWan6orBiLYVqewCG8faud9qlFntJE30ACpzmGME=
 github.com/nishanths/exhaustive v0.9.5/go.mod h1:IbwrGdVMizvDcIxPYGVdQn5BqWJaOwpCvg4RGb8r/TA=
 github.com/nishanths/predeclared v0.2.2 h1:V2EPdZPliZymNAn79T8RkNApBjMmVKh5XRpLm/w98Vk=

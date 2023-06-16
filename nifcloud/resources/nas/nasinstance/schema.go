@@ -88,49 +88,10 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"authentication_type": {
 			Type:         schema.TypeInt,
-			Description:  "Type of cifs authentication. (0: local auth, 1: directory service auth)",
+			Description:  "Type of cifs authentication. (0: local auth)",
 			Optional:     true,
 			Computed:     true,
 			ValidateFunc: validation.IntInSlice([]int{0, 1}),
-		},
-		"directory_service_domain_name": {
-			Type:             schema.TypeString,
-			Description:      "The domain name of directory service.",
-			Optional:         true,
-			ValidateDiagFunc: validator.StringRuneCountBetween(1, 256),
-		},
-		"directory_service_administrator_name": {
-			Type:             schema.TypeString,
-			Description:      "The user name of directory service.",
-			Optional:         true,
-			ValidateDiagFunc: validator.StringRuneCountBetween(1, 128),
-		},
-		"directory_service_administrator_password": {
-			Type:             schema.TypeString,
-			Description:      "The administrator's password of directory service.",
-			Optional:         true,
-			Sensitive:        true,
-			ValidateDiagFunc: validator.StringRuneCountBetween(1, 128),
-		},
-		"domain_controllers": {
-			Type:        schema.TypeSet,
-			Description: "The domain controller info.",
-			Optional:    true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"hostname": {
-						Type:             schema.TypeString,
-						Description:      "The hostname of domain controller.",
-						Optional:         true,
-						ValidateDiagFunc: validator.StringRuneCountBetween(1, 256),
-					},
-					"ip_address": {
-						Type:        schema.TypeString,
-						Description: "The IP address of domain controller.",
-						Optional:    true,
-					},
-				},
-			},
 		},
 		"no_root_squash": {
 			Type:        schema.TypeBool,

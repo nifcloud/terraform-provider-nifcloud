@@ -31,7 +31,6 @@ func TestFlatten(t *testing.T) {
 			"type":         "PRIMARY",
 			"health_check": []interface{}{healthCheck},
 		}},
-		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
 	}
@@ -53,7 +52,6 @@ func TestFlatten(t *testing.T) {
 			"type":         "PRIMARY",
 			"health_check": []interface{}{healthCheck},
 		}},
-		"default_host":   "test_default_host",
 		"comment":        "test_comment",
 		"set_identifier": "test_set_identifier",
 	}
@@ -81,14 +79,13 @@ func TestFlatten(t *testing.T) {
 				res: &dns.ListResourceRecordSetsOutput{
 					ResourceRecordSets: []types.ResourceRecordSets{
 						{
-							Failover:          nifcloud.String("PRIMARY"),
-							Name:              nifcloud.String("test_name"),
-							SetIdentifier:     nifcloud.String("test_set_identifier"),
-							TTL:               nifcloud.Int32(60),
-							Type:              nifcloud.String("A"),
-							Weight:            nifcloud.Int32(60),
-							XniftyComment:     nifcloud.String("test_comment"),
-							XniftyDefaultHost: nifcloud.String("test_default_host"),
+							Failover:      nifcloud.String("PRIMARY"),
+							Name:          nifcloud.String("test_name"),
+							SetIdentifier: nifcloud.String("test_set_identifier"),
+							TTL:           nifcloud.Int32(60),
+							Type:          nifcloud.String("A"),
+							Weight:        nifcloud.Int32(60),
+							XniftyComment: nifcloud.String("test_comment"),
 							ResourceRecords: []types.ResourceRecords{{
 								Value: nifcloud.String("192.0.2.1"),
 							}},
@@ -112,14 +109,13 @@ func TestFlatten(t *testing.T) {
 				res: &dns.ListResourceRecordSetsOutput{
 					ResourceRecordSets: []types.ResourceRecordSets{
 						{
-							Failover:          nifcloud.String("PRIMARY"),
-							Name:              nifcloud.String("test_zone_id"),
-							SetIdentifier:     nifcloud.String("test_set_identifier"),
-							TTL:               nifcloud.Int32(60),
-							Type:              nifcloud.String("A"),
-							Weight:            nifcloud.Int32(60),
-							XniftyComment:     nifcloud.String("test_comment"),
-							XniftyDefaultHost: nifcloud.String("test_default_host"),
+							Failover:      nifcloud.String("PRIMARY"),
+							Name:          nifcloud.String("test_zone_id"),
+							SetIdentifier: nifcloud.String("test_set_identifier"),
+							TTL:           nifcloud.Int32(60),
+							Type:          nifcloud.String("A"),
+							Weight:        nifcloud.Int32(60),
+							XniftyComment: nifcloud.String("test_comment"),
 							ResourceRecords: []types.ResourceRecords{{
 								Value: nifcloud.String("192.0.2.1"),
 							}},
@@ -143,14 +139,13 @@ func TestFlatten(t *testing.T) {
 				res: &dns.ListResourceRecordSetsOutput{
 					ResourceRecordSets: []types.ResourceRecordSets{
 						{
-							Failover:          nifcloud.String("PRIMARY"),
-							Name:              nifcloud.String("test_name.test_zone_id"),
-							SetIdentifier:     nifcloud.String("test_set_identifier"),
-							TTL:               nifcloud.Int32(60),
-							Type:              nifcloud.String("A"),
-							Weight:            nifcloud.Int32(60),
-							XniftyComment:     nifcloud.String("test_comment"),
-							XniftyDefaultHost: nifcloud.String("test_default_host"),
+							Failover:      nifcloud.String("PRIMARY"),
+							Name:          nifcloud.String("test_name.test_zone_id"),
+							SetIdentifier: nifcloud.String("test_set_identifier"),
+							TTL:           nifcloud.Int32(60),
+							Type:          nifcloud.String("A"),
+							Weight:        nifcloud.Int32(60),
+							XniftyComment: nifcloud.String("test_comment"),
 							ResourceRecords: []types.ResourceRecords{{
 								Value: nifcloud.String("192.0.2.1"),
 							}},

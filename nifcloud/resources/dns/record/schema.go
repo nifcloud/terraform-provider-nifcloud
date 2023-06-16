@@ -158,12 +158,6 @@ func newSchema() map[string]*schema.Schema {
 				},
 			},
 		},
-		"default_host": {
-			Type:        schema.TypeString,
-			Description: "The default host if using LBR.",
-			Optional:    true,
-			ForceNew:    true,
-		},
 		"comment": {
 			Type:             schema.TypeString,
 			Description:      "The comment of the record.",

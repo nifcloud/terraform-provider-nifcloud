@@ -69,7 +69,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"engine": {
 			Type:        schema.TypeString,
-			Description: "The database engine. `MySQL` or `postgres` or `MariaDB`",
+			Description: "The database engine. `MySQL` or `postgres`",
 			Optional:    true,
 			Computed:    true,
 			ForceNew:    true,
@@ -153,7 +153,7 @@ func newSchema() map[string]*schema.Schema {
 			Computed:    true,
 		},
 		"multi_az_type": {
-			Description: "The type of multi AZ. (0: Data priority, 1: Performance priority) default `0`",
+			Description: "The type of multi AZ. (0: Data priority) default `0`",
 			Type:        schema.TypeInt,
 			Optional:    true,
 			Default:     0,
@@ -270,11 +270,6 @@ func newSchema() map[string]*schema.Schema {
 		"read_replica_private_address": {
 			Type:        schema.TypeString,
 			Description: "Private IP address for read replica.",
-			Optional:    true,
-		},
-		"read_replica_identifier": {
-			Type:        schema.TypeString,
-			Description: "The DB instance name for read replica.",
 			Optional:    true,
 		},
 		"apply_immediately": {

@@ -60,22 +60,6 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesOutput) error 
 		return err
 	}
 
-	if err := d.Set("directory_service_domain_name", nasInstance.DirectoryServiceDomainName); err != nil {
-		return err
-	}
-
-	var domainControllers []map[string]interface{}
-	for _, controller := range nasInstance.DomainControllers {
-		domainController := map[string]interface{}{
-			"hostname":   controller.Hostname,
-			"ip_address": controller.IPAddress,
-		}
-		domainControllers = append(domainControllers, domainController)
-	}
-	if err := d.Set("domain_controllers", domainControllers); err != nil {
-		return err
-	}
-
 	if err := d.Set("type", nasInstance.NASInstanceType); err != nil {
 		return err
 	}

@@ -42,26 +42,6 @@ func expandModifyNASInstanceInput(d *schema.ResourceData) *nas.ModifyNASInstance
 
 	if d.Get("protocol").(string) == "cifs" {
 		authenticationType := d.Get("authentication_type").(int)
-		if authenticationType == 1 {
-			domainControllers := []types.RequestDomainControllers{}
-			for _, controller := range d.Get("domain_controllers").(*schema.Set).List() {
-				if v, ok := controller.(map[string]interface{}); ok {
-					domainController := types.RequestDomainControllers{}
-					if row, ok := v["hostname"]; ok {
-						domainController.Hostname = nifcloud.String(row.(string))
-					}
-					if row, ok := v["ip_address"]; ok {
-						domainController.IPAddress = nifcloud.String(row.(string))
-					}
-					domainControllers = append(domainControllers, domainController)
-				}
-			}
-			input.DirectoryServiceAdministratorName = nifcloud.String(d.Get("directory_service_administrator_name").(string))
-			input.DirectoryServiceAdministratorPassword = nifcloud.String(d.Get("directory_service_administrator_password").(string))
-			input.DirectoryServiceDomainName = nifcloud.String(d.Get("directory_service_domain_name").(string))
-			input.DomainControllers = domainControllers
-		}
-
 		input.AuthenticationType = nifcloud.Int32(int32(authenticationType))
 		input.MasterUserPassword = nifcloud.String(d.Get("master_user_password").(string))
 	}
@@ -75,8 +55,6 @@ func expandModifyNASInstanceInput(d *schema.ResourceData) *nas.ModifyNASInstance
 
 func expandDeleteNASInstanceInput(d *schema.ResourceData) *nas.DeleteNASInstanceInput {
 	return &nas.DeleteNASInstanceInput{
-		NASInstanceIdentifier:                 nifcloud.String(d.Id()),
-		DirectoryServiceAdministratorName:     nifcloud.String(d.Get("directory_service_administrator_name").(string)),
-		DirectoryServiceAdministratorPassword: nifcloud.String(d.Get("directory_service_administrator_password").(string)),
+		NASInstanceIdentifier: nifcloud.String(d.Id()),
 	}
 }
