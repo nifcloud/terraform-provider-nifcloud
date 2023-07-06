@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/katbyte/terrafmt v0.4.0
-	github.com/nifcloud/nifcloud-sdk-go v1.20.0
+	github.com/nifcloud/nifcloud-sdk-go v1.21.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/sync v0.1.0
 )
@@ -163,7 +163,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polyfloyd/go-errorlint v1.0.6 // indirect
-	github.com/posener/complete v1.2.1 // indirect
+	github.com/posener/complete v1.2.3 // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
