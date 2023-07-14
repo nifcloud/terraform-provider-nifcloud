@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud"
 )
@@ -11,6 +12,15 @@ import (
 const (
 	prefix = "tfacc"
 )
+
+var testAccExternalProviders = map[string]resource.ExternalProvider{
+	"tls": {
+		Source: "registry.terraform.io/hashicorp/tls",
+	},
+	"randam": {
+		Source: "registry.terraform.io/hashicorp/random",
+	},
+}
 
 var testAccProviderFactory = map[string]func() (*schema.Provider, error){
 	"nifcloud": providerFactory,
