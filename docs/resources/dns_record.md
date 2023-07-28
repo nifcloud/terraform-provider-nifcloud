@@ -64,7 +64,6 @@ The following arguments are supported:
 * `ttl` - (Optional) The TTL of the record.
 * `weighted_routing_policy` - (Optional) The configs for weighted routing policy. Conflicts with failover_routing_policy. see [weighted_routing_policy](#weighted_routing_policy)
 * `failover_routing_policy` - (Optional) The configs for failover routing policy. Conflicts with weighted_routing_policy. see [failover_routing_policy](#failover_routing_policy)
-* `default_host` - (Optional) The default host if using LBR.
 * `comment` - (Optional) The comment of the record.
 
 ### weighted_routing_policy

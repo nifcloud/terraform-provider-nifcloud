@@ -59,10 +59,6 @@ func flatten(d *schema.ResourceData, res *dns.ListResourceRecordSetsOutput) erro
 		}
 	}
 
-	if err := d.Set("default_host", resourceRecordSet.XniftyDefaultHost); err != nil {
-		return err
-	}
-
 	if err := d.Set("comment", resourceRecordSet.XniftyComment); err != nil {
 		return err
 	}

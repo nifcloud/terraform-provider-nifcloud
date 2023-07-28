@@ -46,12 +46,11 @@ func expandDeleteChangeResourceRecordSetsInput(d *schema.ResourceData) *dns.Chan
 
 func expandRequestResourceRecordSetInput(d *schema.ResourceData) *types.RequestResourceRecordSet {
 	input := &types.RequestResourceRecordSet{
-		Name:              nifcloud.String(d.Get("name").(string)),
-		SetIdentifier:     nifcloud.String(d.Get("set_identifier").(string)),
-		TTL:               nifcloud.Int32(int32(d.Get("ttl").(int))),
-		Type:              types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets(d.Get("type").(string)),
-		XniftyComment:     nifcloud.String(d.Get("comment").(string)),
-		XniftyDefaultHost: nifcloud.String(d.Get("default_host").(string)),
+		Name:          nifcloud.String(d.Get("name").(string)),
+		SetIdentifier: nifcloud.String(d.Get("set_identifier").(string)),
+		TTL:           nifcloud.Int32(int32(d.Get("ttl").(int))),
+		Type:          types.TypeOfChangeResourceRecordSetsRequestForChangeResourceRecordSets(d.Get("type").(string)),
+		XniftyComment: nifcloud.String(d.Get("comment").(string)),
 		ListOfRequestResourceRecords: []types.RequestResourceRecords{{
 			RequestResourceRecord: &types.RequestResourceRecord{
 				Value: nifcloud.String(d.Get("record").(string)),

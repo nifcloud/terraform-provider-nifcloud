@@ -12,25 +12,18 @@ import (
 
 func TestFlatten(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"allocated_storage":             100,
-		"availability_zone":             "test_availability_zone",
-		"description":                   "test_description",
-		"nas_security_group_name":       "test_nas_security_group_name",
-		"public_ip_address":             "test_public_ip_address",
-		"private_ip_address":            "test_private_ip_address",
-		"protocol":                      "test_protocol",
-		"master_username":               "test_master_username",
-		"network_id":                    "test_network_id",
-		"authentication_type":           1,
-		"directory_service_domain_name": "test_directory_service_domain_name",
-		"domain_controllers": []interface{}{
-			map[string]interface{}{
-				"hostname":   "test_hostname",
-				"ip_address": "test_ip_address",
-			},
-		},
-		"type":           0,
-		"no_root_squash": "false",
+		"allocated_storage":       100,
+		"availability_zone":       "test_availability_zone",
+		"description":             "test_description",
+		"nas_security_group_name": "test_nas_security_group_name",
+		"public_ip_address":       "test_public_ip_address",
+		"private_ip_address":      "test_private_ip_address",
+		"protocol":                "test_protocol",
+		"master_username":         "test_master_username",
+		"network_id":              "test_network_id",
+		"authentication_type":     0,
+		"type":                    0,
+		"no_root_squash":          "false",
 	})
 	rd.SetId("test_identifier")
 
@@ -65,19 +58,12 @@ func TestFlatten(t *testing.T) {
 								Address:        nifcloud.String("test_public_ip_address"),
 								PrivateAddress: nifcloud.String("test_private_ip_address"),
 							},
-							Protocol:                   nifcloud.String("test_protocol"),
-							MasterUsername:             nifcloud.String("test_master_username"),
-							NetworkId:                  nifcloud.String("test_network_id"),
-							AuthenticationType:         nifcloud.Int32(1),
-							DirectoryServiceDomainName: nifcloud.String("test_directory_service_domain_name"),
-							DomainControllers: []types.DomainControllers{
-								{
-									Hostname:  nifcloud.String("test_hostname"),
-									IPAddress: nifcloud.String("test_ip_address"),
-								},
-							},
-							NASInstanceType: nifcloud.Int32(0),
-							NoRootSquash:    nifcloud.Bool(false),
+							Protocol:           nifcloud.String("test_protocol"),
+							MasterUsername:     nifcloud.String("test_master_username"),
+							NetworkId:          nifcloud.String("test_network_id"),
+							AuthenticationType: nifcloud.Int32(0),
+							NASInstanceType:    nifcloud.Int32(0),
+							NoRootSquash:       nifcloud.Bool(false),
 						},
 					},
 				},

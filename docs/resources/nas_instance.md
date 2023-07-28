@@ -51,23 +51,12 @@ The following arguments are supported:
 * `protocol` - (Required) The protocol of the NAS. `nfs` or `cifs`.
 * `master_username` - (Require if protocol is CIFS) The master username.
 * `master_user_password` - (Require if protocol is CIFS) The password for masater user.
-* `authentication_type` - (Optional) The authentication type for CIFS. (0: local auth, 1: directory service auth)
-* `directory_service_domain_name` - (Optional) The domain name of directory service.
-* `directory_service_administrator_name` - (Optional) The administrator name of directory service.
-* `directory_service_administrator_password` - (Optional) The password for directory service administrator.
-* `domain_controllers` - (Optional) The domain controller used by directory service authentication. see [domain_controllers](#domain_controllers).
+* `authentication_type` - (Optional) The authentication type for CIFS. (0: local auth)
 * `no_root_squash` - (Optional) Turn off root squashing.
 * `network_id` - (Optional) The id of private lan.
 * `private_ip_address` - (Optional) The private IP address of the NAS instance.
 * `private_ip_address_subnet_mask` - (Required if `private_ip_address` is defined) The subnet mask of private IP address written in CIDR notation.
 * `type` - (Optional) The type of NAS. (0: standard type, 1: high-speed type)
-
-### domain_controllers
-
-#### Arguments
-
-* `hostname` - (Required) The hostname of domain controller.
-* `ip_address` - (Required) The IP address of domain controller.
 
 ## Attributes Reference
 
