@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.9.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.9.0) (2023-07-28)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.8.0...v1.9.0)
+
+**Merged pull requests:**
+
+- Release/1.9.0 [\#120](https://github.com/nifcloud/terraform-provider-nifcloud/pull/120) ([fuku2014](https://github.com/fuku2014))
+- Feature/ravgw [\#119](https://github.com/nifcloud/terraform-provider-nifcloud/pull/119) ([fuku2014](https://github.com/fuku2014))
+- Feature/paas close [\#118](https://github.com/nifcloud/terraform-provider-nifcloud/pull/118) ([fuku2014](https://github.com/fuku2014))
+- Fix acceptance test parallelism: 7 -\> 4 [\#117](https://github.com/nifcloud/terraform-provider-nifcloud/pull/117) ([aokumasan](https://github.com/aokumasan))
+- Fix/lint errors [\#116](https://github.com/nifcloud/terraform-provider-nifcloud/pull/116) ([aokumasan](https://github.com/aokumasan))
+
 ## [v1.8.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.8.0) (2023-04-20)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.7.0...v1.8.0)
