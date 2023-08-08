@@ -23,7 +23,7 @@ func TestExpandNiftyRegisterPortWithElasticLoadBalancerInput(t *testing.T) {
 		"health_check_target":                "test_health_check_target",
 		"health_check_interval":              1,
 		"health_check_path":                  "test_health_check_path",
-		"health_check_expectation_http_code": []interface{}{1},
+		"health_check_expectation_http_code": []interface{}{"test_health_check_expectation_http_code"},
 		"instances":                          []interface{}{"test_instances"},
 		"session_stickiness_policy_enable":   true,
 		"session_stickiness_policy_method":   1,
@@ -124,7 +124,7 @@ func TestExpandNiftyConfigureElasticLoadBalancerHealthCheckInput(t *testing.T) {
 		"health_check_target":                "HTTPS:443",
 		"health_check_interval":              1,
 		"health_check_path":                  "test_health_check_path",
-		"health_check_expectation_http_code": []interface{}{1},
+		"health_check_expectation_http_code": []interface{}{"test_health_check_expectation_http_code"},
 	})
 	rdWithHTTP.SetId("test-elb-id_protocol_port_port")
 
@@ -164,7 +164,7 @@ func TestExpandNiftyConfigureElasticLoadBalancerHealthCheckInput(t *testing.T) {
 					ListOfRequestExpectation: &types.ListOfRequestExpectation{
 						Member: []types.RequestExpectation{
 							{
-								HttpCode: nifcloud.Int32(1),
+								HttpCode: nifcloud.String("test_health_check_expectation_http_code"),
 							},
 						},
 					},
@@ -197,7 +197,7 @@ func TestExpandNiftyModifyElasticLoadBalancerAttributesInput(t *testing.T) {
 		"health_check_target":                "test_health_check_target",
 		"health_check_interval":              1,
 		"health_check_path":                  "test_health_check_path",
-		"health_check_expectation_http_code": []interface{}{1},
+		"health_check_expectation_http_code": []interface{}{"test_health_check_expectation_http_code"},
 		"instances":                          []interface{}{"test_instances"},
 		"session_stickiness_policy_enable":   true,
 		"session_stickiness_policy_method":   1,
@@ -226,7 +226,7 @@ func TestExpandNiftyModifyElasticLoadBalancerAttributesInput(t *testing.T) {
 		"health_check_target":                         "test_health_check_target",
 		"health_check_interval":                       1,
 		"health_check_path":                           "test_health_check_path",
-		"health_check_expectation_http_code":          []interface{}{1},
+		"health_check_expectation_http_code":          []interface{}{"test_health_check_expectation_http_code"},
 		"instances":                                   []interface{}{"test_instances"},
 		"session_stickiness_policy_enable":            true,
 		"session_stickiness_policy_method":            1,

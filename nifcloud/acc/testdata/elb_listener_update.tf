@@ -89,6 +89,12 @@ resource "nifcloud_elb" "basic" {
     network_name   = nifcloud_private_lan.basic.private_lan_name
     ip_address     = "192.168.100.101"
     is_vip_network = false
+    system_ip_addresses {
+      system_ip_address = "192.168.100.102"
+    }
+    system_ip_addresses {
+      system_ip_address = "192.168.100.103"
+    }
   }
 
   network_interface {
@@ -110,7 +116,7 @@ resource "nifcloud_elb_listener" "basic" {
   health_check_target                         = "HTTP:3001"
   health_check_interval                       = 11
   health_check_path                           = "/health-upd"
-  health_check_expectation_http_code          = ["302"]
+  health_check_expectation_http_code          = ["3xx"]
   instances                                   = [nifcloud_instance.upd.instance_id]
   session_stickiness_policy_enable            = true
   session_stickiness_policy_method            = "2"
@@ -121,15 +127,23 @@ resource "nifcloud_elb_listener" "basic" {
   depends_on = [nifcloud_elb.basic, nifcloud_instance.upd]
 }
 
+resource "tls_private_key" "basic" {
+  algorithm = "RSA"
+}
+
+resource "tls_self_signed_cert" "basic" {
+  private_key_pem       = tls_private_key.basic.private_key_pem
+  validity_period_hours = 3
+  dns_names             = ["example.com"]
+  allowed_uses          = ["client_auth"]
+
+  subject {
+    common_name  = "example.com"
+    organization = "ACME Examples, Inc"
+  }
+}
+
 resource "nifcloud_ssl_certificate" "basic" {
-  certificate = <<EOT
-%s
-EOT
-  key         = <<EOT
-%s
-EOT
-  ca          = <<EOT
-%s
-EOT
-  description = "memo"
+  certificate = tls_self_signed_cert.basic.cert_pem
+  key         = tls_private_key.basic.private_key_pem
 }

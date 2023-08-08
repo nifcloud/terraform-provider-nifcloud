@@ -21,23 +21,40 @@ func expandNiftyCreateElasticLoadBalancerInput(d *schema.ResourceData) *computin
 			if row, ok := v["network_name"]; ok {
 				n.NetworkName = nifcloud.String(row.(string))
 			}
+
 			if row, ok := v["ip_address"]; ok {
-				n.IpAddress = nifcloud.String(row.(string))
+				if row.(string) != "" {
+					n.IpAddress = nifcloud.String(row.(string))
+				}
 			}
+
 			if row, ok := v["is_vip_network"]; ok {
 				n.IsVipNetwork = nifcloud.Bool(row.(bool))
+			}
+			if row, ok := v["system_ip_addresses"]; ok {
+				var listOfRequestSystemIpAddresses []types.RequestSystemIpAddresses
+				for _, sia := range row.(*schema.Set).List() {
+					if vi, ok := sia.(map[string]interface{}); ok {
+						s := types.RequestSystemIpAddresses{}
+						if ipaddress, ok := vi["system_ip_address"]; ok {
+							s.SystemIpAddress = nifcloud.String(ipaddress.(string))
+						}
+						listOfRequestSystemIpAddresses = append(listOfRequestSystemIpAddresses, s)
+					}
+				}
+				n.ListOfRequestSystemIpAddresses = listOfRequestSystemIpAddresses
 			}
 			networkInterface = append(networkInterface, n)
 		}
 	}
-
-	var expectations []types.RequestExpectation
+	var expectations []types.RequestExpectationOfNiftyCreateElasticLoadBalancer
 	for _, expectation := range d.Get("health_check_expectation_http_code").(*schema.Set).List() {
-		expectations = append(expectations, types.RequestExpectation{
-			HttpCode: nifcloud.Int32(int32(expectation.(int))),
+		expectations = append(expectations, types.RequestExpectationOfNiftyCreateElasticLoadBalancer{
+			HttpCode: types.HttpCodeOfListenersForNiftyCreateElasticLoadBalancer(
+				expectation.(string),
+			),
 		})
 	}
-
 	input := &computing.NiftyCreateElasticLoadBalancerInput{
 		ElasticLoadBalancerName: nifcloud.String(d.Get("elb_name").(string)),
 		Listeners: &types.ListOfRequestListenersOfNiftyCreateElasticLoadBalancer{
@@ -75,8 +92,40 @@ func expandNiftyCreateElasticLoadBalancerInput(d *schema.ResourceData) *computin
 	}
 
 	if strings.HasPrefix(nifcloud.ToString(input.Listeners.Member[0].RequestHealthCheck.Target), "HTTP") {
-		input.Listeners.Member[0].RequestHealthCheck.ListOfRequestExpectation = &types.ListOfRequestExpectation{Member: expectations}
+		input.Listeners.Member[0].RequestHealthCheck.ListOfRequestExpectation = &types.ListOfRequestExpectationOfNiftyCreateElasticLoadBalancer{Member: expectations}
 		input.Listeners.Member[0].RequestHealthCheck.Path = nifcloud.String(d.Get("health_check_path").(string))
+	}
+	return input
+}
+
+func expandNiftyReplaceElasticLoadBalancerLatestVersionInput(d *schema.ResourceData) *computing.NiftyReplaceElasticLoadBalancerLatestVersionInput {
+	var networkInterface []types.RequestNetworkInterfaceOfNiftyReplaceElasticLoadBalancerLatestVersion
+	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
+		if v, ok := ni.(map[string]interface{}); ok {
+			n := types.RequestNetworkInterfaceOfNiftyReplaceElasticLoadBalancerLatestVersion{}
+			if row, ok := v["network_id"]; ok {
+				n.NetworkId = nifcloud.String(row.(string))
+			}
+			if row, ok := v["system_ip_addresses"]; ok {
+				var listOfRequestSystemIpAddresses []types.RequestSystemIpAddresses
+				for _, sia := range row.(*schema.Set).List() {
+					if vi, ok := sia.(map[string]interface{}); ok {
+						s := types.RequestSystemIpAddresses{}
+						if ipaddress, ok := vi["system_ip_address"]; ok {
+							s.SystemIpAddress = nifcloud.String(ipaddress.(string))
+						}
+						listOfRequestSystemIpAddresses = append(listOfRequestSystemIpAddresses, s)
+					}
+				}
+				n.ListOfRequestSystemIpAddresses = listOfRequestSystemIpAddresses
+			}
+			networkInterface = append(networkInterface, n)
+		}
+	}
+	input := &computing.NiftyReplaceElasticLoadBalancerLatestVersionInput{
+		ElasticLoadBalancerId:   nifcloud.String(d.Get("elb_id").(string)),
+		ElasticLoadBalancerName: nifcloud.String(d.Get("elb_name").(string)),
+		NetworkInterface:        networkInterface,
 	}
 	return input
 }
@@ -111,7 +160,7 @@ func expandNiftyConfigureElasticLoadBalancerHealthCheckInput(d *schema.ResourceD
 	var expectations []types.RequestExpectation
 	for _, expectation := range d.Get("health_check_expectation_http_code").(*schema.Set).List() {
 		expectations = append(expectations, types.RequestExpectation{
-			HttpCode: nifcloud.Int32(int32(expectation.(int))),
+			HttpCode: nifcloud.String(string(expectation.(string))),
 		})
 	}
 
