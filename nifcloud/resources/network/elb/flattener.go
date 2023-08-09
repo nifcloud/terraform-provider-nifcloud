@@ -146,6 +146,8 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBala
 					switch nifcloud.ToString(n.NetworkId) {
 					case "net-COMMON_GLOBAL":
 						continue
+					case "net-COMMON_PRIVATE":
+						continue
 					default:
 						var si map[string]interface{}
 						si = make(map[string]interface{})
