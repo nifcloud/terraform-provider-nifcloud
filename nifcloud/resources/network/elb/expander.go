@@ -98,38 +98,6 @@ func expandNiftyCreateElasticLoadBalancerInput(d *schema.ResourceData) *computin
 	return input
 }
 
-func expandNiftyReplaceElasticLoadBalancerLatestVersionInput(d *schema.ResourceData) *computing.NiftyReplaceElasticLoadBalancerLatestVersionInput {
-	var networkInterface []types.RequestNetworkInterfaceOfNiftyReplaceElasticLoadBalancerLatestVersion
-	for _, ni := range d.Get("network_interface").(*schema.Set).List() {
-		if v, ok := ni.(map[string]interface{}); ok {
-			n := types.RequestNetworkInterfaceOfNiftyReplaceElasticLoadBalancerLatestVersion{}
-			if row, ok := v["network_id"]; ok {
-				n.NetworkId = nifcloud.String(row.(string))
-			}
-			if row, ok := v["system_ip_addresses"]; ok {
-				var listOfRequestSystemIpAddresses []types.RequestSystemIpAddresses
-				for _, sia := range row.(*schema.Set).List() {
-					if vi, ok := sia.(map[string]interface{}); ok {
-						s := types.RequestSystemIpAddresses{}
-						if ipaddress, ok := vi["system_ip_address"]; ok {
-							s.SystemIpAddress = nifcloud.String(ipaddress.(string))
-						}
-						listOfRequestSystemIpAddresses = append(listOfRequestSystemIpAddresses, s)
-					}
-				}
-				n.ListOfRequestSystemIpAddresses = listOfRequestSystemIpAddresses
-			}
-			networkInterface = append(networkInterface, n)
-		}
-	}
-	input := &computing.NiftyReplaceElasticLoadBalancerLatestVersionInput{
-		ElasticLoadBalancerId:   nifcloud.String(d.Get("elb_id").(string)),
-		ElasticLoadBalancerName: nifcloud.String(d.Get("elb_name").(string)),
-		NetworkInterface:        networkInterface,
-	}
-	return input
-}
-
 func expandNiftyDescribeElasticLoadBalancersInput(d *schema.ResourceData) *computing.NiftyDescribeElasticLoadBalancersInput {
 	lbPort := d.Get("lb_port")
 	instancePort := d.Get("instance_port")
@@ -160,7 +128,7 @@ func expandNiftyConfigureElasticLoadBalancerHealthCheckInput(d *schema.ResourceD
 	var expectations []types.RequestExpectation
 	for _, expectation := range d.Get("health_check_expectation_http_code").(*schema.Set).List() {
 		expectations = append(expectations, types.RequestExpectation{
-			HttpCode: nifcloud.String(string(expectation.(string))),
+			HttpCode: nifcloud.String(expectation.(string)),
 		})
 	}
 

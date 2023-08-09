@@ -51,7 +51,7 @@ func expandNiftyConfigureElasticLoadBalancerHealthCheckInput(d *schema.ResourceD
 	var expectations []types.RequestExpectation
 	for _, expectation := range d.Get("health_check_expectation_http_code").(*schema.Set).List() {
 		expectations = append(expectations, types.RequestExpectation{
-			HttpCode: nifcloud.String(string(expectation.(string))),
+			HttpCode: nifcloud.String(expectation.(string)),
 		})
 	}
 
