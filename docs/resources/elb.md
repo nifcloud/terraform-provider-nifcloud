@@ -77,6 +77,7 @@ The following arguments are supported:
 * `is_vip_network` - (Optional) The flag of vip network.
 * `network_id` - (Optional) The ID of the network to attach; `net-COMMON_GLOBAL` or `net-COMMON_PRIVATE` or private lan network id.
 * `network_name` - (Optional) The private lan name of the network to attach.
+* `system_ip_addresses` - (Optional) The system IP address of multi load balancer.
 
 ## Attributes Reference
 

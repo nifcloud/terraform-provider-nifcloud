@@ -113,19 +113,19 @@ func newSchema() map[string]*schema.Schema {
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(0, 255),
 				validation.StringMatch(
-					regexp.MustCompile(`^[/][\w/:%&~='<>@\?\(\)\.\,\+\-\*\[\]\^\{\}\|]*$`),
-					"Enter the health_check_path within 0-255 characters",
+					regexp.MustCompile(`^[/][!-~]*$`),
+					"Enter the health_check_path within 0-255 ASCII characters",
 				),
 			),
 		},
 		"health_check_expectation_http_code": {
 			Type: schema.TypeSet,
 			Elem: &schema.Schema{
-				Type: schema.TypeInt,
+				Type: schema.TypeString,
 			},
 			Description: "A list of the expected http code.",
 			Optional:    true,
-			MaxItems:    10,
+			MaxItems:    5,
 		},
 		"instances": {
 			Type: schema.TypeSet,

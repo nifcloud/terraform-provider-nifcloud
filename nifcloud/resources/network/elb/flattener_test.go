@@ -26,7 +26,7 @@ func TestFlatten(t *testing.T) {
 		"health_check_target":                "test_health_check_target",
 		"health_check_interval":              1,
 		"health_check_path":                  "test_health_check_path",
-		"health_check_expectation_http_code": []interface{}{1},
+		"health_check_expectation_http_code": []interface{}{"test_health_check_expectation_http_code"},
 		"instances":                          []interface{}{"test_instances"},
 		"session_stickiness_policy_enable":   true,
 		"session_stickiness_policy_method":   1,
@@ -43,6 +43,9 @@ func TestFlatten(t *testing.T) {
 			"network_name":   "test_network_name",
 			"ip_address":     "test_ip_address",
 			"is_vip_network": true,
+			"system_ip_addresses": []interface{}{map[string]interface{}{
+				"system_ip_address": "test_system_ip_address",
+			}},
 		}},
 	})
 	rd.SetId("test_elb_id")
@@ -87,7 +90,7 @@ func TestFlatten(t *testing.T) {
 												Path:               nifcloud.String("test_health_check_path"),
 												Expectation: []types.Expectation{
 													{
-														HttpCode: nifcloud.Int32(1),
+														HttpCode: nifcloud.String("test"),
 													},
 												},
 											},
@@ -114,6 +117,11 @@ func TestFlatten(t *testing.T) {
 										NetworkId:    nifcloud.String("test_network_id"),
 										NetworkName:  nifcloud.String("test_network_name"),
 										IpAddress:    nifcloud.String("test_ip_address"),
+										SystemIpAddresses: []types.SystemIpAddresses{
+											{
+												SystemIpAddress: nifcloud.String("test_system_ip_address"),
+											},
+										},
 									},
 								},
 								RouteTableId:            nifcloud.String("test_route_table_id"),

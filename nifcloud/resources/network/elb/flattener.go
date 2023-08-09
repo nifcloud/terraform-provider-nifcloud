@@ -93,9 +93,9 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBala
 		return err
 	}
 
-	expectations := make([]int32, len(listener.HealthCheck.Expectation))
+	expectations := make([]string, len(listener.HealthCheck.Expectation))
 	for i, e := range listener.HealthCheck.Expectation {
-		expectations[i] = nifcloud.ToInt32(e.HttpCode)
+		expectations[i] = nifcloud.ToString(e.HttpCode)
 	}
 	if err := d.Set("health_check_expectation_http_code", expectations); err != nil {
 		return err
@@ -138,6 +138,24 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBala
 				ni["network_id"] = nifcloud.ToString(n.NetworkId)
 			} else {
 				ni["network_name"] = nifcloud.ToString(n.NetworkName)
+			}
+
+			if findElm["system_ip_addresses"] != "" {
+				var systemIpAddresses []map[string]interface{}
+				for _, systemIpAddress := range n.SystemIpAddresses {
+					switch nifcloud.ToString(n.NetworkId) {
+					case "net-COMMON_GLOBAL":
+						continue
+					case "net-COMMON_PRIVATE":
+						continue
+					default:
+						var si map[string]interface{}
+						si = make(map[string]interface{})
+						si["system_ip_address"] = nifcloud.ToString(systemIpAddress.SystemIpAddress)
+						systemIpAddresses = append(systemIpAddresses, si)
+					}
+				}
+				ni["system_ip_addresses"] = systemIpAddresses
 			}
 
 		} else {

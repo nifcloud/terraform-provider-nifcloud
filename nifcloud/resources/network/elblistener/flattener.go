@@ -71,9 +71,9 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBala
 		return err
 	}
 
-	expectations := make([]int32, len(listener.HealthCheck.Expectation))
+	expectations := make([]string, len(listener.HealthCheck.Expectation))
 	for i, e := range listener.HealthCheck.Expectation {
-		expectations[i] = nifcloud.ToInt32(e.HttpCode)
+		expectations[i] = nifcloud.ToString(e.HttpCode)
 	}
 	if err := d.Set("health_check_expectation_http_code", expectations); err != nil {
 		return err

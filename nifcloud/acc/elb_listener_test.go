@@ -15,7 +15,6 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
-	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/acc/helper"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -25,18 +24,14 @@ func TestAcc_ELBListener(t *testing.T) {
 	resourceName := "nifcloud_elb_listener.basic"
 	randName := prefix + acctest.RandString(7)
 
-	caKey := helper.GeneratePrivateKey(t, 2048)
-	caCert := helper.GenerateSelfSignedCertificateAuthority(t, caKey)
-	key := helper.GeneratePrivateKey(t, 2048)
-	cert := helper.GenerateCertificate(t, caKey, caCert, key, randName)
-
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: testAccProviderFactory,
+		ExternalProviders: testAccExternalProviders,
 		CheckDestroy:      testAccELBListenerResourceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccELBListener(t, "testdata/elb_listener.tf", randName, cert, key, caCert),
+				Config: testAccELBListener(t, "testdata/elb_listener.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckELBListenerExists(resourceName, randName, "HTTPS", 3000, 443, &listener),
 					testAccCheckELBListenerValues(&listener, randName),
@@ -50,7 +45,7 @@ func TestAcc_ELBListener(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "health_check_target", "HTTP:3000"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_interval", "10"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_path", "/health"),
-					resource.TestCheckResourceAttr(resourceName, "health_check_expectation_http_code.0", "200"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_expectation_http_code.0", "2xx"),
 					resource.TestCheckResourceAttr(resourceName, "instances.0", randName),
 					resource.TestCheckResourceAttr(resourceName, "session_stickiness_policy_enable", "true"),
 					resource.TestCheckResourceAttr(resourceName, "session_stickiness_policy_method", "1"),
@@ -61,7 +56,7 @@ func TestAcc_ELBListener(t *testing.T) {
 				),
 			},
 			{
-				Config: testAccELBListener(t, "testdata/elb_listener_update.tf", randName, cert, key, caCert),
+				Config: testAccELBListener(t, "testdata/elb_listener_update.tf", randName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckELBListenerExists(resourceName, randName, "HTTP", 3001, 8080, &listener),
 					testAccCheckELBListenerValuesUpdated(&listener, randName),
@@ -75,7 +70,7 @@ func TestAcc_ELBListener(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "health_check_target", "HTTP:3001"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_interval", "11"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_path", "/health-upd"),
-					resource.TestCheckResourceAttr(resourceName, "health_check_expectation_http_code.0", "302"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_expectation_http_code.0", "3xx"),
 					resource.TestCheckResourceAttr(resourceName, "instances.0", randName+"upd"),
 					resource.TestCheckResourceAttr(resourceName, "session_stickiness_policy_enable", "true"),
 					resource.TestCheckResourceAttr(resourceName, "session_stickiness_policy_method", "2"),
@@ -94,7 +89,7 @@ func TestAcc_ELBListener(t *testing.T) {
 	})
 }
 
-func testAccELBListener(t *testing.T, fileName, rName, certificate, key, ca string) string {
+func testAccELBListener(t *testing.T, fileName, rName string) string {
 	b, err := os.ReadFile(fileName)
 	if err != nil {
 		t.Fatal(err)
@@ -105,9 +100,6 @@ func testAccELBListener(t *testing.T, fileName, rName, certificate, key, ca stri
 		rName,
 		rName,
 		rName,
-		certificate,
-		key,
-		ca,
 	)
 }
 
@@ -195,8 +187,8 @@ func testAccCheckELBListenerValues(listener *types.ListenerOfNiftyDescribeElasti
 			return fmt.Errorf("bad health_check_path state, expected \"/health\", got: %#v", listener.HealthCheck.Path)
 		}
 
-		if nifcloud.ToInt32(listener.HealthCheck.Expectation[0].HttpCode) != 200 {
-			return fmt.Errorf("bad health_check_expectation_http_code state, expected \"/200\", got: %#v", listener.HealthCheck.Expectation[0].HttpCode)
+		if nifcloud.ToString(listener.HealthCheck.Expectation[0].HttpCode) != "2xx" {
+			return fmt.Errorf("bad health_check_expectation_http_code state, expected \"/2xx\", got: %#v", listener.HealthCheck.Expectation[0].HttpCode)
 		}
 
 		if nifcloud.ToString(listener.Instances[0].InstanceId) != rName {
@@ -268,8 +260,8 @@ func testAccCheckELBListenerValuesUpdated(listener *types.ListenerOfNiftyDescrib
 			return fmt.Errorf("bad health_check_path state, expected \"/health\", got: %#v", listener.HealthCheck.Path)
 		}
 
-		if nifcloud.ToInt32(listener.HealthCheck.Expectation[0].HttpCode) != 302 {
-			return fmt.Errorf("bad health_check_expectation_http_code state, expected \"/302\", got: %#v", listener.HealthCheck.Expectation[0].HttpCode)
+		if nifcloud.ToString(listener.HealthCheck.Expectation[0].HttpCode) != "3xx" {
+			return fmt.Errorf("bad health_check_expectation_http_code state, expected \"/3xx\", got: %#v", listener.HealthCheck.Expectation[0].HttpCode)
 		}
 
 		if nifcloud.ToString(listener.Instances[0].InstanceId) != rName+"upd" {
