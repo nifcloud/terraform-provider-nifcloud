@@ -114,8 +114,8 @@ func TestAcc_ELB(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1.is_vip_network", "false"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network_id", "net-COMMON_GLOBAL"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.is_vip_network", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.system_ip_addresses.1.system_ip_address", "192.168.0.1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.system_ip_addresses.2.system_ip_address", "192.168.0.2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.1.system_ip_addresses.0.system_ip_address", "192.168.100.102"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.1.system_ip_addresses.1.system_ip_address", "192.168.100.103"),
 				),
 			},
 			{

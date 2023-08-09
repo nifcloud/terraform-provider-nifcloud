@@ -140,11 +140,21 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeElasticLoadBala
 				ni["network_name"] = nifcloud.ToString(n.NetworkName)
 			}
 
-			systemIpAddresses := make([]string, len(n.SystemIpAddresses))
-			for i, systemIpAddress := range n.SystemIpAddresses {
-				systemIpAddresses[i] = nifcloud.ToString(systemIpAddress.SystemIpAddress)
+			if findElm["system_ip_addresses"] != "" {
+				var systemIpAddresses []map[string]interface{}
+				for _, systemIpAddress := range n.SystemIpAddresses {
+					switch nifcloud.ToString(n.NetworkId) {
+					case "net-COMMON_GLOBAL":
+						continue
+					default:
+						var si map[string]interface{}
+						si = make(map[string]interface{})
+						si["system_ip_address"] = nifcloud.ToString(systemIpAddress.SystemIpAddress)
+						systemIpAddresses = append(systemIpAddresses, si)
+					}
+				}
+				ni["system_ip_addresses"] = systemIpAddresses
 			}
-			findElm["system_ip_addresses"] = systemIpAddresses
 
 		} else {
 			ni["network_id"] = nifcloud.ToString(n.NetworkId)
