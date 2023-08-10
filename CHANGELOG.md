@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.10.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.10.0) (2023-08-09)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.9.0...v1.10.0)
+
+**Closed issues:**
+
+- リモートアクセスVPNGWを作成するコマンドについて [\#99](https://github.com/nifcloud/terraform-provider-nifcloud/issues/99)
+
+**Merged pull requests:**
+
+- Feature/elb v2 [\#121](https://github.com/nifcloud/terraform-provider-nifcloud/pull/121) ([fujita-hiroki1115](https://github.com/fujita-hiroki1115))
+
 ## [v1.9.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.9.0) (2023-07-28)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.8.0...v1.9.0)
