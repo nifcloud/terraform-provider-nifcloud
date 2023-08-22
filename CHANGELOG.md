@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.10.1](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.10.1) (2023-08-21)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.10.0...v1.10.1)
+
+**Merged pull requests:**
+
+- Support Apple silicon [\#123](https://github.com/nifcloud/terraform-provider-nifcloud/pull/123) ([aokumasan](https://github.com/aokumasan))
+
 ## [v1.10.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.10.0) (2023-08-09)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.9.0...v1.10.0)
