@@ -182,7 +182,7 @@ func expandNiftySetLoadBalancerSSLPoliciesOfListenerForPolicyName(d *schema.Reso
 		LoadBalancerName: nifcloud.String(getLBID(d)),
 		LoadBalancerPort: nifcloud.Int32(int32(d.Get("load_balancer_port").(int))),
 		InstancePort:     nifcloud.Int32(int32(d.Get("instance_port").(int))),
-		SSLPolicyId:      nifcloud.String(d.Get("ssl_policy_id").(string)),
+		SSLPolicyName:    nifcloud.String(d.Get("ssl_policy_name").(string)),
 	}
 }
 
