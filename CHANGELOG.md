@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.10.2](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.10.2) (2023-08-31)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.10.1...v1.10.2)
+
+**Closed issues:**
+
+- Darwin/arm64 support [\#122](https://github.com/nifcloud/terraform-provider-nifcloud/issues/122)
+
+**Merged pull requests:**
+
+- fix bug of nifcloud\_loadbalancer resource for use ssl\_policy\_name [\#124](https://github.com/nifcloud/terraform-provider-nifcloud/pull/124) ([fuku2014](https://github.com/fuku2014))
+
 ## [v1.10.1](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.10.1) (2023-08-21)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.10.0...v1.10.1)
