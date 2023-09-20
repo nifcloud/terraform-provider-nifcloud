@@ -16,8 +16,6 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/ess/domaindkim"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/ess/domainidentity"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/ess/emailidentity"
-	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/cluster"
-	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/hatoba/firewallgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nasinstance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/nas/nassecuritygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/network/customergateway"
@@ -125,8 +123,6 @@ func Provider() *schema.Provider {
 			"nifcloud_vpn_connection":            vpnconnection.New(),
 			"nifcloud_vpn_gateway":               vpngateway.New(),
 			"nifcloud_web_proxy":                 webproxy.New(),
-			"nifcloud_hatoba_firewall_group":     firewallgroup.New(),
-			"nifcloud_hatoba_cluster":            cluster.New(),
 			"nifcloud_separate_instance_rule":    separateinstancerule.New(),
 			"nifcloud_storage_bucket":            bucket.New(),
 		},
