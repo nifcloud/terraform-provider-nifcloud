@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.11.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.11.0) (2023-09-20)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.10.2...v1.11.0)
+
+**Merged pull requests:**
+
+- Delete Hatoba [\#125](https://github.com/nifcloud/terraform-provider-nifcloud/pull/125) ([tunakyonn](https://github.com/tunakyonn))
+
 ## [v1.10.2](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.10.2) (2023-08-31)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.10.1...v1.10.2)
