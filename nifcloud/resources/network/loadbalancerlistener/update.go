@@ -95,19 +95,26 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 	if d.HasChange("filter") {
-		input := expandUnSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses.Member) > 0 && *input.IPAddresses.Member[0].IPAddress != "*.*.*.*" {
-			_, err := svc.SetFilterForLoadBalancer(ctx, input)
+		o, n := d.GetChange("filter")
+		os := o.(*schema.Set)
+		ns := n.(*schema.Set)
 
+		addFilters := ns.Difference(os).List()
+		delFilters := os.Difference(ns).List()
+
+		if len(addFilters) > 0 {
+			input := expandSetFilterForLoadBalancer(d, addFilters)
+
+			_, err := svc.SetFilterForLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
 			}
 		}
 
-		input = expandSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses.Member) > 0 && *input.IPAddresses.Member[0].IPAddress != "*.*.*.*" {
-			_, err := svc.SetFilterForLoadBalancer(ctx, input)
+		if len(delFilters) > 0 {
+			input := expandUnSetFilterForLoadBalancer(d, delFilters)
 
+			_, err := svc.SetFilterForLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
 			}

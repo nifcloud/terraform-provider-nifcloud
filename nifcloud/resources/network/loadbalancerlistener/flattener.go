@@ -29,14 +29,15 @@ func flatten(d *schema.ResourceData, res *computing.DescribeLoadBalancersOutput)
 	if err := d.Set("instances", instances); err != nil {
 		return err
 	}
-	if d.Get("filter") != nil && len(loadBalancer.Filter.IPAddresses) > 0 && *loadBalancer.Filter.IPAddresses[0].IPAddress != "*.*.*.*" {
-		filters := make([]string, len(loadBalancer.Filter.IPAddresses))
-		for i, filter := range loadBalancer.Filter.IPAddresses {
-			filters[i] = nifcloud.ToString(filter.IPAddress)
+
+	filters := []string{}
+	for _, filter := range loadBalancer.Filter.IPAddresses {
+		if nifcloud.ToString(filter.IPAddress) != "*.*.*.*" {
+			filters = append(filters, nifcloud.ToString(filter.IPAddress))
 		}
-		if err := d.Set("filter", filters); err != nil {
-			return err
-		}
+	}
+	if err := d.Set("filter", filters); err != nil {
+		return err
 	}
 
 	if err := d.Set("filter_type", loadBalancer.Filter.FilterType); err != nil {
