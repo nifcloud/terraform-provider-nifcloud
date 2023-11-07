@@ -112,19 +112,20 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 	if d.HasChange("ssl_certificate_id") {
-		o, _ := d.GetChange("ssl_certificate_id")
-		oc := o.(string)
-		if oc != "" {
+		n := d.Get("ssl_certificate_id")
+		nc := n.(string)
+		if nc == "" {
 			input := expandUnsetLoadBalancerListenerSSLCertificate(d)
 			_, err := svc.UnsetLoadBalancerListenerSSLCertificate(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed un setting SSLCertificate with load balancer: %s", err))
 			}
-		}
-		input := expandSetLoadBalancerListenerSSLCertificate(d)
-		_, err := svc.SetLoadBalancerListenerSSLCertificate(ctx, input)
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed setting SSLCertificate with load balancer: %s", err))
+		} else {
+			input := expandSetLoadBalancerListenerSSLCertificate(d)
+			_, err := svc.SetLoadBalancerListenerSSLCertificate(ctx, input)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed setting SSLCertificate with load balancer: %s", err))
+			}
 		}
 	}
 	if d.HasChanges("ssl_policy_name", "ssl_policy_id") {
