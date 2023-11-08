@@ -204,10 +204,9 @@ func expandSetFilterForLoadBalancerFilterType(d *schema.ResourceData) *computing
 	}
 }
 
-func expandSetFilterForLoadBalancer(d *schema.ResourceData) *computing.SetFilterForLoadBalancerInput {
+func expandSetFilterForLoadBalancer(d *schema.ResourceData, list []interface{}) *computing.SetFilterForLoadBalancerInput {
 	var filters []types.RequestIPAddresses
-	fl := d.Get("filter").(*schema.Set).List()
-	for _, i := range fl {
+	for _, i := range list {
 		filters = append(filters, types.RequestIPAddresses{
 			IPAddress:   nifcloud.String(i.(string)),
 			AddOnFilter: nifcloud.Bool(true),
@@ -222,11 +221,9 @@ func expandSetFilterForLoadBalancer(d *schema.ResourceData) *computing.SetFilter
 	}
 }
 
-func expandUnSetFilterForLoadBalancer(d *schema.ResourceData) *computing.SetFilterForLoadBalancerInput {
-	o, _ := d.GetChange("filter")
+func expandUnSetFilterForLoadBalancer(d *schema.ResourceData, list []interface{}) *computing.SetFilterForLoadBalancerInput {
 	var filters []types.RequestIPAddresses
-	fl := o.(*schema.Set).List()
-	for _, i := range fl {
+	for _, i := range list {
 		filters = append(filters, types.RequestIPAddresses{
 			IPAddress:   nifcloud.String(i.(string)),
 			AddOnFilter: nifcloud.Bool(false),

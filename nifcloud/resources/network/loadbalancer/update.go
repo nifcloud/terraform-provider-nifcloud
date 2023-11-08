@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
@@ -87,16 +86,25 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 	if d.HasChange("filter") {
-		input := expandUnSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses.Member) > 0 && nifcloud.ToString(input.IPAddresses.Member[0].IPAddress) != "*.*.*.*" {
+		o, n := d.GetChange("filter")
+		os := o.(*schema.Set)
+		ns := n.(*schema.Set)
+
+		addFilters := ns.Difference(os).List()
+		delFilters := os.Difference(ns).List()
+
+		if len(addFilters) > 0 {
+			input := expandSetFilterForLoadBalancer(d, addFilters)
+
 			_, err := svc.SetFilterForLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
 			}
 		}
 
-		input = expandSetFilterForLoadBalancer(d)
-		if len(input.IPAddresses.Member) > 0 && nifcloud.ToString(input.IPAddresses.Member[0].IPAddress) != "*.*.*.*" {
+		if len(delFilters) > 0 {
+			input := expandUnSetFilterForLoadBalancer(d, delFilters)
+
 			_, err := svc.SetFilterForLoadBalancer(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed setting load balancer filters %s", err))
@@ -104,19 +112,20 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		}
 	}
 	if d.HasChange("ssl_certificate_id") {
-		o, _ := d.GetChange("ssl_certificate_id")
-		oc := o.(string)
-		if oc != "" {
+		n := d.Get("ssl_certificate_id")
+		nc := n.(string)
+		if nc == "" {
 			input := expandUnsetLoadBalancerListenerSSLCertificate(d)
 			_, err := svc.UnsetLoadBalancerListenerSSLCertificate(ctx, input)
 			if err != nil {
 				return diag.FromErr(fmt.Errorf("failed un setting SSLCertificate with load balancer: %s", err))
 			}
-		}
-		input := expandSetLoadBalancerListenerSSLCertificate(d)
-		_, err := svc.SetLoadBalancerListenerSSLCertificate(ctx, input)
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed setting SSLCertificate with load balancer: %s", err))
+		} else {
+			input := expandSetLoadBalancerListenerSSLCertificate(d)
+			_, err := svc.SetLoadBalancerListenerSSLCertificate(ctx, input)
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("failed setting SSLCertificate with load balancer: %s", err))
+			}
 		}
 	}
 	if d.HasChanges("ssl_policy_name", "ssl_policy_id") {
