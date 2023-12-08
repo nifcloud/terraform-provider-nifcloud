@@ -111,8 +111,9 @@ github.com/aws/aws-sdk-go v1.44.203 h1:pcsP805b9acL3wUqa4JR2vg1k2wnItkDYNvfmcy6F
 github.com/aws/aws-sdk-go v1.44.203/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/aws/aws-sdk-go-v2 v1.17.4 h1:wyC6p9Yfq6V2y98wfDsj6OnNQa4w2BLGCLIxzNhwOGY=
 github.com/aws/aws-sdk-go-v2 v1.17.4/go.mod h1:uzbQtefpm44goOPmdKyAlXSNcwlRgF3ePWVW6EtJvvw=
-github.com/aws/smithy-go v1.13.5 h1:hgz0X/DX0dGqTYpGALqXJoRKRj5oQ7150i5FdTePzO8=
 github.com/aws/smithy-go v1.13.5/go.mod h1:Tg+OJXh4MB2R/uN61Ko2f6hTZwB/ZYGOtib8J3gBHzA=
+github.com/aws/smithy-go v1.14.2 h1:MJU9hqBGbvWZdApzpvoF2WAIJDbtjK2NDJSiJP7HblQ=
+github.com/aws/smithy-go v1.14.2/go.mod h1:Tg+OJXh4MB2R/uN61Ko2f6hTZwB/ZYGOtib8J3gBHzA=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
@@ -593,10 +594,10 @@ github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 h1:4kuARK6Y6Fx
 github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354/go.mod h1:KSVJerMDfblTH7p5MZaTt+8zaT2iEk3AkVb9PQdZuE8=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/nifcloud/nifcloud-sdk-go v1.20.0 h1:TBK2g7wCpGIubb333D7FgpeKazDwV+kdQsx4coco0KU=
-github.com/nifcloud/nifcloud-sdk-go v1.20.0/go.mod h1:OlT+2biDJKG7FfXJNpTK+KZaBTEpoRYIyRC/meumbzg=
-github.com/nifcloud/nifcloud-sdk-go v1.21.0 h1:ZdsSI42mV3joah8aL2r34PaO9xZFOIG3ifZ2U6MYZ8A=
-github.com/nifcloud/nifcloud-sdk-go v1.21.0/go.mod h1:OlT+2biDJKG7FfXJNpTK+KZaBTEpoRYIyRC/meumbzg=
+github.com/nifcloud/nifcloud-sdk-go v1.22.1-0.20231207111436-480167eda9cc h1:dR/oSKuvN/26voNaWVmJBjwInbtKcB5Vg9Qu07UgIZc=
+github.com/nifcloud/nifcloud-sdk-go v1.22.1-0.20231207111436-480167eda9cc/go.mod h1:+vk7SQl3ed2U4OqEQWmUqW3C/KqtB8VNmbElIbhu2LU=
+github.com/nifcloud/nifcloud-sdk-go v1.22.1-0.20231218102053-973db7e8d404 h1:Yd1K3JEbOGdA8AdFadU64tq1bUagQtUbDQfqTD6WZz0=
+github.com/nifcloud/nifcloud-sdk-go v1.22.1-0.20231218102053-973db7e8d404/go.mod h1:+vk7SQl3ed2U4OqEQWmUqW3C/KqtB8VNmbElIbhu2LU=
 github.com/nishanths/exhaustive v0.9.5 h1:TzssWan6orBiLYVqewCG8faud9qlFntJE30ACpzmGME=
 github.com/nishanths/exhaustive v0.9.5/go.mod h1:IbwrGdVMizvDcIxPYGVdQn5BqWJaOwpCvg4RGb8r/TA=
 github.com/nishanths/predeclared v0.2.2 h1:V2EPdZPliZymNAn79T8RkNApBjMmVKh5XRpLm/w98Vk=
@@ -632,7 +633,6 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/polyfloyd/go-errorlint v1.0.6 h1:ZevdyEGxDoHAMQUVvdTT06hnYuKULe8TQkOmIYx6s1c=
 github.com/polyfloyd/go-errorlint v1.0.6/go.mod h1:NcnNncnm8fVV7vfQWiI4HZrzWFzGp24C262IQutNcMs=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
-github.com/posener/complete v1.2.1 h1:LrvDIY//XNo65Lq84G/akBuMGlawHvGBABv8f/ZN6DI=
 github.com/posener/complete v1.2.1/go.mod h1:6gapUrK/U1TAN7ciCoNRIdVC5sbdBTUh1DKN0g6uH7E=
 github.com/posener/complete v1.2.3 h1:NP0eAhjcjImqslEwo/1hq7gpajME0fTLTezBKDqfXqo=
 github.com/posener/complete v1.2.3/go.mod h1:WZIdtGGp+qx0sLrYKtIRAruyNpv6hFCicSgv7Sy7s/s=

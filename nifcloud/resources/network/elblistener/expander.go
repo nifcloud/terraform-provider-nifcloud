@@ -8,6 +8,7 @@ import (
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing/types"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/network/elb"
 )
 
 func expandNiftyRegisterPortWithElasticLoadBalancerInput(d *schema.ResourceData) *computing.NiftyRegisterPortWithElasticLoadBalancerInput {
@@ -106,7 +107,7 @@ func expandNiftyModifyElasticLoadBalancerAttributesInput(d *schema.ResourceData)
 					Method: types.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
 						d.Get("session_stickiness_policy_method").(string),
 					),
-					ExpirationPeriod: nifcloud.Int32(int32(d.Get("session_stickiness_policy_expiration_period").(int))),
+					ExpirationPeriod: elb.GetStickinessSessionExpirationValue(d),
 				},
 			},
 			RequestSorryPage: &types.RequestSorryPage{

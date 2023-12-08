@@ -75,7 +75,7 @@ func expandNiftyCreateElasticLoadBalancerInput(d *schema.ResourceData) *computin
 						RequestStickinessPolicy: &types.RequestStickinessPolicy{
 							Enable:           nifcloud.Bool(d.Get("session_stickiness_policy_enable").(bool)),
 							Method:           types.MethodOfListenersForNiftyCreateElasticLoadBalancer(d.Get("session_stickiness_policy_method").(string)),
-							ExpirationPeriod: nifcloud.Int32(int32(d.Get("session_stickiness_policy_expiration_period").(int))),
+							ExpirationPeriod: GetStickinessSessionExpirationValue(d),
 						},
 					},
 					RequestSorryPage: &types.RequestSorryPage{
@@ -183,7 +183,7 @@ func expandNiftyModifyElasticLoadBalancerAttributesInput(d *schema.ResourceData)
 					Method: types.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
 						d.Get("session_stickiness_policy_method").(string),
 					),
-					ExpirationPeriod: nifcloud.Int32(int32(d.Get("session_stickiness_policy_expiration_period").(int))),
+					ExpirationPeriod: GetStickinessSessionExpirationValue(d),
 				},
 			},
 			RequestSorryPage: &types.RequestSorryPage{
@@ -320,4 +320,12 @@ func expandNiftyDeleteNiftyElasticLoadBalancerInput(d *schema.ResourceData) *com
 		InstancePort:            nifcloud.Int32(int32(d.Get("instance_port").(int))),
 		Protocol:                types.ProtocolOfNiftyDeleteElasticLoadBalancerRequest(d.Get("protocol").(string)),
 	}
+}
+
+func GetStickinessSessionExpirationValue(d *schema.ResourceData) *int32 {
+	v, exists := d.GetOk("session_stickiness_policy_expiration_period")
+	if !exists {
+		return nil
+	}
+	return nifcloud.Int32(int32(v.(int)))
 }

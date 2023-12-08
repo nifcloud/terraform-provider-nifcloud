@@ -134,6 +134,7 @@ func TestAcc_ELB(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"network_interface",
+					"session_stickiness_policy_expiration_period", // in this part, expiration is 'unlimited' (API returns null), but state is converted it to 0.
 				},
 			},
 		},
