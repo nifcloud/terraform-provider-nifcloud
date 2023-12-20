@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/internal/mutexkv"
 )
 
@@ -81,4 +82,12 @@ func populateELBFromImport(d *schema.ResourceData, importParts []string) error {
 
 func getELBID(d *schema.ResourceData) string {
 	return strings.Split(d.Id(), "_")[0]
+}
+
+func getStickinessSessionExpirationValue(d *schema.ResourceData) *int32 {
+	v, exists := d.GetOk("session_stickiness_policy_expiration_period")
+	if !exists {
+		return nil
+	}
+	return nifcloud.Int32(int32(v.(int)))
 }

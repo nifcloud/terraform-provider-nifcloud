@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 )
 
 func validateELBImportString(importStr string) ([]string, error) {
@@ -77,4 +78,12 @@ func populateELBFromImport(d *schema.ResourceData, importParts []string) error {
 	d.SetId(elbID)
 
 	return nil
+}
+
+func getStickinessSessionExpirationValue(d *schema.ResourceData) *int32 {
+	v, exists := d.GetOk("session_stickiness_policy_expiration_period")
+	if !exists {
+		return nil
+	}
+	return nifcloud.Int32(int32(v.(int)))
 }
