@@ -225,7 +225,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:         schema.TypeInt,
 			Description:  "The session stickiness policy expiration period.",
 			Optional:     true,
-			ValidateFunc: validation.IntBetween(3, 60),
+			ValidateFunc: validation.IntBetween(3, 1440),
 		},
 		"sorry_page_enable": {
 			Type:        schema.TypeBool,

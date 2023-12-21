@@ -75,7 +75,7 @@ func expandNiftyCreateElasticLoadBalancerInput(d *schema.ResourceData) *computin
 						RequestStickinessPolicy: &types.RequestStickinessPolicy{
 							Enable:           nifcloud.Bool(d.Get("session_stickiness_policy_enable").(bool)),
 							Method:           types.MethodOfListenersForNiftyCreateElasticLoadBalancer(d.Get("session_stickiness_policy_method").(string)),
-							ExpirationPeriod: nifcloud.Int32(int32(d.Get("session_stickiness_policy_expiration_period").(int))),
+							ExpirationPeriod: getStickinessSessionExpirationValue(d),
 						},
 					},
 					RequestSorryPage: &types.RequestSorryPage{
@@ -183,7 +183,7 @@ func expandNiftyModifyElasticLoadBalancerAttributesInput(d *schema.ResourceData)
 					Method: types.MethodOfLoadBalancerAttributesForNiftyModifyElasticLoadBalancerAttributes(
 						d.Get("session_stickiness_policy_method").(string),
 					),
-					ExpirationPeriod: nifcloud.Int32(int32(d.Get("session_stickiness_policy_expiration_period").(int))),
+					ExpirationPeriod: getStickinessSessionExpirationValue(d),
 				},
 			},
 			RequestSorryPage: &types.RequestSorryPage{

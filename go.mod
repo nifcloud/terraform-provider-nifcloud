@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.4
-	github.com/aws/smithy-go v1.13.5
+	github.com/aws/smithy-go v1.14.2
 	github.com/bflad/tfproviderdocs v0.9.1
 	github.com/bflad/tfproviderlint v0.28.1
 	github.com/client9/misspell v0.3.4
@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.27.0
 	github.com/katbyte/terrafmt v0.4.0
-	github.com/nifcloud/nifcloud-sdk-go v1.21.0
+	github.com/nifcloud/nifcloud-sdk-go v1.22.1-0.20231218102053-973db7e8d404
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/sync v0.1.0
 )
