@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.12.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.12.0) (2023-12-21)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.11.0...v1.12.0)
+
+**Merged pull requests:**
+
+- Feature/elb unlimited stickiness session [\#127](https://github.com/nifcloud/terraform-provider-nifcloud/pull/127) ([aokumasan](https://github.com/aokumasan))
+- resource/nifcloud\_loadbalancer: Fix filter settings [\#126](https://github.com/nifcloud/terraform-provider-nifcloud/pull/126) ([fuku2014](https://github.com/fuku2014))
+
 ## [v1.11.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.11.0) (2023-09-20)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.10.2...v1.11.0)
