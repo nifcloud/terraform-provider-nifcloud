@@ -86,13 +86,6 @@ func newSchema() map[string]*schema.Schema {
 			Sensitive:        true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(1, 128),
 		},
-		"authentication_type": {
-			Type:         schema.TypeInt,
-			Description:  "Type of cifs authentication. (0: local auth)",
-			Optional:     true,
-			Computed:     true,
-			ValidateFunc: validation.IntInSlice([]int{0, 1}),
-		},
 		"no_root_squash": {
 			Type:        schema.TypeBool,
 			Description: "Turn off root squashing.",

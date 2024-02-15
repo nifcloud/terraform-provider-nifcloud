@@ -41,8 +41,6 @@ func expandModifyNASInstanceInput(d *schema.ResourceData) *nas.ModifyNASInstance
 	}
 
 	if d.Get("protocol").(string) == "cifs" {
-		authenticationType := d.Get("authentication_type").(int)
-		input.AuthenticationType = nifcloud.Int32(int32(authenticationType))
 		input.MasterUserPassword = nifcloud.String(d.Get("master_user_password").(string))
 	}
 

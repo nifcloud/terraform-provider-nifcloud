@@ -104,7 +104,6 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "nas_security_group_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "master_username", "tfacc"),
 					resource.TestCheckResourceAttr(resourceName, "master_user_password", "tfaccpass"),
-					resource.TestCheckResourceAttr(resourceName, "authentication_type", "0"),
 					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
 					resource.TestCheckResourceAttrSet(resourceName, "private_ip_address"),
 				),
@@ -123,7 +122,6 @@ func TestAcc_NASInstance_CIFS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "nas_security_group_name", randName),
 					resource.TestCheckResourceAttr(resourceName, "master_username", "tfacc"),
 					resource.TestCheckResourceAttr(resourceName, "master_user_password", "tfaccpass"),
-					resource.TestCheckResourceAttr(resourceName, "authentication_type", "0"),
 					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
 					resource.TestCheckResourceAttrSet(resourceName, "private_ip_address"),
 				),
@@ -331,10 +329,6 @@ func testAccCheckNASInstanceValuesForCIFS(nasInstance *types.NASInstances, ident
 			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.ToString(nasInstance.MasterUsername))
 		}
 
-		if nifcloud.ToInt32(nasInstance.AuthenticationType) != 0 {
-			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.ToInt32(nasInstance.AuthenticationType))
-		}
-
 		return nil
 	}
 }
@@ -367,10 +361,6 @@ func testAccCheckNASInstanceValuesUpdatedForCIFS(nasInstance *types.NASInstances
 
 		if nifcloud.ToString(nasInstance.MasterUsername) != "tfacc" {
 			return fmt.Errorf("bad master_username state, expected \"tfacc\", got: %#v", nifcloud.ToString(nasInstance.MasterUsername))
-		}
-
-		if nifcloud.ToInt32(nasInstance.AuthenticationType) != 0 {
-			return fmt.Errorf("bad authentication_type state, expected 0, got: %#v", nifcloud.ToInt32(nasInstance.AuthenticationType))
 		}
 
 		return nil
