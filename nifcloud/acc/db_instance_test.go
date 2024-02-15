@@ -65,7 +65,6 @@ func TestAcc_DBInstance(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "backup_window", "00:00-08:00"),
 					resource.TestCheckResourceAttr(resourceName, "maintenance_window", "sun:23:00-sun:23:30"),
 					resource.TestCheckResourceAttr(resourceName, "multi_az", "true"),
-					resource.TestCheckResourceAttr(resourceName, "multi_az_type", "0"),
 					resource.TestCheckResourceAttr(resourceName, "port", "3306"),
 					resource.TestCheckResourceAttr(resourceName, "publicly_accessible", "true"),
 					resource.TestCheckResourceAttr(resourceName, "db_security_group_name", randName),
@@ -80,7 +79,6 @@ func TestAcc_DBInstance(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceNameRestore, "instance_class", "db.large"),
 					resource.TestCheckResourceAttr(resourceNameRestore, "storage_type", "0"),
 					resource.TestCheckResourceAttr(resourceNameRestore, "multi_az", "true"),
-					resource.TestCheckResourceAttr(resourceNameRestore, "multi_az_type", "0"),
 					resource.TestCheckResourceAttr(resourceNameRestore, "port", "3306"),
 					resource.TestCheckResourceAttr(resourceNameRestore, "publicly_accessible", "true"),
 					resource.TestCheckResourceAttr(resourceNameRestore, "db_security_group_name", randName),
@@ -126,7 +124,6 @@ func TestAcc_DBInstance(t *testing.T) {
 					"final_snapshot_identifier",
 					"password",
 					"skip_final_snapshot",
-					"multi_az_type",
 				},
 			},
 		},
@@ -242,10 +239,6 @@ func testAccCheckDBInstanceValues(dbInstance *types.DBInstances, rName string) r
 
 		if nifcloud.ToBool(dbInstance.MultiAZ) != true {
 			return fmt.Errorf("bad multi_az state,  expected \"true\", got: %#v", dbInstance.MultiAZ)
-		}
-
-		if nifcloud.ToString(dbInstance.NiftyMultiAZType) != "0" {
-			return fmt.Errorf("bad multi_az_type state,  expected \"0\", got: %#v", dbInstance.NiftyMultiAZType)
 		}
 
 		if nifcloud.ToInt32(dbInstance.Endpoint.Port) != 3306 {

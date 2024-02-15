@@ -42,7 +42,6 @@ resource "nifcloud_db_instance" "example" {
   backup_window                  = "00:00-09:00"
   maintenance_window             = "sun:22:00-sun:22:30"
   multi_az                       = true
-  multi_az_type                  = 1
   port                           = 3306
   publicly_accessible            = true
   final_snapshot_identifier      = "example"
@@ -76,7 +75,6 @@ The following arguments are supported:
 * `maintenance_window` - (Optional) The weekly time range (in UTC) the instance maintenance window. Example: `Sun:05:00-Sun:06:00`
 * `master_private_address` - (Optional) Private IP address for master DB.
 * `multi_az` - (Optional) If the DB instance is multi AZ enabled.
-* `multi_az_type` - (Optional) The type of multi AZ. (0: Data priority) default `0`
 * `network_id` - (Optional) The id of private lan.
 * `parameter_group_name` - (Optional) Name of the DB parameter group to associate; which can be managed using the nifcloud_db_parameter_group resource.
 * `password` - (Optional) Password for the master DB user.
