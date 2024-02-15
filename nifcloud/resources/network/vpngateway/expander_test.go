@@ -326,6 +326,7 @@ func TestExpandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(t *testing.T
 func TestExpandNiftyUpdateVpnGatewayNetworkInterfacesInput(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"ip_address": "test_ip_address",
+		"network_id": "test_network_id",
 	})
 	rd.SetId("test_vpngateway_id")
 
@@ -339,8 +340,16 @@ func TestExpandNiftyUpdateVpnGatewayNetworkInterfacesInput(t *testing.T) {
 			args: rd,
 			want: &computing.NiftyUpdateVpnGatewayNetworkInterfacesInput{
 				VpnGatewayId: nifcloud.String("test_vpngateway_id"),
-				NetworkInterface: &types.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
-					IpAddress: nifcloud.String("test_ip_address"),
+				NetworkInterface: []types.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
+					{
+						NetworkId:        nifcloud.String("net-COMMON_GLOBAL"),
+						IsOutsideNetwork: nifcloud.Bool(true),
+					},
+					{
+						NetworkId:        nifcloud.String("test_network_id"),
+						IpAddress:        nifcloud.String("test_ip_address"),
+						IsOutsideNetwork: nifcloud.Bool(false),
+					},
 				},
 			},
 		},

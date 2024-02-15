@@ -11,6 +11,7 @@ resource "nifcloud_vpn_gateway" "basic" {
   network_name = nifcloud_private_lan.basic.private_lan_name
   ip_address = "192.168.3.2"
   security_group = nifcloud_security_group.basic.group_name
+  depends_on     = ["nifcloud_route_table.rt"]
 }
 
 resource "nifcloud_private_lan" "basic" {
