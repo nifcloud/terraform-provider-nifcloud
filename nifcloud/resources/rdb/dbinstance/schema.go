@@ -152,13 +152,6 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 			Computed:    true,
 		},
-		"multi_az_type": {
-			Description: "The type of multi AZ. (0: Data priority) default `0`",
-			Type:        schema.TypeInt,
-			Optional:    true,
-			Default:     0,
-		},
-
 		"port": {
 			Type:        schema.TypeInt,
 			Description: "The database port.",

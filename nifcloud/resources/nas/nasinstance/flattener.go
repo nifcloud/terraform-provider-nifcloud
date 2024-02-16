@@ -56,10 +56,6 @@ func flatten(d *schema.ResourceData, res *nas.DescribeNASInstancesOutput) error 
 		return err
 	}
 
-	if err := d.Set("authentication_type", nasInstance.AuthenticationType); err != nil {
-		return err
-	}
-
 	if err := d.Set("type", nasInstance.NASInstanceType); err != nil {
 		return err
 	}

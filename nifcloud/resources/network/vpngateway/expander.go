@@ -89,10 +89,25 @@ func expandNiftyModifyVpnGatewayAttributeInputForVpnGatewayType(d *schema.Resour
 }
 
 func expandNiftyUpdateVpnGatewayNetworkInterfacesInput(d *schema.ResourceData) *computing.NiftyUpdateVpnGatewayNetworkInterfacesInput {
+	networkInterface := types.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
+		IpAddress:        nifcloud.String(d.Get("ip_address").(string)),
+		IsOutsideNetwork: nifcloud.Bool(false),
+	}
+	if row, ok := d.GetOk("network_name"); ok {
+		networkInterface.NetworkName = nifcloud.String(row.(string))
+	}
+	if row, ok := d.GetOk("network_id"); ok {
+		networkInterface.NetworkId = nifcloud.String(row.(string))
+	}
+
 	return &computing.NiftyUpdateVpnGatewayNetworkInterfacesInput{
 		VpnGatewayId: nifcloud.String(d.Id()),
-		NetworkInterface: &types.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
-			IpAddress: nifcloud.String(d.Get("ip_address").(string)),
+		NetworkInterface: []types.RequestNetworkInterfaceOfNiftyUpdateVpnGatewayNetworkInterfaces{
+			{
+				NetworkId:        nifcloud.String("net-COMMON_GLOBAL"),
+				IsOutsideNetwork: nifcloud.Bool(true),
+			},
+			networkInterface,
 		},
 	}
 }

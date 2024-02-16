@@ -101,7 +101,6 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 	rdForCIFS := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"protocol":                       "cifs",
 		"allocated_storage":              100,
-		"authentication_type":            1,
 		"private_ip_address":             "192.168.0.1",
 		"private_ip_address_subnet_mask": "/24",
 		"master_user_password":           "test_master_user_password",
@@ -137,7 +136,6 @@ func TestExpandModifyNASInstanceInput(t *testing.T) {
 			args: rdForCIFS,
 			want: &nas.ModifyNASInstanceInput{
 				AllocatedStorage:         nifcloud.Int32(100),
-				AuthenticationType:       nifcloud.Int32(1),
 				MasterPrivateAddress:     nifcloud.String("192.168.0.1/24"),
 				MasterUserPassword:       nifcloud.String("test_master_user_password"),
 				NASInstanceDescription:   nifcloud.String("test_description"),

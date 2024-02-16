@@ -51,7 +51,6 @@ The following arguments are supported:
 * `protocol` - (Required) The protocol of the NAS. `nfs` or `cifs`.
 * `master_username` - (Require if protocol is CIFS) The master username.
 * `master_user_password` - (Require if protocol is CIFS) The password for masater user.
-* `authentication_type` - (Optional) The authentication type for CIFS. (0: local auth)
 * `no_root_squash` - (Optional) Turn off root squashing.
 * `network_id` - (Optional) The id of private lan.
 * `private_ip_address` - (Optional) The private IP address of the NAS instance.

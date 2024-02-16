@@ -20,7 +20,6 @@ resource "nifcloud_db_instance" "basic" {
   backup_window                  = "00:00-08:00"
   maintenance_window             = "sun:23:00-sun:23:30"
   multi_az                       = true
-  multi_az_type                  = 0
   port                           = 3306
   publicly_accessible            = true
   db_security_group_name         = nifcloud_db_security_group.basic.id
@@ -48,7 +47,6 @@ resource "nifcloud_db_instance" "base" {
   backup_window                  = "00:00-08:00"
   maintenance_window             = "sun:23:00-sun:23:30"
   multi_az                       = true
-  multi_az_type                  = 0
   port                           = 3306
   publicly_accessible            = true
   skip_final_snapshot            = true
@@ -78,7 +76,6 @@ resource "nifcloud_db_instance" "restore" {
   accounting_type        = nifcloud_db_instance.base.accounting_type
   storage_type           = nifcloud_db_instance.base.storage_type
   multi_az               = nifcloud_db_instance.base.multi_az
-  multi_az_type          = nifcloud_db_instance.base.multi_az_type
   publicly_accessible    = nifcloud_db_instance.base.publicly_accessible
   db_security_group_name = nifcloud_db_instance.base.db_security_group_name
   parameter_group_name   = nifcloud_db_instance.base.parameter_group_name

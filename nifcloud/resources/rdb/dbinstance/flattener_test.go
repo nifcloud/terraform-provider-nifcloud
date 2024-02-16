@@ -30,7 +30,6 @@ func TestFlatten(t *testing.T) {
 		"backup_window":                  "test_backup_window",
 		"maintenance_window":             "test_maintenance_window",
 		"multi_az":                       true,
-		"multi_az_type":                  0,
 		"port":                           1,
 		"publicly_accessible":            true,
 		"db_security_group_name":         "test_db_security_group_name",

@@ -2,7 +2,6 @@ package dbinstance
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
@@ -88,12 +87,6 @@ func flatten(d *schema.ResourceData, res *rdb.DescribeDBInstancesOutput) error {
 
 	if err := d.Set("multi_az", dbInstance.MultiAZ); err != nil {
 		return err
-	}
-
-	if multiAZType, err := strconv.Atoi(nifcloud.ToString(dbInstance.NiftyMultiAZType)); err == nil {
-		if err := d.Set("multi_az_type", multiAZType); err != nil {
-			return err
-		}
 	}
 
 	if err := d.Set("port", dbInstance.Endpoint.Port); err != nil {

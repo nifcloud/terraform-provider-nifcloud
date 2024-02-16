@@ -28,7 +28,6 @@ func update(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 		"backup_window",
 		"maintenance_window",
 		"multi_az",
-		"multi_az_type",
 		"db_security_group_name",
 		"parameter_group_name",
 		"slave_private_address",
