@@ -85,6 +85,7 @@ In addition to the arguments listed above, the following computed attributes are
 * `router_id` - The unique ID of the router.
 * `route_table_association_id` - The ID of the route table association.
 * `nat_table_association_id` - The ID of the NAT table association.
+* `public_ip_address` - The public ip address.
 
 ## Import
 
