@@ -35,6 +35,7 @@ func TestFlatten(t *testing.T) {
 		"router_id":                  "test_router_id",
 		"route_table_id":             "test_route_table_id",
 		"route_table_association_id": "test_route_table_association_id",
+		"public_ip_address":          "test_global_ip_address",
 		"security_group":             "test_security_group",
 		"type":                       "test_type",
 	})

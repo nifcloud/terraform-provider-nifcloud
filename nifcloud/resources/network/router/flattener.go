@@ -76,7 +76,12 @@ func flatten(d *schema.ResourceData, res *computing.NiftyDescribeRoutersOutput) 
 	for _, n := range router.NetworkInterfaceSet {
 		ni := make(map[string]interface{})
 		switch nifcloud.ToString(n.NetworkId) {
-		case "net-COMMON_GLOBAL", "net-COMMON_PRIVATE":
+		case "net-COMMON_GLOBAL":
+			ni["network_id"] = nifcloud.ToString(n.NetworkId)
+			if err := d.Set("public_ip_address", n.IpAddress); err != nil {
+				return err
+			}
+		case "net-COMMON_PRIVATE":
 			ni["network_id"] = nifcloud.ToString(n.NetworkId)
 		default:
 			var findElm map[string]interface{}

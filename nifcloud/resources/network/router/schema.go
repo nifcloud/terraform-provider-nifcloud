@@ -116,6 +116,11 @@ func newSchema() map[string]*schema.Schema {
 				},
 			},
 		},
+		"public_ip_address": {
+			Type:        schema.TypeString,
+			Description: "The public ip address.",
+			Computed:    true,
+		},
 		"router_id": {
 			Type:        schema.TypeString,
 			Description: "The unique ID of the router.",

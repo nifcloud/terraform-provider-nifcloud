@@ -78,6 +78,7 @@ func TestAcc_Router(t *testing.T) {
 					resource.TestCheckResourceAttrSet(resourceName, "nat_table_association_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "route_table_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "route_table_association_id"),
+					resource.TestCheckResourceAttrSet(resourceName, "public_ip_address"),
 				),
 			},
 			{
