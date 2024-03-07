@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.13.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.13.0) (2024-03-06)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.12.0...v1.13.0)
+
+**Merged pull requests:**
+
+- resource/nifcloud\_router: Add public\_ip\_address [\#129](https://github.com/nifcloud/terraform-provider-nifcloud/pull/129) ([fuku2014](https://github.com/fuku2014))
+- Upgrade nifcloud-sdk-go@v1.23.0 [\#128](https://github.com/nifcloud/terraform-provider-nifcloud/pull/128) ([aokumasan](https://github.com/aokumasan))
+
 ## [v1.12.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.12.0) (2023-12-21)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.11.0...v1.12.0)
