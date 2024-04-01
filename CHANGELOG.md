@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.14.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.14.0) (2024-04-01)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.13.0...v1.14.0)
+
+**Merged pull requests:**
+
+- Update copyright [\#130](https://github.com/nifcloud/terraform-provider-nifcloud/pull/130) ([tily](https://github.com/tily))
+
 ## [v1.13.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.13.0) (2024-03-06)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.12.0...v1.13.0)
