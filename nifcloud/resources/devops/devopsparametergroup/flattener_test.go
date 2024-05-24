@@ -12,6 +12,17 @@ import (
 
 func TestFlatten(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		// define a parameter because the flattener only update configured parameters.
+		"parameter": []interface{}{
+			map[string]interface{}{
+				"name":  "test_name_01",
+				"value": "",
+			},
+		},
+	})
+	rd.SetId("test_name")
+
+	wantRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
 		"name":        "test_name",
 		"description": "test_description",
 		"parameter": []interface{}{
@@ -21,7 +32,7 @@ func TestFlatten(t *testing.T) {
 			},
 		},
 	})
-	rd.SetId("test_name")
+	wantRd.SetId("test_name")
 
 	wantNotFoundRd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{})
 
@@ -65,7 +76,7 @@ func TestFlatten(t *testing.T) {
 					},
 				},
 			},
-			want: rd,
+			want: wantRd,
 		},
 		{
 			name: "flattens the response even when the resource has been removed externally",
@@ -95,7 +106,6 @@ func TestFlatten(t *testing.T) {
 			}
 
 			assert.Equal(t, wantState.Attributes, gotState.Attributes)
-			assert.True(t, tt.want.Get("parameter").(*schema.Set).Equal(tt.args.d.Get("parameter")))
 		})
 	}
 }

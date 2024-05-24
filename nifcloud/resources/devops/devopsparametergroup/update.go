@@ -42,7 +42,7 @@ func updateParameterGroup(ctx context.Context, d *schema.ResourceData, meta inte
 		// since ResourceData contains only configured parameters in tf file.
 		getParameterGroupRes, err := svc.GetParameterGroup(ctx, expandGetParameterGroupInput(d))
 		if err != nil {
-			return diag.FromErr(fmt.Errorf("failed reading ParameterGroup: %s", err))
+			return diag.FromErr(fmt.Errorf("failed to read a DevOps parameter group: %s", err))
 		}
 		currentParams := flattenParameters(getParameterGroupRes.ParameterGroup.Parameters)
 
@@ -51,7 +51,7 @@ func updateParameterGroup(ctx context.Context, d *schema.ResourceData, meta inte
 		input := expandUpdateParameterGroupInput(d, parametersToUpdate)
 
 		if _, err := svc.UpdateParameterGroup(ctx, input); err != nil {
-			return diag.FromErr(fmt.Errorf("failed updating ParameterGroup: %s", err))
+			return diag.FromErr(fmt.Errorf("failed to update a DevOps parameter group: %s", err))
 		}
 	}
 

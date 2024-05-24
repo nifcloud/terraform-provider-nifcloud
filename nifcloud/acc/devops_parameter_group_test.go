@@ -48,7 +48,39 @@ func TestAcc_DevOpsParameterGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", randName),
 					resource.TestCheckResourceAttr(resourceName, "description", "tfacc-memo"),
 					resource.TestCheckResourceAttr(resourceName, "parameter.#", "3"),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"parameter.*",
+						map[string]string{
+							"name":  "smtp_user_name",
+							"value": "user1",
+						},
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"parameter.*",
+						map[string]string{
+							"name":  "gitlab_email_from",
+							"value": "from@mail.com",
+						},
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"parameter.*",
+						map[string]string{
+							"name":  "gitlab_email_reply_to",
+							"value": "reply-to@mail.com",
+						},
+					),
 					resource.TestCheckResourceAttr(resourceName, "sensitive_parameter.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"sensitive_parameter.*",
+						map[string]string{
+							"name":  "smtp_password",
+							"value": "mystrongpassword",
+						},
+					),
 				),
 			},
 			{
@@ -59,7 +91,39 @@ func TestAcc_DevOpsParameterGroup(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", randName+"-upd"),
 					resource.TestCheckResourceAttr(resourceName, "description", "tfacc-memo-upd"),
 					resource.TestCheckResourceAttr(resourceName, "parameter.#", "3"),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"parameter.*",
+						map[string]string{
+							"name":  "smtp_user_name",
+							"value": "user101",
+						},
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"parameter.*",
+						map[string]string{
+							"name":  "gitlab_email_from",
+							"value": "from@mail.com",
+						},
+					),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"parameter.*",
+						map[string]string{
+							"name":  "gitlab_email_reply_to",
+							"value": "reply-to@mail.com",
+						},
+					),
 					resource.TestCheckResourceAttr(resourceName, "sensitive_parameter.#", "1"),
+					resource.TestCheckTypeSetElemNestedAttrs(
+						resourceName,
+						"sensitive_parameter.*",
+						map[string]string{
+							"name":  "smtp_password",
+							"value": "mynewstrongpassword",
+						},
+					),
 				),
 			},
 			{
@@ -140,7 +204,7 @@ func testAccCheckDevOpsParameterGroupValues(group *types.ParameterGroup, rName s
 func testAccCheckDevOpsParameterGroupValuesUpdated(group *types.ParameterGroup, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.ToString(group.ParameterGroupName) != rName+"-upd" {
-			return fmt.Errorf("bad parameter group name state, expected \"%s\", got: %#v", rName, nifcloud.ToString(group.ParameterGroupName))
+			return fmt.Errorf("bad parameter group name state, expected \"%s\", got: %#v", rName+"-upd", nifcloud.ToString(group.ParameterGroupName))
 		}
 
 		if nifcloud.ToString(group.Description) != "tfacc-memo-upd" {
@@ -198,7 +262,7 @@ func testAccDevOpsParameterGroupResourceDestroy(s *terraform.State) error {
 
 		if err != nil {
 			var awsErr smithy.APIError
-			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.ParameterGroupName" {
+			if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.ParameterGroup" {
 				return nil
 			}
 			return fmt.Errorf("failed GetParameterGroup: %s", err)

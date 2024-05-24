@@ -14,17 +14,17 @@ import (
 func readParameterGroup(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).DevOps
 
-	getParameterGroupRes, err := svc.GetParameterGroup(ctx, expandGetParameterGroupInput(d))
+	res, err := svc.GetParameterGroup(ctx, expandGetParameterGroupInput(d))
 	if err != nil {
 		var awsErr smithy.APIError
 		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.ParameterGroup" {
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("failed reading ParameterGroup: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to read a DevOps parameter group: %s", err))
 	}
 
-	if err := flatten(d, getParameterGroupRes); err != nil {
+	if err := flatten(d, res); err != nil {
 		return diag.FromErr(err)
 	}
 

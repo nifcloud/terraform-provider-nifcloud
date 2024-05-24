@@ -2,7 +2,6 @@ package devopsparametergroup
 
 import (
 	"reflect"
-	"strings"
 
 	"github.com/ettle/strcase"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -45,16 +44,6 @@ func expandUpdateParameterGroupParameters(configured []map[string]string) *types
 	structParams := reflect.Indirect(reflect.ValueOf(parameters))
 	for _, rawParam := range configured {
 		if rawParam["name"] == "" {
-			continue
-		}
-		unsupportedSuffixes := []string{"2", "3", "4", "5"}
-		isUnsuppotedInSDK := false
-		for _, suffix := range unsupportedSuffixes {
-			if strings.HasSuffix(rawParam["name"], suffix) {
-				isUnsuppotedInSDK = true
-			}
-		}
-		if isUnsuppotedInSDK {
 			continue
 		}
 

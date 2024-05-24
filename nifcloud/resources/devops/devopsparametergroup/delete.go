@@ -15,7 +15,7 @@ func deleteParameterGroup(ctx context.Context, d *schema.ResourceData, meta inte
 	input := expandDeleteParameterGroupInput(d)
 
 	if _, err := svc.DeleteParameterGroup(ctx, input); err != nil {
-		return diag.FromErr(fmt.Errorf("failed deleting ParameterGroup: %s", err))
+		return diag.FromErr(fmt.Errorf("failed to delete a DevOps parameter group: %s", err))
 	}
 
 	d.SetId("")

@@ -18,7 +18,7 @@ func flatten(d *schema.ResourceData, res *devops.GetParameterGroupOutput) error 
 	group := res.ParameterGroup
 
 	if nifcloud.ToString(group.ParameterGroupName) != d.Id() {
-		return fmt.Errorf("unable to find parameter group within: %#v", group)
+		return fmt.Errorf("unable to find the DevOps parameter group within: %#v", group)
 	}
 
 	if err := d.Set("name", group.ParameterGroupName); err != nil {

@@ -54,10 +54,10 @@ resource "nifcloud_devops_parameter_group" "example" {
 
 The following arguments are supported:
 
+* `description` - (Optional) Description of the DevOps parameter group.
 * `name` - (Required) The name of the DevOps parameter group.
-* `description` - (Optional) The description for the DevOps parameter group.
-* `parameter` - (Optional) A list of parameters. see [parameter](#parameter)
-* `sensitive_parameter` - (Optional) A list of parameters whose value should be masked. see [sensitive_parameter](#sensitive_parameter)
+* `parameter` - (Optional) List of the DevOps parameters. see [parameter](#parameter)
+* `sensitive_parameter` - (Optional) List of the DevOps parameters whose value should be masked. see [sensitive_parameter](#sensitive_parameter)
 
 ### parameter
 
@@ -66,8 +66,10 @@ The following arguments are supported:
 
 ### sensitive_parameter
 
-* `name` - (Required) The name of the parameter. The allowed name is "smtp_password".
+* `name` - (Required) The name of the parameter. Valid value is `smtp_password`.
 * `value` - (Required) The value of the parameter.
+
+Note: The calculated difference in the values of this parameter may be inaccurate due to API restrictions.
 
 ## Import
 

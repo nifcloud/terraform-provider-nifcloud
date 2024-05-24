@@ -166,10 +166,11 @@ func TestExpandUpdateParameterGroupParameters(t *testing.T) {
 			name: "expands the resource data",
 			args: configured,
 			want: &types.RequestParameters{
-				GitlabEmailFrom:    nifcloud.String("test_value_01"),
-				GitlabEmailReplyTo: nifcloud.String("test_value_02"),
-				SmtpPassword:       nifcloud.String("test_value_03"),
-				SmtpUserName:       nifcloud.String("test_value_04"),
+				GitlabEmailFrom:            nifcloud.String("test_value_01"),
+				GitlabEmailReplyTo:         nifcloud.String("test_value_02"),
+				SmtpPassword:               nifcloud.String("test_value_03"),
+				SmtpUserName:               nifcloud.String("test_value_04"),
+				OmniauthProvidersSamlName2: nifcloud.String("test_value_06"),
 			},
 		},
 	}
