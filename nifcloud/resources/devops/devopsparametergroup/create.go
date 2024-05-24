@@ -17,7 +17,7 @@ func createParameterGroup(ctx context.Context, d *schema.ResourceData, meta inte
 
 	res, err := svc.CreateParameterGroup(ctx, input)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("failed creating ParameterGroup: %s", err))
+		return diag.FromErr(fmt.Errorf("failed creating DevOps ParameterGroup: %s", err))
 	}
 
 	d.SetId(nifcloud.ToString(res.ParameterGroup.ParameterGroupName))

@@ -21,7 +21,7 @@ func readParameterGroup(ctx context.Context, d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		}
-		return diag.FromErr(fmt.Errorf("failed reading ParameterGroup: %s", err))
+		return diag.FromErr(fmt.Errorf("failed reading DevOps ParameterGroup: %s", err))
 	}
 
 	if err := flatten(d, getParameterGroupRes); err != nil {
