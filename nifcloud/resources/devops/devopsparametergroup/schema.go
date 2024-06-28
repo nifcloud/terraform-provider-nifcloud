@@ -41,7 +41,7 @@ func newSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"name": {
 			Type:        schema.TypeString,
-			Description: "The name of the parameter group.",
+			Description: "The name of the DevOps parameter group.",
 			Required:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 63),
@@ -50,7 +50,7 @@ func newSchema() map[string]*schema.Schema {
 		},
 		"description": {
 			Type:             schema.TypeString,
-			Description:      "The description for the DB parameter group.",
+			Description:      "Description of the DevOps parameter group.",
 			Optional:         true,
 			ValidateDiagFunc: validator.StringRuneCountBetween(0, 255),
 		},
@@ -92,7 +92,7 @@ func newSchema() map[string]*schema.Schema {
 				Schema: map[string]*schema.Schema{
 					"name": {
 						Type:        schema.TypeString,
-						Description: "The name of the parameter.",
+						Description: "The name of the parameter. Valid value is `smtp_password`.",
 						Required:    true,
 						ValidateDiagFunc: func(v any, p cty.Path) diag.Diagnostics {
 							value := v.(string)
