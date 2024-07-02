@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/nifcloud/nifcloud-sdk-go/nifcloud"
 	"github.com/nifcloud/nifcloud-sdk-go/service/computing"
+	"github.com/nifcloud/nifcloud-sdk-go/service/devops"
 	"github.com/nifcloud/nifcloud-sdk-go/service/dns"
 	"github.com/nifcloud/nifcloud-sdk-go/service/ess"
 	"github.com/nifcloud/nifcloud-sdk-go/service/nas"
@@ -18,6 +19,7 @@ type Client struct {
 	DNS       *dns.Client
 	ESS       *ess.Client
 	Storage   *storage.Client
+	DevOps    *devops.Client
 }
 
 // New return Client
@@ -29,5 +31,6 @@ func New(cfg nifcloud.Config, storageCfg nifcloud.Config) *Client {
 		DNS:       dns.NewFromConfig(cfg),
 		ESS:       ess.NewFromConfig(cfg),
 		Storage:   storage.NewFromConfig(storageCfg),
+		DevOps:    devops.NewFromConfig(cfg),
 	}
 }
