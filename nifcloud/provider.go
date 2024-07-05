@@ -11,6 +11,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygrouprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/separateinstancerule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/volume"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsbackuprule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsfirewallgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsinstance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsparametergroup"
@@ -131,6 +132,7 @@ func Provider() *schema.Provider {
 			"nifcloud_devops_instance":           devopsinstance.New(),
 			"nifcloud_devops_parameter_group":    devopsparametergroup.New(),
 			"nifcloud_devops_firewall_group":     devopsfirewallgroup.New(),
+			"nifcloud_devops_backup_rule":        devopsbackuprule.New(),
 		},
 	}
 }
