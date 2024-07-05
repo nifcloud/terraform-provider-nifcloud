@@ -12,6 +12,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/separateinstancerule"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/volume"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsfirewallgroup"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsinstance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsparametergroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/record"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/zone"
@@ -127,6 +128,7 @@ func Provider() *schema.Provider {
 			"nifcloud_web_proxy":                 webproxy.New(),
 			"nifcloud_separate_instance_rule":    separateinstancerule.New(),
 			"nifcloud_storage_bucket":            bucket.New(),
+			"nifcloud_devops_instance":           devopsinstance.New(),
 			"nifcloud_devops_parameter_group":    devopsparametergroup.New(),
 			"nifcloud_devops_firewall_group":     devopsfirewallgroup.New(),
 		},
