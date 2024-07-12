@@ -90,5 +90,9 @@ func flatten(d *schema.ResourceData, res *devops.GetInstanceOutput) error {
 		return err
 	}
 
+	if err := d.Set("public_ip_address", instance.PublicIpAddress); err != nil {
+		return err
+	}
+
 	return nil
 }

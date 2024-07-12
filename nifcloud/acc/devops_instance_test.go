@@ -241,9 +241,9 @@ func testSweepDevOpsInstance(region string) error {
 	}
 
 	var sweepInstances []string
-	for _, g := range res.Instances {
-		if strings.HasPrefix(nifcloud.ToString(g.InstanceId), prefix) {
-			sweepInstances = append(sweepInstances, nifcloud.ToString(g.InstanceId))
+	for _, i := range res.Instances {
+		if strings.HasPrefix(nifcloud.ToString(i.InstanceId), prefix) {
+			sweepInstances = append(sweepInstances, nifcloud.ToString(i.InstanceId))
 		}
 	}
 

@@ -69,7 +69,7 @@ func newSchema() map[string]*schema.Schema {
 			Required:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 63),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z\-]+$`), "Enter a name within 1-30 alphanumeric lowercase characters and hyphens. Hyphens cannot be used at the beginning or end."),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z\-]+$`), "Enter a name within 1-63 alphanumeric lowercase characters and hyphens. Hyphens cannot be used at the beginning or end."),
 			),
 		},
 		"parameter_group_name": {
@@ -78,7 +78,7 @@ func newSchema() map[string]*schema.Schema {
 			Required:    true,
 			ValidateFunc: validation.All(
 				validation.StringLenBetween(1, 63),
-				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z\-]+$`), "Enter a name within 1-30 alphanumeric lowercase characters and hyphens. Hyphens cannot be used at the beginning or end."),
+				validation.StringMatch(regexp.MustCompile(`^[0-9a-zA-Z\-]+$`), "Enter a name within 1-63 alphanumeric lowercase characters and hyphens. Hyphens cannot be used at the beginning or end."),
 			),
 		},
 		"disk_size": {
@@ -104,12 +104,11 @@ func newSchema() map[string]*schema.Schema {
 			ValidateDiagFunc: validator.StringRuneCountBetween(0, 255),
 		},
 		"initial_root_password": {
-			Type:             schema.TypeString,
-			Description:      "Initial password for the root user.",
-			Required:         true,
-			Sensitive:        true,
-			DiffSuppressFunc: func(k, oldValue, newValue string, d *schema.ResourceData) bool { return false },
-			StateFunc:        func(i interface{}) string { return "*" },
+			Type:        schema.TypeString,
+			Description: "Initial password for the root user.",
+			Required:    true,
+			Sensitive:   true,
+			ForceNew:    true,
 		},
 		"network_id": {
 			Type:        schema.TypeString,
@@ -167,6 +166,11 @@ func newSchema() map[string]*schema.Schema {
 		"registry_url": {
 			Type:        schema.TypeString,
 			Description: "URL for GitLab container registry.",
+			Computed:    true,
+		},
+		"public_ip_address": {
+			Type:        schema.TypeString,
+			Description: "Public IP address for the DevOps instance.",
 			Computed:    true,
 		},
 	}

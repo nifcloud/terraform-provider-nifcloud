@@ -62,6 +62,7 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `gitlab_url` - URL for GitLab.
 * `registry_url` - URL for GitLab container registry.
+* `public_ip_address` - Public IP address for the DevOps instance.
 
 ## Import
 
