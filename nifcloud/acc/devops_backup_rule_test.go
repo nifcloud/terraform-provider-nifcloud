@@ -128,7 +128,7 @@ func testAccCheckDevOpsBackupRuleValues(rule *types.BackupRule, rName string) re
 func testAccCheckDevOpsBackupRuleValuesUpdated(rule *types.BackupRule, rName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if nifcloud.ToString(rule.BackupRuleName) != rName+"-upd" {
-			return fmt.Errorf("bad backup rule name state, expected \"%s\", got: %#v", rName, nifcloud.ToString(rule.BackupRuleName))
+			return fmt.Errorf("bad backup rule name state, expected \"%s\", got: %#v", rName+"-upd", nifcloud.ToString(rule.BackupRuleName))
 		}
 
 		if nifcloud.ToString(rule.InstanceId) != rName {
@@ -178,9 +178,9 @@ func testSweepDevOpsBackupRule(region string) error {
 	}
 
 	var sweepBackupRules []string
-	for _, g := range res.BackupRules {
-		if strings.HasPrefix(nifcloud.ToString(g.BackupRuleName), prefix) {
-			sweepBackupRules = append(sweepBackupRules, nifcloud.ToString(g.BackupRuleName))
+	for _, b := range res.BackupRules {
+		if strings.HasPrefix(nifcloud.ToString(b.BackupRuleName), prefix) {
+			sweepBackupRules = append(sweepBackupRules, nifcloud.ToString(b.BackupRuleName))
 		}
 	}
 
