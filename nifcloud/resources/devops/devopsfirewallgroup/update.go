@@ -96,7 +96,7 @@ func updateFirewallGroup(ctx context.Context, d *schema.ResourceData, meta inter
 		}
 	}
 
-	if d.HasChanges("name", "description") {
+	if d.HasChanges("name", "description") && !d.IsNewResource() {
 		input := expandUpdateFirewallGroupInput(d)
 
 		if _, err := svc.UpdateFirewallGroup(ctx, input); err != nil {
