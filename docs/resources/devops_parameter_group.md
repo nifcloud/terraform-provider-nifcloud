@@ -56,8 +56,8 @@ The following arguments are supported:
 
 * `description` - (Optional) Description of the DevOps parameter group.
 * `name` - (Required) The name of the DevOps parameter group.
-* `parameter` - (Optional) List of the DevOps parameters. see [parameter](#parameter)
-* `sensitive_parameter` - (Optional) List of the DevOps parameters whose value should be masked. see [sensitive_parameter](#sensitive_parameter)
+* `parameter` - (Optional) List of the DevOps parameters. See [parameter](#parameter).
+* `sensitive_parameter` - (Optional) List of the DevOps parameters whose value should be masked. See [sensitive_parameter](#sensitive_parameter).
 
 ### parameter
 
