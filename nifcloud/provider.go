@@ -15,6 +15,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsfirewallgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsinstance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsparametergroup"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsrunner"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/devops/devopsrunnerparametergroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/record"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/dns/zone"
@@ -134,6 +135,7 @@ func Provider() *schema.Provider {
 			"nifcloud_devops_parameter_group":        devopsparametergroup.New(),
 			"nifcloud_devops_firewall_group":         devopsfirewallgroup.New(),
 			"nifcloud_devops_backup_rule":            devopsbackuprule.New(),
+			"nifcloud_devops_runner":                 devopsrunner.New(),
 			"nifcloud_devops_runner_parameter_group": devopsrunnerparametergroup.New(),
 		},
 	}
