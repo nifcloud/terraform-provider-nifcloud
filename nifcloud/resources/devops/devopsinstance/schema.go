@@ -30,9 +30,9 @@ func New() *schema.Resource {
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Default: schema.DefaultTimeout(5 * time.Minute),
-			Create:  schema.DefaultTimeout(120 * time.Minute),
-			Update:  schema.DefaultTimeout(120 * time.Minute),
-			Delete:  schema.DefaultTimeout(60 * time.Minute),
+			Create:  schema.DefaultTimeout(80 * time.Minute),
+			Update:  schema.DefaultTimeout(80 * time.Minute),
+			Delete:  schema.DefaultTimeout(30 * time.Minute),
 		},
 		CustomizeDiff: customdiff.ValidateChange(
 			"disk_size",

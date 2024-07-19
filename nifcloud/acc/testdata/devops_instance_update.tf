@@ -11,7 +11,7 @@ resource "nifcloud_devops_instance" "basic" {
   availability_zone     = "east-14"
   description           = "tfacc-memo-upd"
   initial_root_password = "initialroo00ootpassword"
-  to                    = "email@example.com"
+  to                    = "email-upd@example.com"
 }
 
 resource "nifcloud_devops_firewall_group" "basic" {

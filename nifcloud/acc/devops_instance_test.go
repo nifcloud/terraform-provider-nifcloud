@@ -49,6 +49,7 @@ func TestAcc_DevOpsInstance(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "disk_size", "100"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-14"),
 					resource.TestCheckResourceAttr(resourceName, "description", "tfacc-memo"),
+					resource.TestCheckResourceAttr(resourceName, "to", "email@example.com"),
 					resource.TestCheckResourceAttr(resourceName, "gitlab_url", "https://"+randName+".jp-east-1.gitlab.devops.nifcloud.com"),
 					resource.TestCheckResourceAttr(resourceName, "registry_url", "https://registry-"+randName+".jp-east-1.gitlab.devops.nifcloud.com"),
 				),
@@ -65,6 +66,7 @@ func TestAcc_DevOpsInstance(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "disk_size", "300"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-14"),
 					resource.TestCheckResourceAttr(resourceName, "description", "tfacc-memo-upd"),
+					resource.TestCheckResourceAttr(resourceName, "to", "email-upd@example.com"),
 					resource.TestCheckResourceAttr(resourceName, "gitlab_url", "https://"+randName+".jp-east-1.gitlab.devops.nifcloud.com"),
 					resource.TestCheckResourceAttr(resourceName, "registry_url", "https://registry-"+randName+".jp-east-1.gitlab.devops.nifcloud.com"),
 				),
@@ -152,6 +154,10 @@ func testAccCheckDevOpsInstanceValues(instance *types.Instance, rName string) re
 			return fmt.Errorf("bad description state, expected \"tfacc-memo\", got: %#v", nifcloud.ToString(instance.Description))
 		}
 
+		if nifcloud.ToString(instance.To) != "email@example.com" {
+			return fmt.Errorf("bad to state, expected \"email@example.com\", got: %#v", nifcloud.ToString(instance.To))
+		}
+
 		if nifcloud.ToString(instance.GitlabUrl) != "https://"+rName+".jp-east-1.gitlab.devops.nifcloud.com" {
 			return fmt.Errorf("bad gitlab_url state, expected \"https://%s.jp-east-1.gitlab.devops.nifcloud.com\", got: %#v", rName, nifcloud.ToString(instance.GitlabUrl))
 		}
@@ -192,6 +198,10 @@ func testAccCheckDevOpsInstanceValuesUpdated(instance *types.Instance, rName str
 
 		if nifcloud.ToString(instance.Description) != "tfacc-memo-upd" {
 			return fmt.Errorf("bad description state, expected \"tfacc-memo-upd\", got: %#v", nifcloud.ToString(instance.Description))
+		}
+
+		if nifcloud.ToString(instance.To) != "email-upd@example.com" {
+			return fmt.Errorf("bad to state, expected \"email-upd@example.com\", got: %#v", nifcloud.ToString(instance.To))
 		}
 
 		if nifcloud.ToString(instance.GitlabUrl) != "https://"+rName+".jp-east-1.gitlab.devops.nifcloud.com" {
