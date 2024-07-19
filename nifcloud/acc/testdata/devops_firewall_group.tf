@@ -10,18 +10,18 @@ resource "nifcloud_devops_firewall_group" "basic" {
   rule {
     protocol = "TCP"
     port     = 443
-    cidr_ip  = "0.0.0.0/0"
+    cidr_ip  = "172.16.0.0/24"
   }
 
   rule {
     protocol = "TCP"
     port     = 22
-    cidr_ip  = "0.0.0.0/0"
+    cidr_ip  = "172.16.0.0/24"
   }
 
   rule {
     protocol    = "ICMP"
-    cidr_ip     = "0.0.0.0/0"
+    cidr_ip     = "172.16.0.0/24"
     description = "ping"
   }
 }

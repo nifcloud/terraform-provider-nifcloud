@@ -92,6 +92,19 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeInt,
 						Description: "Port. Valid values are `22` or `443`.",
 						Optional:    true,
+						ValidateDiagFunc: func(v any, p cty.Path) diag.Diagnostics {
+							value := v.(int)
+							var diags diag.Diagnostics
+							if value != 22 && value != 443 {
+								diag := diag.Diagnostic{
+									Severity: diag.Error,
+									Summary:  "wrong value",
+									Detail:   fmt.Sprintf("%d is neither 22 nor 443.", value),
+								}
+								diags = append(diags, diag)
+							}
+							return diags
+						},
 					},
 					"cidr_ip": {
 						Type:        schema.TypeString,

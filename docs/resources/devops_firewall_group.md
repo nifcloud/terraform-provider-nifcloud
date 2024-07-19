@@ -58,7 +58,7 @@ The following arguments are supported:
 * `availability_zone` - (Optional) The availability zone for the DevOps firewall group.
 * `description` - (Optional) Description of the DevOps firewall group.
 * `name` - (Required) The name of the DevOps firewall group.
-* `rule` - (Optional) List of the DevOps firewall rules. see [rule](#rule).
+* `rule` - (Optional) List of the DevOps firewall rules. See [rule](#rule).
 
 ### rule
 

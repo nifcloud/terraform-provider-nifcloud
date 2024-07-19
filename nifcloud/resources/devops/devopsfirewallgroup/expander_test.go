@@ -148,7 +148,7 @@ func TestExpandAuthorizeFirewallRules(t *testing.T) {
 					{
 						Protocol:    types.ProtocolOfrulesForAuthorizeFirewallRules("TCP"),
 						Port:        nifcloud.Int32(443),
-						CidrIp:      types.CidrIpOfrulesForAuthorizeFirewallRules("0.0.0.0/0"),
+						CidrIp:      types.CidrIpOfrulesForAuthorizeFirewallRules("172.16.0.0/24"),
 						Description: nifcloud.String("test_description"),
 					},
 				},
@@ -159,7 +159,7 @@ func TestExpandAuthorizeFirewallRules(t *testing.T) {
 					{
 						Protocol:    types.ProtocolOfrulesForAuthorizeFirewallRules("TCP"),
 						Port:        nifcloud.Int32(443),
-						CidrIp:      types.CidrIpOfrulesForAuthorizeFirewallRules("0.0.0.0/0"),
+						CidrIp:      types.CidrIpOfrulesForAuthorizeFirewallRules("172.16.0.0/24"),
 						Description: nifcloud.String("test_description"),
 					},
 				},

@@ -55,7 +55,7 @@ func TestAcc_DevOpsFirewallGroup(t *testing.T) {
 						map[string]string{
 							"protocol": "TCP",
 							"port":     "443",
-							"cidr_ip":  "0.0.0.0/0",
+							"cidr_ip":  "172.16.0.0/24",
 						},
 					),
 					resource.TestCheckTypeSetElemNestedAttrs(
@@ -64,7 +64,7 @@ func TestAcc_DevOpsFirewallGroup(t *testing.T) {
 						map[string]string{
 							"protocol": "TCP",
 							"port":     "22",
-							"cidr_ip":  "0.0.0.0/0",
+							"cidr_ip":  "172.16.0.0/24",
 						},
 					),
 					resource.TestCheckTypeSetElemNestedAttrs(
@@ -72,7 +72,7 @@ func TestAcc_DevOpsFirewallGroup(t *testing.T) {
 						"rule.*",
 						map[string]string{
 							"protocol":    "ICMP",
-							"cidr_ip":     "0.0.0.0/0",
+							"cidr_ip":     "172.16.0.0/24",
 							"description": "ping",
 						},
 					),
@@ -190,11 +190,11 @@ func testAccCheckDevOpsFirewallGroupValues(group *types.FirewallGroup, rName str
 		var icmpOk bool
 
 		for _, r := range group.Rules {
-			if nifcloud.ToString(r.Protocol) == "TCP" && nifcloud.ToInt32(r.Port) == int32(443) && nifcloud.ToString(r.CidrIp) == "0.0.0.0/0" {
+			if nifcloud.ToString(r.Protocol) == "TCP" && nifcloud.ToInt32(r.Port) == int32(443) && nifcloud.ToString(r.CidrIp) == "172.16.0.0/24" {
 				httpOk = true
-			} else if nifcloud.ToString(r.Protocol) == "TCP" && nifcloud.ToInt32(r.Port) == int32(22) && nifcloud.ToString(r.CidrIp) == "0.0.0.0/0" {
+			} else if nifcloud.ToString(r.Protocol) == "TCP" && nifcloud.ToInt32(r.Port) == int32(22) && nifcloud.ToString(r.CidrIp) == "172.16.0.0/24" {
 				sshOk = true
-			} else if nifcloud.ToString(r.Protocol) == "ICMP" && nifcloud.ToString(r.CidrIp) == "0.0.0.0/0" && nifcloud.ToString(r.Description) == "ping" {
+			} else if nifcloud.ToString(r.Protocol) == "ICMP" && nifcloud.ToString(r.CidrIp) == "172.16.0.0/24" && nifcloud.ToString(r.Description) == "ping" {
 				icmpOk = true
 			}
 		}
