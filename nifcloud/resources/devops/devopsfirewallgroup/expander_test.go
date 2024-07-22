@@ -43,7 +43,7 @@ func TestExpandCreateFirewallGroupInput(t *testing.T) {
 
 func TestExpandUpdateFirewallGroupInput(t *testing.T) {
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"name":        "test_name",
+		"name":        "test_name_changed",
 		"description": "test_description",
 	})
 	rd.SetId("test_name")
@@ -58,7 +58,7 @@ func TestExpandUpdateFirewallGroupInput(t *testing.T) {
 			args: rd,
 			want: &devops.UpdateFirewallGroupInput{
 				FirewallGroupName:        nifcloud.String("test_name"),
-				ChangedFirewallGroupName: nifcloud.String("test_name"),
+				ChangedFirewallGroupName: nifcloud.String("test_name_changed"),
 				Description:              nifcloud.String("test_description"),
 			},
 		},

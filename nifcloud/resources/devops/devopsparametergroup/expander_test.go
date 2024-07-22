@@ -47,7 +47,7 @@ func TestExpandUpdateParameterGroupInput(t *testing.T) {
 		SmtpUserName:       nifcloud.String("test_value"),
 	}
 	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
-		"name":        "test_name",
+		"name":        "test_name_changed",
 		"description": "test_description",
 	})
 	rd.SetId("test_name")
@@ -62,7 +62,7 @@ func TestExpandUpdateParameterGroupInput(t *testing.T) {
 			args: rd,
 			want: &devops.UpdateParameterGroupInput{
 				ParameterGroupName:        nifcloud.String("test_name"),
-				ChangedParameterGroupName: nifcloud.String("test_name"),
+				ChangedParameterGroupName: nifcloud.String("test_name_changed"),
 				Description:               nifcloud.String("test_description"),
 				Parameters:                parameters,
 			},
