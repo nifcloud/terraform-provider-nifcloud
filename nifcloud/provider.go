@@ -6,6 +6,7 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/elasticip"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/instance"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/keypair"
+	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/multiipaddressgroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/networkinterface"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygroup"
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/resources/computing/securitygrouprule"
@@ -116,6 +117,7 @@ func Provider() *schema.Provider {
 			"nifcloud_nas_security_group":            nassecuritygroup.New(),
 			"nifcloud_nat_table":                     nattable.New(),
 			"nifcloud_network_interface":             networkinterface.New(),
+			"nifcloud_multi_ip_address_group":        multiipaddressgroup.New(),
 			"nifcloud_load_balancer":                 loadbalancer.New(),
 			"nifcloud_load_balancer_listener":        loadbalancerlistener.New(),
 			"nifcloud_private_lan":                   privatelan.New(),
