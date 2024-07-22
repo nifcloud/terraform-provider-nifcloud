@@ -23,9 +23,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_devops_firewall_group", &resource.Sweeper{
 		Name: "nifcloud_devops_firewall_group",
 		F:    testSweepDevOpsFirewallGroup,
-		// Dependencies: []string{
-		// 	"nifcloud_devops_instance",
-		// },
+		Dependencies: []string{
+			"nifcloud_devops_instance",
+		},
 	})
 }
 
