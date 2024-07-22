@@ -32,7 +32,7 @@ func configure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Dia
 	cfg.Retryer = func() aws.Retryer {
 		return aws.NopRetryer{}
 	}
-	cfg.ClientLogMode = aws.LogRequestWithBody
+	cfg.ClientLogMode = aws.LogRequestWithBody | aws.LogResponseWithBody
 	cfg.Logger = &debugLogger{}
 
 	storageCfg := nifcloud.NewConfig(
@@ -43,7 +43,7 @@ func configure(_ context.Context, d *schema.ResourceData) (interface{}, diag.Dia
 	storageCfg.Retryer = func() aws.Retryer {
 		return aws.NopRetryer{}
 	}
-	storageCfg.ClientLogMode = aws.LogRequestWithBody
+	storageCfg.ClientLogMode = aws.LogRequestWithBody | aws.LogResponseWithBody
 	storageCfg.Logger = &debugLogger{}
 
 	client := client.New(cfg, storageCfg)
