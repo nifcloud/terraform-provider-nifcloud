@@ -73,9 +73,10 @@ func newSchema() map[string]*schema.Schema {
 						Required:    true,
 					},
 					"ip_address": {
-						Type:        schema.TypeString,
-						Description: "IPv4 address.",
-						Required:    true,
+						Type:             schema.TypeString,
+						Description:      "IPv4 address.",
+						Required:         true,
+						ValidateDiagFunc: validator.IPAddress,
 					},
 				},
 			},

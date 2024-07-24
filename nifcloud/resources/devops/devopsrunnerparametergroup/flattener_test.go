@@ -21,7 +21,7 @@ func TestFlatten(t *testing.T) {
 		"docker_disable_entrypoint_overwrite": true,
 		"docker_extra_host": []interface{}{
 			map[string]interface{}{
-				"host_name":  "test_name",
+				"host_name":  "test_host_name",
 				"ip_address": "test_address",
 			},
 		},
@@ -58,7 +58,7 @@ func TestFlatten(t *testing.T) {
 							DisableEntrypointOverwrite: nifcloud.Bool(true),
 							ExtraHosts: []types.ExtraHosts{
 								{
-									HostName:  nifcloud.String("test_name"),
+									HostName:  nifcloud.String("test_host_name"),
 									IpAddress: nifcloud.String("test_address"),
 								},
 							},

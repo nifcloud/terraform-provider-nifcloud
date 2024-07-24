@@ -15,7 +15,7 @@ resource "nifcloud_devops_runner_parameter_group" "example" {
   description = "memo"
 
   docker_image      = "ruby"
-  docker_privileged = true
+  docker_privileged = false
   docker_shm_size   = 300000
 
   docker_extra_host {
