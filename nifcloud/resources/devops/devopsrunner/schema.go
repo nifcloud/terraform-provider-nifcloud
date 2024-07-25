@@ -27,9 +27,9 @@ func New() *schema.Resource {
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Default: schema.DefaultTimeout(5 * time.Minute),
-			Create:  schema.DefaultTimeout(120 * time.Minute),
-			Update:  schema.DefaultTimeout(120 * time.Minute),
-			Delete:  schema.DefaultTimeout(60 * time.Minute),
+			Create:  schema.DefaultTimeout(80 * time.Minute),
+			Update:  schema.DefaultTimeout(80 * time.Minute),
+			Delete:  schema.DefaultTimeout(30 * time.Minute),
 		},
 	}
 }
@@ -78,10 +78,11 @@ func newSchema() map[string]*schema.Schema {
 			ForceNew:    true,
 		},
 		"private_address": {
-			Type:        schema.TypeString,
-			Description: "Private IP address for the DevOps Runner.",
-			Optional:    true,
-			ForceNew:    true,
+			Type:         schema.TypeString,
+			Description:  "Private IP address for the DevOps Runner.",
+			Optional:     true,
+			ForceNew:     true,
+			ValidateFunc: validation.IsCIDR,
 		},
 		"public_ip_address": {
 			Type:        schema.TypeString,
