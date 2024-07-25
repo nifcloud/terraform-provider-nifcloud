@@ -116,9 +116,10 @@ func newSchema() map[string]*schema.Schema {
 			Optional:    true,
 		},
 		"private_address": {
-			Type:        schema.TypeString,
-			Description: "Private IP address for the DevOps instance.",
-			Optional:    true,
+			Type:         schema.TypeString,
+			Description:  "Private IP address for the DevOps instance.",
+			Optional:     true,
+			ValidateFunc: validation.IsCIDR,
 		},
 		"object_storage_account": {
 			Type:        schema.TypeString,
