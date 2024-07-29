@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.15.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.15.0) (2024-07-25)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.14.0...v1.15.0)
+
+**Merged pull requests:**
+
+- Create devops runner [\#138](https://github.com/nifcloud/terraform-provider-nifcloud/pull/138) ([SogoKato](https://github.com/SogoKato))
+- Create devops runner parameter group [\#137](https://github.com/nifcloud/terraform-provider-nifcloud/pull/137) ([SogoKato](https://github.com/SogoKato))
+- Create devops backup rule [\#136](https://github.com/nifcloud/terraform-provider-nifcloud/pull/136) ([SogoKato](https://github.com/SogoKato))
+- Create devops instance [\#135](https://github.com/nifcloud/terraform-provider-nifcloud/pull/135) ([SogoKato](https://github.com/SogoKato))
+- Create DevOps firewall group [\#134](https://github.com/nifcloud/terraform-provider-nifcloud/pull/134) ([SogoKato](https://github.com/SogoKato))
+- Create DevOps parameter group [\#132](https://github.com/nifcloud/terraform-provider-nifcloud/pull/132) ([SogoKato](https://github.com/SogoKato))
+
 ## [v1.14.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.14.0) (2024-04-01)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.13.0...v1.14.0)
