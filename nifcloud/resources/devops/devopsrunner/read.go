@@ -14,7 +14,7 @@ import (
 func readRunner(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).DevOpsRunner
 
-	runRes, err := svc.GetRunner(ctx, expandGetRunnerInput(d))
+	res, err := svc.GetRunner(ctx, expandGetRunnerInput(d))
 	if err != nil {
 		var awsErr smithy.APIError
 		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.Runner" {
@@ -24,7 +24,7 @@ func readRunner(ctx context.Context, d *schema.ResourceData, meta interface{}) d
 		return diag.FromErr(fmt.Errorf("failed to read a DevOps Runner: %s", err))
 	}
 
-	if err := flatten(d, runRes); err != nil {
+	if err := flatten(d, res); err != nil {
 		return diag.FromErr(err)
 	}
 
