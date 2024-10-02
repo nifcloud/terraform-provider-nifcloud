@@ -2,12 +2,12 @@
 page_title: "NIFCLOUD: nifcloud_devops_runner_registration"
 subcategory: "DevOps with GitLab"
 description: |-
-  Provides a DevOps Runner resource.
+  Provides a DevOps Runner registration resource.
 ---
 
 # nifcloud_devops_runner_registration
 
-Provides a DevOps Runner resource.
+Provides a DevOps Runner registration resource.
 
 ## Example Usage
 
