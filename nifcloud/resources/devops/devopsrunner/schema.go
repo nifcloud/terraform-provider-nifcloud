@@ -61,6 +61,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:        schema.TypeInt,
 			Description: "Limits how many jobs can run concurrently, across all registrations.",
 			Optional:    true,
+			Computed:    true,
 			ValidateFunc: validation.All(
 				validation.IntBetween(1, 50),
 			),

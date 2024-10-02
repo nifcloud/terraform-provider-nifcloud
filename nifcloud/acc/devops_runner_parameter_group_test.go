@@ -23,9 +23,9 @@ func init() {
 	resource.AddTestSweepers("nifcloud_devops_runner_parameter_group", &resource.Sweeper{
 		Name: "nifcloud_devops_runner_parameter_group",
 		F:    testSweepDevOpsRunnerParameterGroup,
-		// Dependencies: []string{
-		// 	"nifcloud_devops_runner",
-		// },
+		Dependencies: []string{
+			"nifcloud_devops_runner_registration",
+		},
 	})
 }
 

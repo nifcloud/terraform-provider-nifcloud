@@ -8,11 +8,16 @@ import (
 )
 
 func expandCreateRunnerInput(d *schema.ResourceData) *devopsrunner.CreateRunnerInput {
+	var concurrent *int32
+	if v := d.Get("concurrent").(int); v != 0 {
+		concurrent = nifcloud.Int32(int32(v))
+	}
+
 	return &devopsrunner.CreateRunnerInput{
 		RunnerName:       nifcloud.String(d.Get("name").(string)),
 		InstanceType:     types.InstanceTypeOfCreateRunnerRequest(d.Get("instance_type").(string)),
 		AvailabilityZone: types.AvailabilityZoneOfCreateRunnerRequest(d.Get("availability_zone").(string)),
-		Concurrent:       nifcloud.Int32(int32(d.Get("concurrent").(int))),
+		Concurrent:       concurrent,
 		Description:      nifcloud.String(d.Get("description").(string)),
 		NetworkConfig:    expandNetworkConfig(d),
 	}

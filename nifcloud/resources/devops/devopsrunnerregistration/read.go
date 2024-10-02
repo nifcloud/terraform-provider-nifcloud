@@ -1,4 +1,4 @@
-package devopsrunner
+package devopsrunnerregistration
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 	"github.com/nifcloud/terraform-provider-nifcloud/nifcloud/client"
 )
 
-func readRunner(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func readRunnerRegistration(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	svc := meta.(*client.Client).DevOpsRunner
 
-	res, err := svc.GetRunner(ctx, expandGetRunnerInput(d))
+	runRes, err := svc.GetRunner(ctx, expandGetRunnerInput(d))
 	if err != nil {
 		var awsErr smithy.APIError
 		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "Client.InvalidParameterNotFound.Runner" {
@@ -24,7 +24,16 @@ func readRunner(ctx context.Context, d *schema.ResourceData, meta interface{}) d
 		return diag.FromErr(fmt.Errorf("failed to read a DevOps Runner: %s", err))
 	}
 
-	if err := flatten(d, res); err != nil {
+	if err := flattenRunnerName(d, runRes); err != nil {
+		return diag.FromErr(err)
+	}
+
+	regRes, err := svc.ListRunnerRegistrations(ctx, expandListRunnerRegistrationsInput(d))
+	if err != nil {
+		return diag.FromErr(fmt.Errorf("failed to read a list of DevOps Runner registrations: %s", err))
+	}
+
+	if err := flatten(d, regRes); err != nil {
 		return diag.FromErr(err)
 	}
 
