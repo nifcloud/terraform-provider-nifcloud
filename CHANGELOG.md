@@ -1,6 +1,14 @@
 # Changelog
 
-## [v1.15.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.15.0) (2024-07-25)
+## [v1.16.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.16.0) (2024-10-02)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.15.0...v1.16.0)
+
+**Merged pull requests:**
+
+- Create devops runner registration [\#140](https://github.com/nifcloud/terraform-provider-nifcloud/pull/140) ([SogoKato](https://github.com/SogoKato))
+
+## [v1.15.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.15.0) (2024-07-29)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.14.0...v1.15.0)
 
