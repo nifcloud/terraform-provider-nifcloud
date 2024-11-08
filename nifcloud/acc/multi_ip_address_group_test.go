@@ -151,7 +151,7 @@ func testAccCheckMultiIPAddressGroupValuesUpdated(multiIPAddressGroup *types.Mul
 		}
 
 		if nifcloud.ToString(multiIPAddressGroup.Description) != "tfacc-memo-upd" {
-			return fmt.Errorf("bad description state, expected \"tfacc-memo\", got: %#v", multiIPAddressGroup.Description)
+			return fmt.Errorf("bad description state, expected \"tfacc-memo-upd\", got: %#v", multiIPAddressGroup.Description)
 		}
 
 		if nifcloud.ToString(multiIPAddressGroup.AvailabilityZone) != "east-21" {
