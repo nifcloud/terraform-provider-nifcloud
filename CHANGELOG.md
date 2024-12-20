@@ -1,5 +1,22 @@
 # Changelog
 
+## [v1.17.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.17.0) (2024-12-20)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.16.0...v1.17.0)
+
+**Closed issues:**
+
+- リモートアクセス用ネットワークゲートウェイの作成方法 [\#147](https://github.com/nifcloud/terraform-provider-nifcloud/issues/147)
+- OSイメージの指定について \(Windows Server 2022\) [\#146](https://github.com/nifcloud/terraform-provider-nifcloud/issues/146)
+- nifcloud\_instanceのパラメータ key\_nameについて [\#145](https://github.com/nifcloud/terraform-provider-nifcloud/issues/145)
+- terraformからの高速フラッシュストレージの新規作成時の最大ディスク容量について [\#144](https://github.com/nifcloud/terraform-provider-nifcloud/issues/144)
+- WindowsServerのnifcloud\_instance作成時のディスク構成について [\#143](https://github.com/nifcloud/terraform-provider-nifcloud/issues/143)
+
+**Merged pull requests:**
+
+- Add support nifcloud\_volume 4000 size [\#148](https://github.com/nifcloud/terraform-provider-nifcloud/pull/148) ([fuku2014](https://github.com/fuku2014))
+- Add multi ip address group [\#139](https://github.com/nifcloud/terraform-provider-nifcloud/pull/139) ([aokumasan](https://github.com/aokumasan))
+
 ## [v1.16.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.16.0) (2024-10-02)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.15.0...v1.16.0)
