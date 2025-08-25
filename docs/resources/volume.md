@@ -72,7 +72,7 @@ data "nifcloud_image" "ubuntu" {
 The following arguments are supported:
 
 * `size` - (Required) The disk size.
-  * Specifiable size: [100/200/300/.../4000]
+  * Specifiable size: [100/200/300/.../8000]
   * `disk_type` `Flash Storage` cannot specify more than 1100 size.
 * `volume_id` - (Optional) The volume name.
 * `disk_type` - (Optional) The disk type. See [disk_type](#disk_type).
