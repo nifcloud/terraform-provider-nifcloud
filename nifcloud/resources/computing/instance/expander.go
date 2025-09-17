@@ -16,7 +16,13 @@ func expandRunInstancesInput(d *schema.ResourceData) *computing.RunInstancesInpu
 		if v, ok := ni.(map[string]interface{}); ok {
 			n := types.RequestNetworkInterface{}
 			if row, ok := v["network_id"]; ok {
-				n.NetworkId = nifcloud.String(row.(string))
+				// net-MULTI_IP_ADDRESS cannot be specified during instance creation, so replace it with net-COMMON_GLOBAL
+				// Multi IP address group association will be performed after instance creation
+				if row.(string) == "net-MULTI_IP_ADDRESS" {
+					n.NetworkId = nifcloud.String("net-COMMON_GLOBAL")
+				} else {
+					n.NetworkId = nifcloud.String(row.(string))
+				}
 			}
 			if row, ok := v["network_name"]; ok {
 				n.NetworkName = nifcloud.String(row.(string))
@@ -81,10 +87,10 @@ func expandDescribeInstanceAttributeInputWithDisableAPITermination(d *schema.Res
 	}
 }
 
-func expandStopInstancesInput(d *schema.ResourceData) *computing.StopInstancesInput {
+func expandStopInstancesInput(d *schema.ResourceData, force bool) *computing.StopInstancesInput {
 	return &computing.StopInstancesInput{
 		InstanceId: []string{d.Id()},
-		Force:      nifcloud.Bool(true),
+		Force:      nifcloud.Bool(force),
 	}
 }
 
@@ -191,5 +197,31 @@ func expandDeregisterInstancesFromSecurityGroupInput(d *schema.ResourceData) *co
 	return &computing.DeregisterInstancesFromSecurityGroupInput{
 		InstanceId: []string{d.Id()},
 		GroupName:  nifcloud.String(groupName.(string)),
+	}
+}
+
+func expandAssociateMultiIpAddressGroupInput(multiIPAddressGroupID, instanceUniqueID string) *computing.AssociateMultiIpAddressGroupInput {
+	return &computing.AssociateMultiIpAddressGroupInput{
+		MultiIpAddressGroupId: nifcloud.String(multiIPAddressGroupID),
+		InstanceUniqueId:      nifcloud.String(instanceUniqueID),
+		NiftyReboot:           types.NiftyRebootOfAssociateMultiIpAddressGroupRequestFalse,
+	}
+}
+
+func expandDisassociateMultiIpAddressGroupInput(multiIPAddressGroupID, instanceUniqueID string) *computing.DisassociateMultiIpAddressGroupInput {
+	return &computing.DisassociateMultiIpAddressGroupInput{
+		MultiIpAddressGroupId: nifcloud.String(multiIPAddressGroupID),
+		InstanceUniqueId:      nifcloud.String(instanceUniqueID),
+		NiftyReboot:           types.NiftyRebootOfDisassociateMultiIpAddressGroupRequestFalse,
+	}
+}
+
+func expandStartInstancesInputWithMultiIPAddressConfigurationUserData(d *schema.ResourceData) *computing.StartInstancesInput {
+	return &computing.StartInstancesInput{
+		InstanceId: []string{d.Get("instance_id").(string)},
+		UserData: &types.RequestUserData{
+			Content:  nifcloud.String(base64.StdEncoding.EncodeToString([]byte(d.Get("multi_ip_address_configuration_user_data").(string)))),
+			Encoding: nifcloud.String("base64"),
+		},
 	}
 }

@@ -165,7 +165,7 @@ func TestExpandStopInstancesInput(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := expandStopInstancesInput(tt.args)
+			got := expandStopInstancesInput(tt.args, true)
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -509,6 +509,108 @@ func TestExpandDeregisterInstancesFromSecurityGroupInput(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := expandDeregisterInstancesFromSecurityGroupInput(tt.args)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandAssociateMultiIpAddressGroupInput(t *testing.T) {
+	type args struct {
+		multiIPAddressGroupID string
+		instanceUniqueID      string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want *computing.AssociateMultiIpAddressGroupInput
+	}{
+		{
+			name: "expands the args",
+			args: args{
+				multiIPAddressGroupID: "test_multi_ip_address_group_id",
+				instanceUniqueID:      "test_instance_unique_id",
+			},
+			want: &computing.AssociateMultiIpAddressGroupInput{
+				MultiIpAddressGroupId: nifcloud.String("test_multi_ip_address_group_id"),
+				InstanceUniqueId:      nifcloud.String("test_instance_unique_id"),
+				NiftyReboot:           types.NiftyRebootOfAssociateMultiIpAddressGroupRequestFalse,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandAssociateMultiIpAddressGroupInput(tt.args.multiIPAddressGroupID, tt.args.instanceUniqueID)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandDisassociateMultiIpAddressGroupInput(t *testing.T) {
+	type args struct {
+		multiIPAddressGroupID string
+		instanceUniqueID      string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want *computing.DisassociateMultiIpAddressGroupInput
+	}{
+		{
+			name: "expands the args",
+			args: args{
+				multiIPAddressGroupID: "test_multi_ip_address_group_id",
+				instanceUniqueID:      "test_instance_unique_id",
+			},
+			want: &computing.DisassociateMultiIpAddressGroupInput{
+				MultiIpAddressGroupId: nifcloud.String("test_multi_ip_address_group_id"),
+				InstanceUniqueId:      nifcloud.String("test_instance_unique_id"),
+				NiftyReboot:           types.NiftyRebootOfDisassociateMultiIpAddressGroupRequestFalse,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandDisassociateMultiIpAddressGroupInput(tt.args.multiIPAddressGroupID, tt.args.instanceUniqueID)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestExpandStartInstancesInputWithMultiIPAddressConfigurationUserData(t *testing.T) {
+	r := New()
+	rd := schema.TestResourceDataRaw(t, newSchema(), map[string]interface{}{
+		"instance_id": "test_instance_id",
+		"multi_ip_address_configuration_user_data": "test_user_data",
+	})
+	rd.SetId("test_instance_id")
+
+	dn := r.Data(rd.State())
+
+	tests := []struct {
+		name string
+		args *schema.ResourceData
+		want *computing.StartInstancesInput
+	}{
+		{
+			name: "expands the resource data",
+			args: dn,
+			want: &computing.StartInstancesInput{
+				InstanceId: []string{"test_instance_id"},
+				UserData: &types.RequestUserData{
+					Content:  nifcloud.String(base64.StdEncoding.EncodeToString([]byte("test_user_data"))),
+					Encoding: nifcloud.String("base64"),
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := expandStartInstancesInputWithMultiIPAddressConfigurationUserData(tt.args)
 			assert.Equal(t, tt.want, got)
 		})
 	}
