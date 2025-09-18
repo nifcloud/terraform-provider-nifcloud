@@ -76,12 +76,13 @@ The following arguments are supported:
 * `password` - (Optional) Admin password for windows os.
 * `security_group` - (Optional) The security group name to associate with; which can be managed using the nifcloud_security_group resource.
 * `user_data` - (Optional) The user data to provide when launching the instance.
+* `multi_ip_address_configuration_user_data` - (Optional) The user data to provide when launching the instance after associating or disassociating the multi IP address group.
 * `network_interface` - (Required) The network interface list. see [network interface](#network-interface).
 
 ### network interface
 
 * `ip_address` - (Optional) The IP address to select from `static` or `elastic IP address` or `static IP address`; Default(null) is DHCP.
-* `network_id` - (Optional) The ID of the network to attach; `net-COMMON_GLOBAL` or `net-COMMON_PRIVATE` or `private lan network id` .
+* `network_id` - (Optional) The ID of the network to attach; `net-COMMON_GLOBAL` or `net-COMMON_PRIVATE` or `net-MULTI_IP_ADDRESS` or `private lan network id` .
 * `network_name` - (Optional) The private lan name of the network to attach.
 * `network_interface_id` - (Optional) The ID of the additional NIC, which can be managed using the `nifcloud_network_interface` resource. Modifying this field instance will force reboot.
 
