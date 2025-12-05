@@ -1,6 +1,6 @@
 ---
 page_title: "NIFCLOUD: nifcloud_multi_ip_address_group"
-subcategory: "Network"
+subcategory: "Computing"
 description: |-
   Provides a multi IP address group resource.
 ---

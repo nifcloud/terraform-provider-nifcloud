@@ -126,7 +126,7 @@ func newSchema() map[string]*schema.Schema {
 				Schema: map[string]*schema.Schema{
 					"network_id": {
 						Type:        schema.TypeString,
-						Description: "The ID of the network to attach; 'net-COMMON_GLOBAL' or `net-COMMON_PRIVATE` or private lan network id.",
+						Description: "The ID of the network to attach; 'net-COMMON_GLOBAL' or `net-COMMON_PRIVATE` or `net-MULTI_IP_ADDRESS` or private lan network id.",
 						Optional:    true,
 					},
 					"network_name": {
@@ -149,6 +149,11 @@ func newSchema() map[string]*schema.Schema {
 						Type:        schema.TypeString,
 						Description: "The attachment ID of the additional NIC",
 						Computed:    true,
+					},
+					"multi_ip_address_group_id": {
+						Type:        schema.TypeString,
+						Description: "The ID of the multi IP address group to associate, which can be managed using the nifcloud_multi_ip_address_group resource.",
+						Optional:    true,
 					},
 				},
 			},
@@ -174,6 +179,11 @@ func newSchema() map[string]*schema.Schema {
 			Description: "The user data to provide when launching the instance.",
 			Optional:    true,
 			ForceNew:    true,
+		},
+		"multi_ip_address_configuration_user_data": {
+			Type:        schema.TypeString,
+			Description: "The user data to provide when launching the instance after associating or disassociating the multi IP address group.",
+			Optional:    true,
 		},
 		"instance_state": {
 			Type:        schema.TypeString,

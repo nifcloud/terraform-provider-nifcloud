@@ -138,6 +138,52 @@ func TestAcc_Instance_windows(t *testing.T) {
 	})
 }
 
+func TestAcc_Instance_MultiIPAddress(t *testing.T) {
+	var instance types.InstancesSet
+
+	resourceName := "nifcloud_instance.basic"
+	randName := prefix + acctest.RandString(7)
+
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactory,
+		CheckDestroy:      testAccInstanceResourceDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccInstanceMultiIPAddress(t, "testdata/instance_multi_ip_address.tf", randName),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckInstanceExists(resourceName, &instance),
+					resource.TestCheckResourceAttr(resourceName, "instance_id", randName),
+					resource.TestCheckResourceAttr(resourceName, "description", "memo"),
+					resource.TestCheckResourceAttr(resourceName, "availability_zone", "east-21"),
+					resource.TestCheckResourceAttr(resourceName, "accounting_type", "2"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "354"),
+					resource.TestCheckResourceAttr(resourceName, "instance_type", "c2-small"),
+					resource.TestCheckResourceAttr(resourceName, "key_name", randName),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.1.network_id", "net-MULTI_IP_ADDRESS"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network_id", "net-COMMON_PRIVATE"),
+					resource.TestCheckResourceAttr(resourceName, "security_group", randName),
+					resource.TestCheckResourceAttr(resourceName, "user_data", "#!/bin/bash"),
+					resource.TestCheckResourceAttrSet(resourceName, "multi_ip_address_configuration_user_data"),
+					resource.TestCheckResourceAttrSet(resourceName, "instance_state"),
+					resource.TestCheckResourceAttrSet(resourceName, "public_ip"),
+					resource.TestCheckResourceAttrSet(resourceName, "private_ip"),
+					resource.TestCheckResourceAttrSet(resourceName, "unique_id"),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"user_data",
+					"multi_ip_address_configuration_user_data",
+				},
+			},
+		},
+	})
+}
+
 func testAccInstance(t *testing.T, fileName, rName string) string {
 	b, err := os.ReadFile(fileName)
 	if err != nil {
@@ -156,6 +202,19 @@ func testAccInstanceWindows(t *testing.T, fileName, rName string) string {
 		t.Fatal(err)
 	}
 	return fmt.Sprintf(string(b),
+		rName,
+	)
+}
+
+func testAccInstanceMultiIPAddress(t *testing.T, fileName, rName string) string {
+	b, err := os.ReadFile(fileName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return fmt.Sprintf(string(b),
+		rName,
+		rName,
+		rName,
 		rName,
 	)
 }

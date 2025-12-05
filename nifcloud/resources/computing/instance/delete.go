@@ -32,7 +32,7 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 	instance := describeInstancesRes.ReservationSet[0].InstancesSet[0]
 
 	if nifcloud.ToString(instance.InstanceState.Name) != "stopped" {
-		stopInstancesInput := expandStopInstancesInput(d)
+		stopInstancesInput := expandStopInstancesInput(d, true)
 		_, err := svc.StopInstances(ctx, stopInstancesInput)
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("failed deleting for stop instances error: %s", err))
@@ -55,6 +55,12 @@ func delete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.
 
 		if err := computing.NewRouterAvailableWaiter(svc).Wait(ctx, &computing.NiftyDescribeRoutersInput{RouterId: []string{r}}, time.Until(deadline)); err != nil {
 			return diag.FromErr(fmt.Errorf("failed waiting for router available: %s", err))
+		}
+	}
+
+	if instance.MultiIpAddressGroup != nil && instance.MultiIpAddressGroup.MultiIpAddressGroupId != nil {
+		if err := disassociateMultiIPAddressGroup(ctx, d, svc, false); err != nil {
+			return diag.FromErr(fmt.Errorf("failed disassociating multi ip address group error: %s", err))
 		}
 	}
 

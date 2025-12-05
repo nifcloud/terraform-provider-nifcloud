@@ -67,8 +67,8 @@ func flatten(d *schema.ResourceData, res *computing.DescribeInstancesOutput) err
 			}
 			ni["network_id"] = nifcloud.ToString(n.NiftyNetworkId)
 		case "net-MULTI_IP_ADDRESS":
-			// implement when support multi ip
-			continue
+			ni["network_id"] = nifcloud.ToString(n.NiftyNetworkId)
+			ni["multi_ip_address_group_id"] = nifcloud.ToString(instance.MultiIpAddressGroup.MultiIpAddressGroupId)
 		default:
 			var findElm map[string]interface{}
 			for _, dn := range d.Get("network_interface").(*schema.Set).List() {
