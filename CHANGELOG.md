@@ -1,5 +1,19 @@
 # Changelog
 
+## [v1.18.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.18.0) (2025-12-05)
+
+[Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.17.0...v1.18.0)
+
+**Closed issues:**
+
+- IPCOM サービスのterraformでのルーター設定の方法を教えてください [\#149](https://github.com/nifcloud/terraform-provider-nifcloud/issues/149)
+- マルチIPアドレスを扱いたい [\#131](https://github.com/nifcloud/terraform-provider-nifcloud/issues/131)
+
+**Merged pull requests:**
+
+- Multi IP address association [\#156](https://github.com/nifcloud/terraform-provider-nifcloud/pull/156) ([aokumasan](https://github.com/aokumasan))
+- Add support nifcloud\_volume 8000 size [\#155](https://github.com/nifcloud/terraform-provider-nifcloud/pull/155) ([fuku2014](https://github.com/fuku2014))
+
 ## [v1.17.0](https://github.com/nifcloud/terraform-provider-nifcloud/tree/v1.17.0) (2024-12-20)
 
 [Full Changelog](https://github.com/nifcloud/terraform-provider-nifcloud/compare/v1.16.0...v1.17.0)
