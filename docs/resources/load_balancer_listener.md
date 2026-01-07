@@ -46,7 +46,7 @@ The following arguments are supported:
 
 * `balancing_type` - (Optional) Balancing type. (1: Round-Robin, 2: Least-Connection).
 * `filter` - (Optional) A list of IP address filter for load balancer.
-* `filter_type` - (Optional) The filter_type of filter (1: Allow, 2: Deny).
+* `filter_type` - (Required) The filter_type of filter (1: Allow, 2: Deny).
 * `health_check_interval` - (Optional) The interval between health checks.
 * `health_check_target` - (Optional) The target of the health check. Valid pattern is ${PROTOCOL}:${PORT} or ICMP.
 * `healthy_threshold` - (Optional) The number of checks before the instance is declared healthy.
