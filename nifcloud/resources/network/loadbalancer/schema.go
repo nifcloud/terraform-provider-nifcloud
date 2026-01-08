@@ -75,7 +75,7 @@ func newSchema() map[string]*schema.Schema {
 			Type:         schema.TypeString,
 			Description:  "The filter_type of filter (1: Allow, 2: Deny).",
 			Optional:     true,
-			Computed:     true,
+			Default:      "1",
 			ValidateFunc: validation.StringInSlice([]string{"1", "2"}, false),
 		},
 		"healthy_threshold": {
