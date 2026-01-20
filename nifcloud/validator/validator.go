@@ -43,7 +43,7 @@ func CIDRNetworkAddress(v interface{}, k cty.Path) diag.Diagnostics {
 		return diag.Errorf("%q is not a valid CIDR block; did you mean %q?", cidr, ipnet1)
 	}
 
-	if !(ip2.String() == ip1.String() && ipnet2.String() == ipnet1.String()) {
+	if ip2.String() != ip1.String() || ipnet2.String() != ipnet1.String() {
 		return diag.Errorf("%q is not a valid CIDR block; did you mean %q?", cidr, ipnet1)
 	}
 
