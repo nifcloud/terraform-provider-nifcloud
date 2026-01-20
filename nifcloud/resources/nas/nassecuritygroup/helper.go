@@ -44,7 +44,7 @@ func waitUntilNASSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resourc
 			return nil
 		}
 
-		return retry.RetryableError(fmt.Errorf("Ecpected rule to revoked but was in state revoking"))
+		return retry.RetryableError(fmt.Errorf("expected rule to revoked but was in state revoking"))
 	})
 
 	return err
