@@ -1,6 +1,6 @@
 module github.com/nifcloud/terraform-provider-nifcloud
 
-go 1.20
+go 1.25
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.4
