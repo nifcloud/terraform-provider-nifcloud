@@ -62,11 +62,11 @@ func idHash(inputList []*computing.AuthorizeSecurityGroupIngressInput) string {
 		buf.WriteString(fmt.Sprintf("%s-", v))
 	}
 
-	if ip.ListOfRequestIpRanges != nil && len(ip.ListOfRequestIpRanges) > 0 {
+	if len(ip.ListOfRequestIpRanges) > 0 {
 		buf.WriteString(fmt.Sprintf("%s-", nifcloud.ToString(ip.ListOfRequestIpRanges[0].CidrIp)))
 
 	}
-	if ip.ListOfRequestGroups != nil && len(ip.ListOfRequestGroups) > 0 {
+	if len(ip.ListOfRequestGroups) > 0 {
 		buf.WriteString(fmt.Sprintf("%s-", nifcloud.ToString(ip.ListOfRequestGroups[0].GroupName)))
 	}
 
