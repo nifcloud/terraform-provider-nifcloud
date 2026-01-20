@@ -19,7 +19,7 @@ default: build
 .PHONY: tools
 tools:
 	@ mkdir -p ${GOBIN}
-	@ GOBIN=${GOBIN} go install github.com/golangci/golangci-lint/cmd/golangci-lint
+	@ GOBIN=${GOBIN} go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	@ GOBIN=${GOBIN} go install github.com/bflad/tfproviderdocs
 	@ GOBIN=${GOBIN} go install github.com/client9/misspell/cmd/misspell
 	@ GOBIN=${GOBIN} go install github.com/katbyte/terrafmt
