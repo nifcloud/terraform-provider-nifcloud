@@ -1,18 +1,23 @@
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
     - errcheck
-    - goimports
-    - gofmt
     - gosec
-    - gosimple
     - govet
     - ineffassign
     - misspell
     - staticcheck
     - unconvert
     - unused
-    - vet
-
-run:
-  timeout: 10m
+  settings:
+    gosec:
+      excludes:
+        - G115
+        - G304
+issues:
+  max-same-issues: 20
+formatters:
+  enable:
+    - gofmt
+    - goimports

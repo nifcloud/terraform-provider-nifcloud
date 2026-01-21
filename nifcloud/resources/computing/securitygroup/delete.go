@@ -109,7 +109,7 @@ func forceRevokeSecurityGroupRules(ctx context.Context, svc *computing.Client, d
 				return nil
 			}
 			return fmt.Errorf(
-				"Error revoking security group %s rules: %s",
+				"error revoking security group %s rules: %s",
 				nifcloud.ToString(securityGroup.GroupName), err)
 		}
 

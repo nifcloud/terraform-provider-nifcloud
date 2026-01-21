@@ -44,7 +44,7 @@ func waitUntilDBSecurityGroupRuleRevoked(ctx context.Context, d *schema.Resource
 			return nil
 		}
 
-		return retry.RetryableError(fmt.Errorf("Ecpected rule to revoked but was in state revoking"))
+		return retry.RetryableError(fmt.Errorf("expected rule to revoked but was in state revoking"))
 	})
 
 	return err
